@@ -1,0 +1,21 @@
+
+spring:
+  mail:
+    host: smtp.f5tv.com
+    username: springbootblog@f5tv.com
+    password: ll.201520111
+    default-encoding: utf-8
+    port: 465
+    properties:
+      mail:
+        smtp:
+          auth: true
+          socketFactory:
+            class: javax.net.ssl.SSLSocketFactory
+            port: 465
+  resources:
+    static-locations: classpath:/
+  thymeleaf:
+    prefix: classpath:/template/
+    suffix: .html
+    mode:  HTML5

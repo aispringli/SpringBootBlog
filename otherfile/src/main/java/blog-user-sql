@@ -1,0 +1,42 @@
+create database springBootBlog;
+
+use springBootBlog;
+
+create table userRole(
+    userRoleId int UNSIGNED,
+    userRoleName VARCHAR(50) NOT NULL,
+    PRIMARY KEY ( userRoleId)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+select * from userRole;
+
+insert into userRole(userRoleId,userRoleName) values(101,'admin');
+insert into userRole(userRoleId,userRoleName) values(201,'manger');
+insert into userRole(userRoleId,userRoleName) values(301,'user');
+
+
+
+create table user(
+    userId bigint UNSIGNED auto_increment,
+    userName VARCHAR(20) NOT NULL,
+    userEmail VARCHAR(100) NOT NULL,
+    userStatus int default 0,
+    userRoleId int default 301,
+    userDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    userLogoSrc VARCHAR(100)  NULL,
+    PRIMARY KEY (userId)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+insert into user(userName,userEmail,userStatus) values('administrator','3377939225@qq.com',0);
+
+create table userPassword(
+    password VARCHAR(60) NOT NULL,
+    userId bigint UNSIGNED,
+    PRIMARY KEY ( userId)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+insert into userPassword(password,userId) values('$2a$10$/udjFoC7X2oWoUTP5.Zt6.ydzzndnagYnOKoUqsULcn52DbbatVj2',1);
+
+select user.userId,userName,userEmail,userStatus,userDate,userLogoSrc,passwordId,password
+from user left join  userPassword
+on user.userId = userPassword.userId

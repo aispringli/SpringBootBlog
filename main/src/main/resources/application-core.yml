@@ -1,0 +1,11 @@
+
+spring:
+  mvc:
+    favicon:
+      enabled: false
+  resources:
+    static-locations: classpath:/
+  thymeleaf:
+    prefix: classpath:/template/
+    suffix: .html
+    mode:  HTML5

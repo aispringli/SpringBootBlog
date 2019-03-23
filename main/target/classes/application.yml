@@ -1,0 +1,46 @@
+server:
+  port: 80
+
+spring:
+  mail:
+    host: smtp.f5tv.com
+    username: springbootblog@f5tv.com
+    password: ll.201520111
+    default-encoding: utf-8
+    port: 465
+    properties:
+      mail:
+        smtp:
+          ssl:
+            enable: true
+          socketFactory:
+            port: 465
+            class: javax.net.ssl.SSLSocketFactory
+          auth: true
+          starttls:
+            enable: true
+            required: true
+  favicon:
+    enabled: false
+  mvc:
+    favicon:
+      enabled: false
+  profiles:
+    active: user,core
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver               #配置oracle驱动类
+    url: jdbc:mysql://localhost:3306/springBootBlog?useUnicode=true&amp;characterEncoding=UTF-8&useSSL=false&autoReconnect=true             #配置数据库连接地址
+    username: root                                         #配置数据库连接用户名
+    password: 123456                                         #配置数据库连接用户密码
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 100
+      connection-test-query: SELECT 1
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      pool-name: DatebookHikariCP
+  thymeleaf:
+    prefix: classpath:/template/
+    suffix: .html
+    mode:  HTML5

@@ -3,9 +3,11 @@
   <component name="Encoding" defaultCharsetForPropertiesFiles="UTF-8" addBOMForNewFiles="with NO BOM">
     <file url="file://$PROJECT_DIR$" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/core" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/email" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/main" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/otherfile" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/projecttest" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/web" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/user" charset="UTF-8" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

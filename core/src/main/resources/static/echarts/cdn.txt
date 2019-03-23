@@ -1,0 +1,31 @@
+﻿<script src="https://cdn.bootcss.com/echarts/4.2.0-rc.2/echarts-en.common.js"></script>
+
+<script src="https://cdn.bootcss.com/echarts/4.2.0-rc.2/echarts-en.common.min.js"></script>
+
+<script src="https://cdn.bootcss.com/echarts/4.2.0-rc.2/echarts-en.js"></script>
+
+<script src="https://cdn.bootcss.com/echarts/4.2.0-rc.2/echarts-en.min.js"></script>
+
+<script src="https://cdn.bootcss.com/echarts/4.2.0-rc.2/echarts-en.simple.js"></script>
+
+<script src="https://cdn.bootcss.com/echarts/4.2.0-rc.2/echarts-en.simple.min.js"></script>
+
+<script src="https://cdn.bootcss.com/echarts/4.2.0-rc.2/echarts.common.js"></script>
+
+<script src="https://cdn.bootcss.com/echarts/4.2.0-rc.2/echarts.common.min.js"></script>
+
+<script src="https://cdn.bootcss.com/echarts/4.2.0-rc.2/echarts.js"></script>
+
+<script src="https://cdn.bootcss.com/echarts/4.2.0-rc.2/echarts.min.js"></script>
+
+<script src="https://cdn.bootcss.com/echarts/4.2.0-rc.2/echarts.simple.js"></script>
+
+<script src="https://cdn.bootcss.com/echarts/4.2.0-rc.2/echarts.simple.min.js"></script>
+
+<script src="https://cdn.bootcss.com/echarts/4.2.0-rc.2/extension/bmap.js"></script>
+
+<script src="https://cdn.bootcss.com/echarts/4.2.0-rc.2/extension/bmap.min.js"></script>
+
+<script src="https://cdn.bootcss.com/echarts/4.2.0-rc.2/extension/dataTool.js"></script>
+
+<script src="https://cdn.bootcss.com/echarts/4.2.0-rc.2/extension/dataTool.min.js"></script>

@@ -1,0 +1,9 @@
+﻿https://cdn.bootcss.com/jquery/3.3.1/core.js
+
+https://cdn.bootcss.com/jquery/3.3.1/jquery.js
+
+https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js
+
+https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.js
+
+https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js

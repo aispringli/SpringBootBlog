@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="/common/Head::common_header(~{::title},~{::link})">
+    <title>登陆</title>
+    <link rel="stylesheet" href="/static/user/sign/css/style.css" />
+</head>
+<body class="style">
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6 offset-md-3 col-lg-4  offset-lg-4">
+
+            <!-- Start Sign In Form -->
+            <form action="#" class="fh5co-form animate-box" data-animate-effect="fadeInRight">
+                <h2>注册登录个人博客</h2>
+
+                <div class="form-group">
+                    <input type="text" class="form-control" id="userName" onblur="checkUserName()" placeholder="用户名或邮箱"
+                           autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" id="password" onblur="checkPassword()" placeholder="密码"
+                           autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <img src="/VerificationCode/GetImage" style="cursor:pointer;position: absolute;" id="validateCodeImg"
+                         onclick="this.src='/VerificationCode/GetImage?'+Math.random()" alt="验证码"/>
+                    <input class="form-control" id="validateCode" onblur="checkValidateCode()"
+                           style="padding-left: 120px;" placeholder="验证码" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label> <input type="checkbox" id="remember-me" value="true"/> 记住我</label>
+                </div>
+                <div class="form-group">
+                    <p>还未注册？ <a href="/User/SignUp">注册</a></p>
+                    <p>忘记密码？ <a href="/User/RetrievePassword">找回密码</a></p>
+                </div>
+                <div class="form-group">
+                    <input type="button" id="formBtn" value="登陆" class="btn btn-primary">
+                </div>
+                <div class="form-group" style="display: none;">
+                    <div class="alert alert-danger" id="tips"></div>
+                </div>
+            </form>
+            <!-- END Sign In Form -->
+        </div>
+
+    </div>
+    <footer th:replace="/common/Footer::common_footer">
+    </footer>
+</div>
+<div th:replace="/common/Head::common_js(~{::script})">
+    <script>
+        var tipsVar = $('#tips');
+        var userName = $('#userName');
+        var validateCode = $('#validateCode');
+        var password = $('#password');
+
+        tipsVar.parent().hide();
+        tipsVar.html('');
+
+        //检查用户名
+        function checkUserName() {
+            tipsVar.parent().hide();
+            if (userName.val() == null || userName.val() === '') {
+                tipsVar.html('没有输入用户名或邮箱');
+                tipsVar.parent().show();
+                return false;
+            }
+            if (userName.val().length < 6 || userName.val().length > 100) {
+                tipsVar.html('用户名或邮箱长度不正确');
+                tipsVar.parent().show();
+                return false;
+            }
+            if (!isMailReg(userName.val())) {
+                if (!isStringReg(userName.val())) {
+                    tipsVar.html('用户名含有非法字符');
+                    tipsVar.parent().show();
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        //检查验证码
+        function checkValidateCode() {
+            tipsVar.parent().hide();
+            if (validateCode.val() == null || validateCode.val() === '' || validateCode.val().length !== 4) {
+                tipsVar.html('请输入四位验证码');
+                tipsVar.parent().show();
+                return false;
+            }
+            return true;
+        }
+
+        //检查密码
+        function checkPassword() {
+            tipsVar.parent().hide();
+            if (password.val() == null || password.val() === '') {
+                tipsVar.html('没有输入密码');
+                tipsVar.parent().show();
+                return false;
+            }
+            if (password.val().length < 6 || password.val().length > 20) {
+                tipsVar.html('密码长度不正确');
+                tipsVar.parent().show();
+                return false;
+            }
+            if (!isStringReg(password.val())) {
+                tipsVar.html('密码含有非法字符');
+                tipsVar.parent().show();
+                return false;
+            }
+            return true;
+        }
+
+        function checkTips() {
+            tipsVar.removeClass('alert-success');
+            tipsVar.addClass('alert-danger');
+            tipsVar.parent().hide();
+            if (!checkValidateCode()) return false;
+            if (!checkUserName()) return false;
+            return (!checkPassword());
+        }
+
+        //登陆
+        $('#formBtn').click(
+            function () {
+                if (checkTips()) {
+                    function errorFunction() {
+                        tipsVar.removeClass('alert-success');
+                        tipsVar.addClass('alert-danger');
+                        tipsVar.html('遇到问题了，请稍后刷新或联系管理员解决');
+                        tipsVar.parent().show();
+                    }
+
+                    function successFunction(result) {
+                        tipsVar.html(result.message);
+                        tipsVar.parent().show();
+                        if (result.success) {
+                            tipsVar.removeClass('alert-danger');
+                            tipsVar.addClass('alert-success');
+                            setCookie("userName", userName.val(), "d1");
+                            var url = "/";
+                            if (window.opener !== null) {
+                                if (window.opener.location.host === window.location.host) {
+                                    window.opener.location.reload();
+                                    window.close();
+                                } else url = window.location.host;
+                            }
+                            setTimeout(url, 1000);
+                        } else $('#validateCodeImg').click();
+                    }
+
+                    $.ajax({
+                        url: '/User/HandleSignIn',
+                        type: 'post',
+                        data: {
+                            'userName': userName.val(),
+                            'password': password.val(),
+                            'validateCode': validateCode,
+                            'remember-me': $('#remember-me').val()
+                        },
+                        error: errorFunction,  //错误执行方法
+                        success: successFunction //成功执行方法
+                    })
+                }
+            });
+    </script>
+</div>
+</body>
+</html>
