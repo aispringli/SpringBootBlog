@@ -55,8 +55,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginPage("/User/SignIn")
 //                .successForwardUrl("/Index")
                 .and()
+                .csrf()
+                .ignoringAntMatchers("/Email/**")
+                .and()
                 .authorizeRequests()
-                .antMatchers("/User/HandleSignIn","/static/**","/VerificationCode/**","favicon.ico").permitAll();
+                .antMatchers("/User/HandleSignIn","/static/**","/VerificationCode/**","favicon.ico","/Email/**").permitAll();
 //                .anyRequest()
 //                .authenticated()
 //                .and()

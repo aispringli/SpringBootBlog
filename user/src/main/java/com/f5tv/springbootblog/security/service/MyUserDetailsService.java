@@ -48,8 +48,6 @@ public class MyUserDetailsService implements UserDetailsService {
         else userEntity = userService.userEntitySelectByUserName(username);
         if (userEntity == null) throw new UsernameNotFoundException("用户名或邮箱不存在");
 
-        userEntity.setUserName(userEntity.getUsername());
-
         UserPassword userPassword = userService.userPasswordSelectByUserId(userEntity.getUserId());
         if (userPassword == null) {
             //此用户没有绑定密码

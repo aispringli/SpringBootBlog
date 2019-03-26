@@ -68,12 +68,10 @@ public class UserResultBean {
 
     //用户重置密码结果
     @Bean
-    public Map<Integer, ResponseResult> userResetPasswordResult(){
+    public Map<Integer, ResponseResult> userResetPasswordEmailResult(){
         Map<Integer,ResponseResult> map=new HashMap<>();
-        map.put(0,new ResponseResult());
-
-
-
+        map.put(0,new ResponseResult(0,true,""));
+        map.put(101,new ResponseResult(101,"邮箱未注册"));
         return map;
     }
 }

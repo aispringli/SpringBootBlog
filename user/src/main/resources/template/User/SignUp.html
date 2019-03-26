@@ -38,7 +38,7 @@
                            style="padding-left: 120px;" placeholder="验证码" autocomplete="off" />
                 </div>
                 <div class="form-group">
-                    <button class="btn btn-success" style="position: absolute;" id="userEmailBtn">发送验证码</button>
+                    <button class="btn btn-success" type="button" style="position: absolute;" id="userEmailBtn">发送验证码</button>
                     <input type="number" class="form-control" id="userEmailCode" onblur="checkEmailCode()" style="padding-left: 120px;"
                            placeholder="邮箱验证码" autocomplete="off" />
                 </div>
@@ -73,7 +73,7 @@
         tipsVar.html('');
 
         function checkUserNameOrUserEmail(userName,userEmail) {
-            var result=false;
+            var flag=false;
             function errorFunction() {
                 tipsVar.removeClass('alert-success');
                 tipsVar.addClass('alert-danger');
@@ -86,7 +86,7 @@
                     tipsVar.html(result.message);
                     tipsVar.parent().show();
                 }
-                else result= true;
+                else flag= true;
             }
 
             $.ajax({
@@ -100,7 +100,7 @@
                 error: errorFunction,  //错误执行方法
                 success: successFunction //成功执行方法
             });
-            return result;
+            return flag;
         }
 
         //检查用户名
@@ -223,7 +223,29 @@
             function () {
                 if(checkValidateCode()&&checkEmail()){
                     //请求发送验证码
-                    console.log("验证码已发送")
+                    console.log("验证码已发送");
+                    function errorFunction() {
+                        tipsVar.html('遇到问题了，请稍后刷新或联系管理员解决');
+                        tipsVar.parent().show();
+                    }
+
+                    function successFunction(result) {
+                        tipsVar.html(result.message);
+                        tipsVar.parent().show();
+                        validateCode.val('');
+                        $('#validateCodeImg').click();
+                    }
+
+                    $.ajax({
+                        url: '/User/SendEmailValidateCode',
+                        type: 'post',
+                        data: {
+                            'emailAddress': userEmail.val(),
+                            'validateCode': validateCode.val()
+                        },
+                        error: errorFunction,  //错误执行方法
+                        success: successFunction //成功执行方法
+                    })
                 }
             }
         );
@@ -250,7 +272,7 @@
                                     window.close();
                                 } else url = window.location.host;
                             }
-                            setTimeout(url, 1000);
+                            setTimeout(self.location=url, 2000);
                         } else $('#validateCodeImg').click();
                     }
 
@@ -258,9 +280,11 @@
                         url: '/User/HandleSignUp',
                         type: 'post',
                         data: {
-                            'userName': userName.val(),
+                            'username': userName.val(),
                             'password': password.val(),
-                            'validateCode': validateCode.val()
+                            'validateCode': validateCode.val(),
+                            'userEmail': userEmail.val(),
+                            'emailValidateCode': userEmailCode.val()
                         },
                         error: errorFunction,  //错误执行方法
                         success: successFunction //成功执行方法

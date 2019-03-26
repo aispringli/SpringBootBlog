@@ -19,10 +19,6 @@ import java.util.*;
 public class UserEntity extends UserPassword implements UserDetails, CredentialsContainer {
 
 
-    /**
-     * 用户用户名 String
-     **/
-    private String userName;
 
     /**
      * 用户邮箱 String
@@ -233,15 +229,6 @@ public class UserEntity extends UserPassword implements UserDetails, Credentials
 
 
     // get set methods
-
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
 
     public String getUserEmail() {
         return userEmail;

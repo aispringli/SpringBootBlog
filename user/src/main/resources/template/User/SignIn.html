@@ -33,7 +33,7 @@
                 </div>
                 <div class="form-group">
                     <p>还未注册？ <a href="/User/SignUp">注册</a></p>
-                    <p>忘记密码？ <a href="/User/RetrievePassword">找回密码</a></p>
+                    <p>忘记密码？ <a href="/User/RetrievePasswordEmail">找回密码</a></p>
                 </div>
                 <div class="form-group">
                     <input type="button" id="formBtn" value="登陆" class="btn btn-primary">
@@ -120,7 +120,7 @@
             tipsVar.parent().hide();
             if (!checkValidateCode()) return false;
             if (!checkUserName()) return false;
-            return (!checkPassword());
+            return checkPassword();
         }
 
         //登陆
@@ -133,7 +133,6 @@
                         tipsVar.html('遇到问题了，请稍后刷新或联系管理员解决');
                         tipsVar.parent().show();
                     }
-
                     function successFunction(result) {
                         tipsVar.html(result.message);
                         tipsVar.parent().show();
@@ -148,7 +147,7 @@
                                     window.close();
                                 } else url = window.location.host;
                             }
-                            setTimeout(url, 1000);
+                            setTimeout(self.location=url, 2000);
                         } else $('#validateCodeImg').click();
                     }
 
@@ -156,10 +155,10 @@
                         url: '/User/HandleSignIn',
                         type: 'post',
                         data: {
-                            'userName': userName.val(),
+                            'username': userName.val(),
                             'password': password.val(),
-                            'validateCode': validateCode,
-                            'remember-me': $('#remember-me').val()
+                            'validateCode': validateCode.val(),
+                            'remember-me': $('#remember-me').is(':checked')
                         },
                         error: errorFunction,  //错误执行方法
                         success: successFunction //成功执行方法

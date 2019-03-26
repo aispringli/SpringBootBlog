@@ -50,7 +50,7 @@ function delCookie(name) {
 
 // s设置cookie
 function setCookie(name, value, time) {
-    var strsec = getsec(time);
+    var strsec = getSec(time);
     var exp = new Date();
     exp.setTime(exp.getTime() + strsec * 1);
     document.cookie = name + "=" + escape(value) + ";expires=" + exp.toGMTString();

@@ -4,7 +4,9 @@ import com.f5tv.springbootblog.entity.user.UserEntity;
 import com.f5tv.springbootblog.entity.user.UserPassword;
 import com.f5tv.springbootblog.mapper.user.UserMapper;
 import com.f5tv.springbootblog.mapper.user.UserPasswordMapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
@@ -58,5 +60,21 @@ public class UserService {
 
     public UserPassword userPasswordSelectByUserId(long userId){
         return userPasswordMapper.userPasswordByUserId(userId);
+    }
+
+    public int insert(UserEntity userEntity){
+        userMapper.insert(userEntity);
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        return userPasswordMapper.insert(userEntity.getUserId(),bCryptPasswordEncoder.encode(userEntity.getPassword()));
+    }
+
+    // 修改用户信息
+    public int updateUser(UserEntity userEntity){
+        return userMapper.update(userEntity);
+    }
+
+    // 修改用户密码
+    public int updatePassword(@Param("userId") long userId, @Param("password") String password){
+        return userPasswordMapper.update(userId,password);
     }
 }

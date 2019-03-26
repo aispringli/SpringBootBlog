@@ -1,6 +1,9 @@
 server:
   port: 80
 
+feign:
+  okhttp:
+    enabled: true
 spring:
   mail:
     host: smtp.f5tv.com

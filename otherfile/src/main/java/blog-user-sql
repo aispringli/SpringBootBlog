@@ -24,6 +24,7 @@ create table user(
     userRoleId int default 301,
     userDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     userLogoSrc VARCHAR(100)  NULL,
+    userMotto VARCHAR(50)  NULL,
     PRIMARY KEY (userId)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

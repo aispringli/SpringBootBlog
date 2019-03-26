@@ -78,12 +78,10 @@ public class KaptchaController {
 
     @Autowired
     CommonResultBean commonResultBean;
-    @RequestMapping("checkValidateCode")
+    @RequestMapping("CheckValidateCode")
     @ResponseBody
-    public ResponseResult checkValidateCode(String validateCode, HttpServletRequest request){
+    public ResponseResult CheckValidateCode(String validateCode, String rightValidateCode){
         //验证码部分的判断
-        String rightValidateCode = (String) request.getSession().getAttribute("validateCode");
-        request.getSession().setAttribute("validateCode", "");
         if (StringUtils.isEmpty(validateCode)) return commonResultBean.pubicValidateCodeResult().get(101);
         if (validateCode.length() != 4) return commonResultBean.pubicValidateCodeResult().get(103);
         if (StringUtils.isEmpty(rightValidateCode)) return commonResultBean.pubicValidateCodeResult().get(102);
