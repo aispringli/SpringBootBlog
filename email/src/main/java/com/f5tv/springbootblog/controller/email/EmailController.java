@@ -3,7 +3,7 @@ package com.f5tv.springbootblog.controller.email;
 import com.f5tv.springbootblog.config.email.EmailResultBean;
 import com.f5tv.springbootblog.entity.core.ResponseResult;
 import com.f5tv.springbootblog.service.email.EmailClientService;
-import com.f5tv.springbootblog.tools.CheckTool;
+import com.f5tv.springbootblog.tools.CheckStringTool;
 import feign.QueryMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -30,6 +30,8 @@ public class EmailController {
     //注入email 发送service
     @Autowired
     EmailClientService emailClientService;
+    @Autowired
+    CheckStringTool checkStringTool;
 
     /**
      * @return com.f5tv.springbootblog.entity.core.ResponseResult
@@ -42,7 +44,7 @@ public class EmailController {
     public ResponseResult CheckEmailAddress(String emailAddress) {
         //邮箱的判断
         if (StringUtils.isEmpty(emailAddress)) return emailResultBean.checkEmailAddressResult().get(101);
-        if (CheckTool.checkEmailAddress(emailAddress)) {
+        if (checkStringTool.CheckEmailAddress(emailAddress)) {
             if (emailAddress.length() > 100) return emailResultBean.checkEmailAddressResult().get(103);
         }
         return emailResultBean.checkEmailAddressResult().get(0);

@@ -34,9 +34,9 @@ public class UserResultBean {
         map.put(304,new ResponseResult(304,"注册失败，邮箱已被注册使用"));
         map.put(305,new ResponseResult(305,"注册失败，邮箱验证码不正确"));
 
-        map.put(401,new ResponseResult(401,"注册失败，密码长度请在6-20之间"));
-        map.put(402,new ResponseResult(402,"注册失败，密码不允许有空格等其他字符"));
-        map.put(403,new ResponseResult(403,"注册失败，密码简单，请输入复杂的密码"));
+        map.put(401,new ResponseResult(401,"密码长度请在6-20之间"));
+        map.put(402,new ResponseResult(402,"密码不允许有空格等其他字符"));
+        map.put(403,new ResponseResult(403,"密码简单，请输入复杂的密码"));
 
         map.put(501,new ResponseResult(501,"用户名已被注册，请换一个"));
         map.put(502,new ResponseResult(502,"邮箱已被注册，如忘记密码可选择重置密码"));
@@ -68,10 +68,14 @@ public class UserResultBean {
 
     //用户重置密码结果
     @Bean
-    public Map<Integer, ResponseResult> userResetPasswordEmailResult(){
+    public Map<Integer, ResponseResult> userResetPasswordResult(){
         Map<Integer,ResponseResult> map=new HashMap<>();
-        map.put(0,new ResponseResult(0,true,""));
+        map.put(0,new ResponseResult(0,true,"修改成功"));
         map.put(101,new ResponseResult(101,"邮箱未注册"));
+        map.put(201,new ResponseResult(201,"修改失败"));
+        map.put(202,new ResponseResult(202,"非法访问，校验码格式不正确"));
+        map.put(203,new ResponseResult(203,"修改失败，校验码不正确，可以重新重置密码试试"));
+
         return map;
     }
 }

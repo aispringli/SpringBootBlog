@@ -7,7 +7,7 @@ import com.f5tv.springbootblog.security.Exception.PasswordNotExistException;
 import com.f5tv.springbootblog.security.Exception.PasswordNotMathException;
 import com.f5tv.springbootblog.service.user.UserRoleService;
 import com.f5tv.springbootblog.service.user.UserService;
-import com.f5tv.springbootblog.tools.CheckTool;
+import com.f5tv.springbootblog.tools.CheckStringTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,12 +39,14 @@ public class MyUserDetailsService implements UserDetailsService {
     @Autowired
     UserService userService;
 
+    @Autowired
+    CheckStringTool checkStringTool;
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, PasswordNotExistException, PasswordNotMathException {
 
         logger.info("登陆用户名:" + username);
         UserEntity userEntity;
-        if (CheckTool.checkEmailAddress(username)) userEntity = userService.userEntitySelectByUserEmail(username);
+        if (checkStringTool.CheckEmailAddress(username)) userEntity = userService.userEntitySelectByUserEmail(username);
         else userEntity = userService.userEntitySelectByUserName(username);
         if (userEntity == null) throw new UsernameNotFoundException("用户名或邮箱不存在");
 

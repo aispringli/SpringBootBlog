@@ -273,7 +273,10 @@
                                 } else url = window.location.host;
                             }
                             setTimeout(self.location=url, 2000);
-                        } else $('#validateCodeImg').click();
+                        } else{
+                            $('#validateCodeImg').click();
+                            validateCode.val('');
+                        }
                     }
 
                     $.ajax({

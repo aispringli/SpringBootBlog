@@ -75,6 +75,7 @@ public class UserService {
 
     // 修改用户密码
     public int updatePassword(@Param("userId") long userId, @Param("password") String password){
-        return userPasswordMapper.update(userId,password);
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        return userPasswordMapper.update(userId,bCryptPasswordEncoder.encode(password));
     }
 }

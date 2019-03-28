@@ -9,7 +9,7 @@ import com.f5tv.springbootblog.feign.clients.core.KaptchaFeignClient;
 import com.f5tv.springbootblog.feign.clients.email.EmailFeignClient;
 import com.f5tv.springbootblog.service.user.UserRoleService;
 import com.f5tv.springbootblog.service.user.UserService;
-import com.f5tv.springbootblog.tools.CheckTool;
+import com.f5tv.springbootblog.tools.CheckStringTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +68,9 @@ public class UserController {
 
     @Autowired
     EmailFeignClient emailFeignClient;
+
+    @Autowired
+    CheckStringTool checkStringTool;
 
     /**
      * @param userEmail 邮箱
@@ -149,20 +152,21 @@ public class UserController {
         ResponseResult responseResult = CheckValidateCode(validateCode, request);
         if (!responseResult.success) return responseResult;
         //邮箱的判断
-        if (CheckTool.checkEmailAddress(userEntity.getUsername())) {
+        if (checkStringTool.CheckEmailAddress(userEntity.getUsername())) {
             responseResult = emailFeignClient.CheckEmailAddress(userEntity.getUsername());
             if (!responseResult.success) return responseResult;
             userEntity.setUserEmail(userEntity.getUsername());
         } else {
             //用户名的判断
-            if (StringUtils.isEmpty(userEntity.getUsername()) || userEntity.getUsername().length() < 6 || userEntity.getUsername().length() > 20) return userResultBean.userLoginResult().get(201);
-            if (CheckTool.checkStringHasSpecialChar(userEntity.getUsername()))
+            if (!checkStringTool.CheckStringLength(userEntity.getUsername(), 6, 20))
+                return userResultBean.userLoginResult().get(201);
+            if (checkStringTool.CheckStringHasSpecialChar(userEntity.getUsername()))
                 return userResultBean.userLoginResult().get(202);
         }
         //密码的简单判断
-        if (StringUtils.isEmpty(userEntity.getPassword()) || userEntity.getPassword().length() < 6 || userEntity.getPassword().length() > 20)
+        if (!checkStringTool.CheckStringLength(userEntity.getPassword(), 6, 20))
             return userResultBean.userLoginResult().get(401);
-        if (CheckTool.checkStringHasSpecialChar(userEntity.getPassword()))
+        if (checkStringTool.CheckStringHasSpecialChar(userEntity.getPassword()))
             return userResultBean.userLoginResult().get(402);
         //系统校验部分
         responseResult = SignAuthentication(userEntity, request);
@@ -182,13 +186,15 @@ public class UserController {
     public ResponseResult HandleSignUp(UserEntity userEntity, String validateCode, String emailValidateCode, HttpServletRequest request) {
         ResponseResult responseResult = CheckValidateCode(validateCode, request);
         if (!responseResult.success) return responseResult;
-        if (StringUtils.isEmpty(userEntity.getUsername()) || userEntity.getUsername().length() < 6 || userEntity.getUsername().length() > 20)
+        if (!checkStringTool.CheckStringLength(userEntity.getUsername(), 6, 20))
             return userResultBean.userRegisterResult().get(201);
-        if (CheckTool.checkStringHasSpecialChar(userEntity.getUsername()))
+        if (checkStringTool.CheckStringHasSpecialChar(userEntity.getUsername()))
             return userResultBean.userRegisterResult().get(202);
         if (StringUtils.isEmpty(userEntity.getUserEmail())) return userResultBean.userRegisterResult().get(301);
-        if (StringUtils.isEmpty(userEntity.getPassword()) || userEntity.getPassword().length() < 6 || userEntity.getPassword().length() > 20)
+        if (!checkStringTool.CheckStringLength(userEntity.getPassword(), 6, 20))
             return userResultBean.userRegisterResult().get(401);
+        if (checkStringTool.CheckStringComplexity(userEntity.getPassword(), 2))
+            return userResultBean.userLoginResult().get(403);
         if (userEntity.getUserEmail().length() > 100) return userResultBean.userRegisterResult().get(302);
 
         String rightEmailAddress = (String) request.getSession().getAttribute("emailAddress");
@@ -236,7 +242,8 @@ public class UserController {
         if (!responseResult.success) return responseResult;
         //检查邮箱是否用过
         UserEntity userEntity = userService.userEntitySelectByUserEmail(userEmail);
-        if (userEntity == null) return userResultBean.userResetPasswordEmailResult().get(101);
+        if (userEntity == null) return userResultBean.userResetPasswordResult().get(101);
+
         String[] emailAddressArray = new String[1];
         emailAddressArray[0] = userEmail;
         Map<String, Object> datas = new HashMap<>();
@@ -248,5 +255,36 @@ public class UserController {
         return emailFeignClient.SendEmailHtml(emailAddressArray, "重置密码", "/User/HandleRetrievePassword", datas, null);
     }
 
+    //找回密码
+    @RequestMapping("RetrievePassword")
+    public String RetrievePassword() {
 
+        return "/User/RetrievePassword";
+    }
+
+    @RequestMapping("HandleRetrievePassword")
+    @ResponseBody
+    public ResponseResult HandleRetrievePassword(String validateCode, String userEmail, String password, String code, HttpServletRequest request) {
+        ResponseResult responseResult = CheckValidateCode(validateCode, request);
+        if (!responseResult.success) return responseResult;
+        //1
+        responseResult = emailFeignClient.CheckEmailAddress(userEmail);
+        if (!responseResult.success) return responseResult;
+        if (!checkStringTool.CheckStringLength(password, 6, 20))
+            return userResultBean.userRegisterResult().get(401);
+        if (!checkStringTool.CheckStringComplexity(password, 2))
+            
+            return userResultBean.userRegisterResult().get(403);
+        //检查邮箱是否用过
+        UserEntity userEntity = userService.userEntitySelectByUserEmail(userEmail);
+        if (userEntity == null) return userResultBean.userResetPasswordResult().get(101);
+        //校验码
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        if(StringUtils.isEmpty(code)||code.length()!=60)return return userResultBean.userResetPasswordResult().get(0);
+        if(bCryptPasswordEncoder.matches(userEntity.getUserId() + userEntity.getUsername() + userEntity.getPassword() + userEntity.getUserEmail(), code))
+            return userResultBean.userResetPasswordResult().get(0);
+        //return emailFeignClient.SendEmailHtml(emailAddressArray, "重置密码", "/User/HandleRetrievePassword", datas, null);
+        if(userService.updatePassword(userEntity.getUserId(),password)>0)return userResultBean.userResetPasswordResult().get(0);
+        return userResultBean.userResetPasswordResult().get(201);
+    }
 }
