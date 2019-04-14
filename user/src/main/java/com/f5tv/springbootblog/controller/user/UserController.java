@@ -273,18 +273,19 @@ public class UserController {
         if (!checkStringTool.CheckStringLength(password, 6, 20))
             return userResultBean.userRegisterResult().get(401);
         if (!checkStringTool.CheckStringComplexity(password, 2))
-            
+
             return userResultBean.userRegisterResult().get(403);
         //检查邮箱是否用过
         UserEntity userEntity = userService.userEntitySelectByUserEmail(userEmail);
         if (userEntity == null) return userResultBean.userResetPasswordResult().get(101);
         //校验码
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        if(StringUtils.isEmpty(code)||code.length()!=60)return return userResultBean.userResetPasswordResult().get(0);
-        if(bCryptPasswordEncoder.matches(userEntity.getUserId() + userEntity.getUsername() + userEntity.getPassword() + userEntity.getUserEmail(), code))
+        if (StringUtils.isEmpty(code) || code.length() != 60) return userResultBean.userResetPasswordResult().get(0);
+        if (bCryptPasswordEncoder.matches(userEntity.getUserId() + userEntity.getUsername() + userEntity.getPassword() + userEntity.getUserEmail(), code))
             return userResultBean.userResetPasswordResult().get(0);
         //return emailFeignClient.SendEmailHtml(emailAddressArray, "重置密码", "/User/HandleRetrievePassword", datas, null);
-        if(userService.updatePassword(userEntity.getUserId(),password)>0)return userResultBean.userResetPasswordResult().get(0);
+        if (userService.updatePassword(userEntity.getUserId(), password) > 0)
+            return userResultBean.userResetPasswordResult().get(0);
         return userResultBean.userResetPasswordResult().get(201);
     }
 }

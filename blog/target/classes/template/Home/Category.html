@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="Home/Layout">
+<head>
+    <title>首页-SpringBootBlog</title>
+</head>
+
+<body class="" th:with="index_active=false">
+<div class="container" layout:fragment="content">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">我的分类
+                    <a class="icon" href="#" style="margin-left:20px;" data-toggle="modal" data-target="#addCategoryModal">
+                        <i class="fe fe-plus-square"></i> 添加新分类
+                    </a>
+                </h3>
+            </div>
+            <div class="table-responsive">
+                <table class="table card-table table-vcenter text-nowrap">
+                    <thead>
+                    <tr>
+                        <th class="w-1">编号</th>
+                        <th>名称</th>
+                        <th>创建时间</th>
+                        <th>博客数量</th>
+                        <th>状态</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><span class="text-muted">001401</span></td>
+                        <td><a href="invoice.html" class="text-inherit">默认</a></td>
+                        <td th:text="${#dates.format(new java.util.Date().getTime(), 'yyyy-MM-dd hh:mm:ss')}">
+
+                        </td>
+                        <td>
+                            8100
+                        </td>
+                        <td>
+                            <span class="status-icon bg-success"></span> 正常显示
+                        </td>
+                        <td>
+                            <a class="icon" href="#" data-toggle="modal" data-target="#updateCategoryModal">
+                                <i class="fe fe-edit"></i>
+                            </a>
+                        </td>
+                        <td>
+                            <a class="icon" href="#">
+                                <i class="fe fe-delete"></i>
+                            </a>
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td><span class="text-muted">001401</span></td>
+                        <td><a href="invoice.html" class="text-inherit">Spring</a></td>
+                        <td th:text="${#dates.format(new java.util.Date().getTime(), 'yyyy-MM-dd hh:mm:ss')}">
+
+                        </td>
+                        <td>
+                            8100
+                        </td>
+                        <td>
+                            <span class="status-icon bg-secondary"></span> 私密可见
+                        </td>
+                        <td>
+                            <a class="icon">
+                                <i class="fe fe-edit"></i>
+                            </a>
+                        </td>
+                        <td>
+                            <a class="icon" href="#">
+                                <i class="fe fe-delete"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="text-muted">001401</span></td>
+                        <td><a href="invoice.html" class="text-inherit">前端</a></td>
+                        <td th:text="${#dates.format(new java.util.Date().getTime(), 'yyyy-MM-dd hh:mm:ss')}">
+
+                        </td>
+                        <td>
+                            8100
+                        </td>
+                        <td>
+                            <span class="status-icon bg-danger"></span> 管理员下架
+                        </td>
+                        <td>
+                            <a class="icon" href="#">
+                                <i class="fe fe-edit"></i>
+                            </a>
+                        </td>
+                        <td>
+                            <a class="icon" href="#">
+                                <i class="fe fe-delete"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- 模态框 添加新分类 -->
+            <div class="modal fade" id="addCategoryModal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+
+                        <!-- 模态框头部 -->
+                        <div class="modal-header">
+                            <h4 class="modal-title">添加新分类</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+
+                        <!-- 模态框主体 -->
+                        <div class="modal-body">
+                            <div class="input-group">
+                                <span class="input-group-prepend">
+                                    <span class="input-group-text">新分类名称： </span>
+                                </span>
+                                <input type="text" class="form-control" id="addCategoryNameInput"
+                                       aria-describedby="basic-addon3"/>
+                            </div>
+                        </div>
+
+                        <!-- 模态框底部 -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                            <button type="button" class="btn btn-primary">添加</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 模态框 修改分类 -->
+            <div class="modal fade" id="updateCategoryModal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+
+                        <!-- 模态框头部 -->
+                        <div class="modal-header">
+                            <h4 class="modal-title">添加新分类</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+
+                        <!-- 模态框主体 -->
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <div class="input-group">
+                                <span class="input-group-prepend">
+                                    <span class="input-group-text">分类名称： </span>
+                                </span>
+                                    <input type="text" class="form-control" id="updateCategoryNameInput"
+                                           aria-describedby="basic-addon3"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group">
+                                <span class="input-group-prepend">
+                                    <span class="input-group-text">分类状态： </span>
+                                </span>
+                                    <select name="beast" id="select-beast" class="form-control custom-select">
+                                        <option value="0">正常显示</option>
+                                        <option value="1">私密可见</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 模态框底部 -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                            <button type="button" class="btn btn-primary">修改</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<th:block layout:fragment="bodyJs">
+    <script>
+        require(['jquery'], function ($) {
+            $(function () {
+                //添加新分类 模态框关闭时
+                $('#addCategoryModal').on('hide.bs.modal', function () {
+                    if ($('#addCategoryNameInput').val().length != 0) {
+                        $('#addCategoryNameInput').val('');
+                        alert('您的操作内容未保留');
+                    }
+                });
+                $('#updateCategoryModal').on('hide.bs.modal', function () {
+                    if ($('#addCategoryNameInput').val().length != 0) {
+                        $('#addCategoryNameInput').val('');
+                        alert('您的操作内容未保留');
+                    }
+                });
+
+            });
+        });
+    </script>
+</th:block>
+</body>
+</html>

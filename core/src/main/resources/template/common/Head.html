@@ -21,18 +21,47 @@
     <link href="/static/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
     <link href="/static/font-awesome/5.6.3/css/fontawesome.min.css" rel="stylesheet"/>
 
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300i,400,400i,500,500i,600,600i,700,700i&amp;subset=latin-ext"/>
+
     <link href="/static/common/css/style.css" rel="stylesheet"/>
 
     <!--/* Per-page placeholder for additional links */-->
     <th:block th:replace="${links}"/>
 </head>
+<head th:fragment="home_script(scripts)">
+    <th:block th:replace="${scripts}"/>
+    <script>
+        require(["jquery"], function ($) {
+            $(function () {
+                var token = $("meta[name='_csrf']").attr("content");
+                var header = $("meta[name='_csrf_header']").attr("content");
+                $.ajaxSetup({
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader(header, token);
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+
+
 <body>
 <div th:fragment="common_js(scripts)">
 
     <script src="/static/jquery/3.3.1/jquery.min.js"></script>
     <script src="/static/echarts/4.2.0/echarts.min.js"></script>
-    <script src="/static/bootstrap/4.2.1/dist/js/bootstrap.min.js"></script>
+    <script src="/static/bootstrap/4.2.1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/static/font-awesome/5.6.3/js/fontawesome.min.js"></script>
+
+    <!--Global Javascript -->
+    <script src="/static/js/popper/popper.min.js"></script>
+    <script src="/static/js/tether.min.js"></script>
+    <script src="/static/js/jquery.cookie.js"></script>
+    <script src="/static/js/jquery.validate.min.js"></script>
+    <script src="/static/js/chart.min.js"></script>
+    <script src="/static/js/front.js"></script>
 
     <script src="/static/common/js/common.js"></script>
 

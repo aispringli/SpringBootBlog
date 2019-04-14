@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.w3.org/1999/xhtml" th:with="index_active=false">
+<head th:include="/common/Head::common_header(~{::title},~{::link})">
+    <title>首页-SpringBootBlog</title>
+    <link href="/static/home/css/dashboard.css" rel="stylesheet"/>
+    <link href="/static/home/plugins/charts-c3/plugin.css" rel="stylesheet"/>
+    <link href="/static/home/plugins/maps-google/plugin.css" rel="stylesheet"/>
+</head>
+<body class="" >
+<div class="page">
+    <div class="page-main">
+        <div class="fixed-top">
+            <div class="header py-4">
+                <div class="container">
+                    <div class="d-flex">
+                        <a class="header-brand" href="Index.html">
+                            <img src="../../static/demo/brand/tabler.svg" class="header-brand-img" alt="tabler logo">
+                        </a>
+                        <div class="d-flex order-lg-2 ml-auto">
+                            <div class="dropdown">
+                                <a href="#" class="nav-link pr-0 leading-none" data-toggle="dropdown">
+                                    <span class="avatar"
+                                          style="background-image: url(../../static/demo/faces/female/25.jpg)">
+                                    </span>
+                                    <span class="ml-2 d-none d-lg-block">
+                                        <span class="text-default">Jane Pearson</span>
+                                        <small class="text-muted d-block mt-1">Administrator</small>
+                                    </span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
+                                    <a class="dropdown-item" href="#">
+                                        <i class="dropdown-icon fe fe-home"></i> 主  页
+                                    </a>
+                                    <a class="dropdown-item" th:href="@{/Home/Category}">
+                                        <i class="dropdown-icon fe fe-layout"></i> 分  类
+                                    </a>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="dropdown-icon fe fe-book-open"></i> 博  客
+                                    </a>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="dropdown-icon fe fe-users"></i> 粉  丝
+                                    </a>
+
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" th:href="@{/HomeUser/Personal}">
+                                        <i class="dropdown-icon fe fe-user"></i> 个人中心
+                                    </a>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="dropdown-icon fe fe-log-out"></i> 退  出
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#" class="header-toggler d-lg-none ml-3 ml-lg-0" data-toggle="collapse"
+                           data-target="#headerMenuCollapse">
+                            <span class="header-toggler-icon"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="header collapse d-lg-flex p-0" id="headerMenuCollapse">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-lg-3 ml-auto">
+                            <form class="input-icon my-3 my-lg-0">
+                                <input type="search" class="form-control header-search" placeholder="Search&hellip;"
+                                       tabindex="1">
+                                <div class="input-icon-addon" style="cursor:pointer;pointer-events: auto;">
+                                    <i class="fe fe-search"></i>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-lg order-lg-first">
+                            <ul class="nav nav-tabs border-0 flex-column flex-lg-row">
+                                <li class="nav-item">
+                                    <a th:href="@{/Home/Index}" class="nav-link active" th:if="${index_active}">
+                                        <i class="fa fa-internet-explorer" aria-hidden="true"></i> 发现
+                                    </a>
+                                    <a th:href="@{/Home/Index}" class="nav-link" th:if="${!index_active}">
+                                        <i class="fa fa-internet-explorer" aria-hidden="true"></i> 发现
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="Index" class="nav-link"><i class="fa fa-rss-square" aria-hidden="true"></i>
+                                        关注</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="Index" class="nav-link"><i class="fa fa-heart" aria-hidden="true"></i>
+                                        收藏</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="Index" class="nav-link"><i class="fa fa-edit" aria-hidden="true"></i>
+                                        写博客</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="my-3 my-md-5">
+            <div class="container" layout:fragment="content">
+
+            </div>
+        </div>
+    </div>
+    <footer th:replace="/common/Footer::common_footer">
+    </footer>
+</div>
+</body>
+<div th:include="/common/Head::home_script(~{::script})">
+    <script src="/static/home/js/require.min.js"></script>
+    <script>
+        requirejs.config({
+            baseUrl: '.'
+        });
+    </script>
+    <!-- Dashboard Core -->
+    <script src="/static/home/js/dashboard.js"></script>
+    <!-- c3.js Charts Plugin -->
+    <script src="/static/home/plugins/charts-c3/plugin.js"></script>
+    <!-- Google Maps Plugin -->
+    <script src="/static/home/plugins/maps-google/plugin.js"></script>
+    <!-- Input Mask Plugin -->
+    <script src="/static/home/plugins/input-mask/plugin.js"></script>
+    <script>
+        require(['jquery'], function ($) {
+
+        });
+    </script>
+</div>
+<th:block layout:fragment = "bodyJs">
+
+</th:block>
+</html>
