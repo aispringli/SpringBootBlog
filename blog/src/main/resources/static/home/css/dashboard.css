@@ -18259,3 +18259,13 @@ svg {
 .fe-zoom-out:before {
   content: "\ea06";
 }
+
+/*自定义样式*/
+
+body, .fixed-top {
+  padding-right: 0 !important;
+}
+.modal-open{
+  overflow-y: scroll;
+  padding-right: 0 !important;
+}

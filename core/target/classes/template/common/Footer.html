@@ -1,10 +1,20 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
-<footer class="row" style="position:fixed;bottom:0;left:48%;" th:fragment="common_footer">
+<footer class="row" style="position:fixed;bottom:0;left:48%;">
     <p>
         <small>&copy; All Rights Reserved By <a href="/" target="_blank" title="SpringBootBlog">个人博客</a></small>
     </p>
+</footer>
+
+<footer class="footer" th:fragment="common_footer">
+    <div class="container">
+        <div class="row align-items-center flex-row-reverse">
+            <div class="col-12  mt-3 mt-lg-3 text-center">
+                &copy; All Rights Reserved By <a href="/" target="_blank" title="SpringBootBlog">个人博客</a>
+            </div>
+        </div>
+    </div>
 </footer>
 </body>
 </html>

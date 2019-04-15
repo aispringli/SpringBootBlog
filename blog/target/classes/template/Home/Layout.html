@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.w3.org/1999/xhtml" th:with="index_active=false">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.w3.org/1999/xhtml" th:with="index_active='',writeblog_active=''">
 <head th:include="/common/Head::common_header(~{::title},~{::link})">
     <title>首页-SpringBootBlog</title>
     <link href="/static/home/css/dashboard.css" rel="stylesheet"/>
@@ -73,10 +73,7 @@
                         <div class="col-lg order-lg-first">
                             <ul class="nav nav-tabs border-0 flex-column flex-lg-row">
                                 <li class="nav-item">
-                                    <a th:href="@{/Home/Index}" class="nav-link active" th:if="${index_active}">
-                                        <i class="fa fa-internet-explorer" aria-hidden="true"></i> 发现
-                                    </a>
-                                    <a th:href="@{/Home/Index}" class="nav-link" th:if="${!index_active}">
+                                    <a th:href="@{/Home/Index}" class="nav-link" th:classappend="${index_active}">
                                         <i class="fa fa-internet-explorer" aria-hidden="true"></i> 发现
                                     </a>
                                 </li>
@@ -89,7 +86,7 @@
                                         收藏</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="Index" class="nav-link"><i class="fa fa-edit" aria-hidden="true"></i>
+                                    <a th:href="@{/Home/WriteBlog}" class="nav-link" th:classappend="${writeblog_active}"><i class="fa fa-edit" aria-hidden="true"></i>
                                         写博客</a>
                                 </li>
                             </ul>
@@ -123,6 +120,11 @@
     <script src="/static/home/plugins/maps-google/plugin.js"></script>
     <!-- Input Mask Plugin -->
     <script src="/static/home/plugins/input-mask/plugin.js"></script>
+
+    <script src="/static/home/plugins/jquery-validation/plugin.js"></script>
+
+    <script src="/static/home/plugins/jquery-form/plugin.js"></script>
+
     <script>
         require(['jquery'], function ($) {
 

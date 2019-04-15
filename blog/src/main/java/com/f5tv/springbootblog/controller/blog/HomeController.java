@@ -28,4 +28,9 @@ public class HomeController {
     public String Personal(){
         return "/Home/Personal";
     }
+
+    @RequestMapping("WriteBlog")
+    public String WriteBlog(){
+        return "/Home/WriteBlog";
+    }
 }

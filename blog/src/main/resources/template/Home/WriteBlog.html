@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="Home/Layout">
+<head>
+    <title>欢迎您来写博客-SpringBootBlog</title>
+</head>
+
+<body class="" th:with="writeblog_active='active'">
+<div class="container" layout:fragment="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="col-12 col-xl-8 offset-xl-2">
+                <div class="row">
+                    <div class="form-group col-6">
+                        <div class="input-group">
+                          <span class="input-group-prepend">
+                            <span class="input-group-text">博客标题</span>
+                          </span>
+                            <input type="text" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group col-6">
+                        <div class="input-group">
+                          <span class="input-group-prepend">
+                            <span class="input-group-text">所属分类</span>
+                          </span>
+                            <select name="beast" id="select-beast" class="form-control custom-select">
+                                <option value="0">Java</option>
+                                <option value="1">C#</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- 编辑器部分 -->
+            <div class="col-12" id="editor">
+
+            </div>
+            <div class="row">
+                <div class="col-12 form-group">
+                    <label class="form-label">博客简介，您可点击按钮自动生成简介和封面图片，亦可手动填写内容和上传图片
+                        <button type="submit" class="btn btn-sm btn-primary">生成简介</button></label>
+                </div>
+                <div class="form-group form-group col-6">
+                    <textarea class="form-control" rows="6">简介</textarea>
+                </div>
+                <div class="form-group col-6">
+                    <img style="height: 150px;cursor: pointer;" src="/static/demo/photos/adrian-infernus-281832-1500.jpg" alt="点击上传图片" title="点击上传图片" />
+                </div>
+            </div>
+            <div class="card-footer text-center">
+                <button type="submit" class="btn btn-primary">发表</button>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block layout:fragment="bodyJs">
+    <script>
+        function uploadFile(fileList){
+            alert(fileList);
+        }
+        require(['wangEditor'], function (E) {
+            var editor = new E('#editor');
+            editor.customConfig.zIndex = 0
+            editor.customConfig.uploadImgServer = '/upload';  // 上传图片到服务器
+            editor.create()
+
+        });
+    </script>
+    <script>
+        require(['jquery'], function ($) {
+            $(function () {
+
+            });
+        });
+    </script>
+</th:block>
+</body>
+</html>
