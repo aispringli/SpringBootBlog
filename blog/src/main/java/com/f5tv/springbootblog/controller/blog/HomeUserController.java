@@ -37,4 +37,13 @@ public class HomeUserController {
     public String UpdateEmail(){
         return "HomeUser/UpdateEmail";
     }
+
+
+
+    //找回密码
+    @RequestMapping("RetrievePasswordEmail")
+    public String RetrievePasswordEmail() {
+
+        return "/User/RetrievePasswordEmail";
+    }
 }

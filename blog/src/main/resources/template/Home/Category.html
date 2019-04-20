@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
-      layout:decorator="Home/Layout">
+      layout:decorate="Home/Layout">
 <head>
     <title>首页-SpringBootBlog</title>
 </head>
@@ -26,80 +26,42 @@
                         <th>创建时间</th>
                         <th>博客数量</th>
                         <th>状态</th>
-                        <th></th>
-                        <th></th>
+                        <th>修改</th>
+                        <th>删除</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td><span class="text-muted">001401</span></td>
-                        <td><a href="invoice.html" class="text-inherit">默认</a></td>
-                        <td th:text="${#dates.format(new java.util.Date().getTime(), 'yyyy-MM-dd hh:mm:ss')}">
-
+                    <tr th:each="category:${categoryLists}">
+                        <td><span class="text-muted" th:text="${category.categoryId}">1</span></td>
+                        <td><a href="invoice.html" th:href="@{'/Home/CategoryDetails?categoryId='+${category.categoryId}}" th:text="${category.categoryName}">默认</a></td>
+                        <td th:text="${#dates.format(category.categoryDate, 'yyyy-MM-dd HH:mm')}">
+                            2019-04-19 12:10
+                        </td>
+                        <td th:text="${category.blogQuantity}">
+                            0
                         </td>
                         <td>
-                            8100
+                            <div th:if="${category.categoryStatus == 0}">
+                                <span class="status-icon bg-success"></span> 正常显示
+                            </div>
+                            <div th:if="${category.categoryStatus == 1}">
+                                <span class="status-icon bg-secondary"></span> 私密可见
+                            </div>
+                            <div th:if="${category.categoryStatus == -1}">
+                                <span class="status-icon bg-danger"></span> 管理员下架
+                            </div>
                         </td>
                         <td>
-                            <span class="status-icon bg-success"></span> 正常显示
-                        </td>
-                        <td>
-                            <a class="icon" href="#" data-toggle="modal" data-target="#updateCategoryModal">
+                            <a class="icon"  data-toggle="modal" data-target="#updateCategoryModal" th:attr="data-categoryid=${category.categoryId},data-categoryname=${category.categoryName},data-categorystatus=${category.categoryStatus}">
                                 <i class="fe fe-edit"></i>
                             </a>
                         </td>
                         <td>
-                            <a class="icon" href="#">
+                            <a class="icon btnDelete" th:id="${category.categoryId}"  th:attr="data-categoryid=${category.categoryId}">
                                 <i class="fe fe-delete"></i>
                             </a>
                         </td>
 
-                    </tr>
-                    <tr>
-                        <td><span class="text-muted">001401</span></td>
-                        <td><a href="invoice.html" class="text-inherit">Spring</a></td>
-                        <td th:text="${#dates.format(new java.util.Date().getTime(), 'yyyy-MM-dd hh:mm:ss')}">
-
-                        </td>
-                        <td>
-                            8100
-                        </td>
-                        <td>
-                            <span class="status-icon bg-secondary"></span> 私密可见
-                        </td>
-                        <td>
-                            <a class="icon">
-                                <i class="fe fe-edit"></i>
-                            </a>
-                        </td>
-                        <td>
-                            <a class="icon" href="#">
-                                <i class="fe fe-delete"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><span class="text-muted">001401</span></td>
-                        <td><a href="invoice.html" class="text-inherit">前端</a></td>
-                        <td th:text="${#dates.format(new java.util.Date().getTime(), 'yyyy-MM-dd hh:mm:ss')}">
-
-                        </td>
-                        <td>
-                            8100
-                        </td>
-                        <td>
-                            <span class="status-icon bg-danger"></span> 管理员下架
-                        </td>
-                        <td>
-                            <a class="icon" href="#">
-                                <i class="fe fe-edit"></i>
-                            </a>
-                        </td>
-                        <td>
-                            <a class="icon" href="#">
-                                <i class="fe fe-delete"></i>
-                            </a>
-                        </td>
                     </tr>
                     </tbody>
                 </table>
@@ -108,29 +70,29 @@
             <div class="modal fade" id="addCategoryModal">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
-
                         <!-- 模态框头部 -->
                         <div class="modal-header">
                             <h4 class="modal-title">添加新分类</h4>
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
                         </div>
-
-                        <!-- 模态框主体 -->
-                        <div class="modal-body">
-                            <div class="input-group">
+                        <form id="addCategoryModalForm">
+                            <!-- 模态框主体 -->
+                            <div class="modal-body">
+                                <div class="input-group">
                                 <span class="input-group-prepend">
                                     <span class="input-group-text">新分类名称： </span>
                                 </span>
-                                <input type="text" class="form-control" id="addCategoryNameInput"
-                                       aria-describedby="basic-addon3"/>
+                                    <input type="text" required maxlength="20" name="categoryName" class="form-control" id="addCategoryNameInput"
+                                           aria-describedby="basic-addon3"/>
+                                </div>
                             </div>
-                        </div>
+                            <!-- 模态框底部 -->
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                                <button id="addCategoryModalBtn" type="submit" class="btn btn-primary">添加</button>
+                            </div>
+                        </form>
 
-                        <!-- 模态框底部 -->
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
-                            <button type="button" class="btn btn-primary">添加</button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -144,36 +106,39 @@
                             <h4 class="modal-title">修改分类</h4>
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
                         </div>
-
-                        <!-- 模态框主体 -->
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <div class="input-group">
-                                <span class="input-group-prepend">
-                                    <span class="input-group-text">分类名称： </span>
-                                </span>
-                                    <input type="text" class="form-control" id="updateCategoryNameInput"
-                                           aria-describedby="basic-addon3"/>
+                        <form id="updateCategoryForm">
+                            <!-- 模态框主体 -->
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-prepend">
+                                            <span class="input-group-text">分类名称： </span>
+                                        </span>
+                                        <input style="display:none" name="categoryId"  id="updateCategoryIdInput" />
+                                        <input type="text" name="categoryName" required maxlength="20" class="form-control" id="updateCategoryNameInput"
+                                               aria-describedby="basic-addon3"/>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="input-group">
+                                <div class="form-group">
+                                    <div class="input-group">
                                 <span class="input-group-prepend">
                                     <span class="input-group-text">分类状态： </span>
                                 </span>
-                                    <select name="beast" id="select-beast" class="form-control custom-select">
-                                        <option value="0">正常显示</option>
-                                        <option value="1">私密可见</option>
-                                    </select>
+                                        <select name="categoryStatus" id="categoryStatus" class="form-control custom-select">
+                                            <option value="0">正常显示</option>
+                                            <option value="1">私密可见</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- 模态框底部 -->
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
-                            <button type="button" class="btn btn-primary">修改</button>
-                        </div>
+                            <!-- 模态框底部 -->
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                                <button type="submit" class="btn btn-primary">修改</button>
+                            </div>
+                        </form>
+
                     </div>
                 </div>
             </div>
@@ -183,19 +148,151 @@
 </div>
 <th:block layout:fragment="bodyJs">
     <script>
-        require(['jquery'], function ($) {
+        require(['jquery','jquery-validation'], function ($) {
             $(function () {
                 //添加新分类 模态框关闭时
                 $('#addCategoryModal').on('hide.bs.modal', function () {
                     if ($('#addCategoryNameInput').val().length != 0) {
                         $('#addCategoryNameInput').val('');
-                        alert('您的操作内容未保留');
+                        $("#modalTipBody").removeClass();
+                        $("#modalTipBody").html("您的操作内容未保留");
+                        $("#modalTipBody").addClass("alert alert-warning");
+                        $('#modalTip').modal();
                     }
                 });
                 $('#updateCategoryModal').on('hide.bs.modal', function () {
-                    if ($('#addCategoryNameInput').val().length != 0) {
-                        $('#addCategoryNameInput').val('');
-                        alert('您的操作内容未保留');
+                    $('#addCategoryNameInput').val('');
+                    $("#modalTipBody").removeClass();
+                    $("#modalTipBody").html("您的操作内容未保留");
+                    $("#modalTipBody").addClass("alert alert-warning");
+                    $('#modalTip').modal();
+                });
+
+                $('#updateCategoryModal').on('show.bs.modal', function (event) {
+                    var btnThis = $(event.relatedTarget); //触发事件的按钮
+                    //var modal = $(this);  //当前模态框
+                    var modalId = btnThis.data('id');   //解析出data-id的内容
+                    $("#updateCategoryIdInput").val(btnThis.data('categoryid'));
+                    $("#categoryStatus").val(btnThis.data('categorystatus'));
+                    $("#updateCategoryNameInput").val(btnThis.data('categoryname'));
+
+                    //var content = btnThis.closest('tr').find('td').eq(2).text();
+                });
+            });
+
+            $("#addCategoryModalForm").validate({
+                onsubmit:true,// 是否在提交是验证
+                onfocusout:function (element) { $(element).valid()},// 是否在获取焦点时验证
+                onkeyup :false,// 是否在敲击键盘时验证
+                rules: {
+                },
+                messages:{
+                    categoryName:{
+                        required:"请输入分类名称",
+                        maxlength:"最多20个字符长度"
+                    }
+                },
+                submitHandler: function(form) {  //通过之后回调
+                    var param = $("#addCategoryModalForm").serialize();
+                    $.ajax({
+                        url : "/Category/HandleCategoryAdd",
+                        type : "post",
+                        dataType : "json",
+                        data: param,
+                        success : function(result) {
+                            if(result.success){
+                                alert(result.message);
+                                $('#addCategoryNameInput').val('');
+                                $('#addCategoryModal').modal('hide');
+                                location.reload();
+                            }
+                            else alert(result.message);
+                        },
+                        error:function (event, XMLHttpRequest, ajaxOptions, thrownError) {
+                            if(XMLHttpRequest.status==403||XMLHttpRequest.status==302){
+                                alert('您还没有登陆，请登陆后使用');
+                                location.reload();
+                            }
+                            else alert('发生了错误,请检查网络或稍后刷新重试');
+                        }
+                    });
+                },
+                invalidHandler: function(form, validator) {  //不通过回调
+                    return false;
+                }
+            });
+
+            $("#updateCategoryForm").validate({
+                onsubmit:true,// 是否在提交是验证
+                onfocusout:function (element) { $(element).valid()},// 是否在获取焦点时验证
+                onkeyup :false,// 是否在敲击键盘时验证
+                rules: {
+                },
+                messages:{
+                    categoryName:{
+                        required:"请输入分类名称",
+                        maxlength:"最多20个字符长度"
+                    }
+                },
+                submitHandler: function(form) {  //通过之后回调
+                    var param = $("#updateCategoryForm").serialize();
+                    $.ajax({
+                        url : "/Category/HandleCategoryUpdateNameAndStatus",
+                        type : "post",
+                        dataType : "json",
+                        data: param,
+                        success : function(result) {
+                            if(result.success){
+                                alert(result.message);
+                                location.reload();
+                            }
+                            else alert(result.message);
+                        },
+                        error:function (event, XMLHttpRequest, ajaxOptions, thrownError) {
+                            if(XMLHttpRequest.status==403||XMLHttpRequest.status==302){
+                                alert('您还没有登陆，请登陆后使用');
+                                location.reload();
+                            }
+                            else alert('发生了错误,请检查网络或稍后刷新重试');
+                        }
+                    });
+                },
+                invalidHandler: function(form, validator) {  //不通过回调
+                    return false;
+                }
+            });
+            var deleteFlag=false;
+            var btnDeleteId=0;
+            $("#modalConfirmBtn").click(function () {
+                deleteFlag=true;
+                $("#"+btnDeleteId).click();
+            });
+            $(".btnDelete").click(function () {
+                btnDeleteId=$(this).data('categoryid');
+                if(!deleteFlag){
+                    $("#modalConfirmBody").removeClass();
+                    $("#modalConfirmBody").addClass("alert alert-warning");
+                    $("#modalConfirmBody").html("您确认删除此分类吗？");
+                    $('#modalConfirm').modal();
+                    return;
+                }
+                deleteFlag=false;
+                $.ajax({
+                    url : "/Category/HandleCategoryDelete",
+                    type : "post",
+                    data: {
+                        "categoryId":$(this).data('categoryid')
+                    },
+                    success : function(result) {
+                        alert(result.message);
+                        if(result.success)location.reload();
+                    },
+                    error:function (event, XMLHttpRequest, ajaxOptions, thrownError) {
+                        if(XMLHttpRequest.status==403||XMLHttpRequest.status==302){
+                            alert('您还没有登陆，请登陆后使用');
+                            location.reload();
+                        }
+                        else alert('发生了错误,请检查网络或稍后刷新重试');
                     }
                 });
 

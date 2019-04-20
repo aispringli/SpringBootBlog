@@ -19,9 +19,11 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -31,6 +33,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,32 +75,41 @@ public class UserController {
     @Autowired
     CheckStringTool checkStringTool;
 
+
     /**
-     * @param userEmail 邮箱
-     * @return com.f5tv.springbootblog.entity.core.ResponseResult
+     * @param type 判断结果类型
+     * @return boolean 结果
      * @Author SpringLee
-     * @Description //TODO 检查用户名或邮箱是否可用
-     * @Date 2019/3/20 21:02
-     * @Param * @param userName 用户名
+     * @Description //TODO 检查邮箱是否已注册
+     * @Date 2019/4/17 11:35
+     * @Param * @param userEmail 邮箱地址
      **/
-    @RequestMapping("CheckUserNameOrUserEmail")
+    @RequestMapping("CheckUserEmail")
     @ResponseBody
-    public ResponseResult CheckUserNameOrUserEmail(String userName, String userEmail) {
-        if (!StringUtils.isEmpty(userName)) {
-            if (userService.userEntitySelectByUserName(userName) != null)
-                return userResultBean.userRegisterResult().get(501);
-        }
+    public boolean CheckUserEmail(String userEmail, boolean type) {
+        boolean result = false;
         if (!StringUtils.isEmpty(userEmail)) {
             if (userService.userEntitySelectByUserEmail(userEmail) != null)
-                return userResultBean.userRegisterResult().get(502);
+                result = true;
         }
-        return null;
+        return type == result;
     }
+
 
     @ResponseBody
     @RequestMapping("ShowUserRole")
     public List<UserRole> ShowUserRole() {
         return userRoleService.selectAllUserRole();
+    }
+
+    @RequestMapping("HandleUserLogout")
+    public String HandleUserLogout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+        if (authentication != null) {
+            UserEntity user = (UserEntity) authentication.getPrincipal();
+            logger.info("USER : " + user.getUsername() + " LOGOUT SUCCESS !  ");
+            new SecurityContextLogoutHandler().logout(request, response, authentication);
+        }
+        return "redirect:/Home/Index";
     }
 
     //登陆
@@ -112,7 +124,7 @@ public class UserController {
         try {
             logger.info(userEntity.getUsername());
             logger.info(userEntity.getPassword());
-            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userEntity.getUsername(),
+            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userEntity.getUserEmail(),
                     userEntity.getPassword());
             logger.info(userEntity.getPassword());
             token.setDetails(new WebAuthenticationDetails(request));
@@ -151,18 +163,8 @@ public class UserController {
 
         ResponseResult responseResult = CheckValidateCode(validateCode, request);
         if (!responseResult.success) return responseResult;
-        //邮箱的判断
-        if (checkStringTool.CheckEmailAddress(userEntity.getUsername())) {
-            responseResult = emailFeignClient.CheckEmailAddress(userEntity.getUsername());
-            if (!responseResult.success) return responseResult;
-            userEntity.setUserEmail(userEntity.getUsername());
-        } else {
-            //用户名的判断
-            if (!checkStringTool.CheckStringLength(userEntity.getUsername(), 6, 20))
-                return userResultBean.userLoginResult().get(201);
-            if (checkStringTool.CheckStringHasSpecialChar(userEntity.getUsername()))
-                return userResultBean.userLoginResult().get(202);
-        }
+        if (!checkStringTool.CheckEmailAddress(userEntity.getUserEmail()))
+            return userResultBean.userLoginResult().get(301);
         //密码的简单判断
         if (!checkStringTool.CheckStringLength(userEntity.getPassword(), 6, 20))
             return userResultBean.userLoginResult().get(401);
@@ -193,8 +195,9 @@ public class UserController {
         if (StringUtils.isEmpty(userEntity.getUserEmail())) return userResultBean.userRegisterResult().get(301);
         if (!checkStringTool.CheckStringLength(userEntity.getPassword(), 6, 20))
             return userResultBean.userRegisterResult().get(401);
+        //检查密码复杂度 无效
         if (checkStringTool.CheckStringComplexity(userEntity.getPassword(), 2))
-            return userResultBean.userLoginResult().get(403);
+            return userResultBean.userRegisterResult().get(403);
         if (userEntity.getUserEmail().length() > 100) return userResultBean.userRegisterResult().get(302);
 
         String rightEmailAddress = (String) request.getSession().getAttribute("emailAddress");
@@ -203,10 +206,13 @@ public class UserController {
         request.getSession().setAttribute("emailValidateCode", null);
         responseResult = emailFeignClient.CheckEmailValidateCode(userEntity.getUserEmail(), emailValidateCode, rightEmailAddress, rightEmailValidateCode);
         if (!responseResult.success) return responseResult;
-        responseResult = CheckUserNameOrUserEmail(userEntity.getUsername(), userEntity.getUserEmail());
-        if (responseResult != null) return responseResult;
+        if (CheckUserEmail(userEntity.getUserEmail(), true)) return userResultBean.userRegisterResult().get(304);
         userEntity.setUserRoleId(301);//普通用户
+        userEntity.setUserMotto("签名是一种态度");
+        userEntity.setUserLogoSrc("file/logo/demo.jpg");
+        String password=userEntity.getPassword();
         userService.insert(userEntity);
+        userEntity.setPassword(password);;
         responseResult = SignAuthentication(userEntity, request);
         if (!responseResult.success) return responseResult;
         else return userResultBean.userRegisterResult().get(0);
@@ -217,8 +223,7 @@ public class UserController {
     public ResponseResult SendEmailValidateCode(String validateCode, String emailAddress, HttpServletRequest request) {
         ResponseResult responseResult = CheckValidateCode(validateCode, request);
         if (!responseResult.success) return responseResult;
-        responseResult = CheckUserNameOrUserEmail(null, emailAddress);
-        if (responseResult != null) return responseResult;
+        if (CheckUserEmail(emailAddress, true)) return userResultBean.userRegisterResult().get(304);
         int emailValidateCode = (int) ((Math.random() * 9 + 1) * 100000);
         request.getSession().setAttribute("emailValidateCode", emailValidateCode);
         request.getSession().setAttribute("emailAddress", emailAddress);
@@ -267,7 +272,6 @@ public class UserController {
     public ResponseResult HandleRetrievePassword(String validateCode, String userEmail, String password, String code, HttpServletRequest request) {
         ResponseResult responseResult = CheckValidateCode(validateCode, request);
         if (!responseResult.success) return responseResult;
-        //1
         responseResult = emailFeignClient.CheckEmailAddress(userEmail);
         if (!responseResult.success) return responseResult;
         if (!checkStringTool.CheckStringLength(password, 6, 20))
@@ -284,8 +288,84 @@ public class UserController {
         if (bCryptPasswordEncoder.matches(userEntity.getUserId() + userEntity.getUsername() + userEntity.getPassword() + userEntity.getUserEmail(), code))
             return userResultBean.userResetPasswordResult().get(0);
         //return emailFeignClient.SendEmailHtml(emailAddressArray, "重置密码", "/User/HandleRetrievePassword", datas, null);
-        if (userService.updatePassword(userEntity.getUserId(), password) > 0)
+        userEntity.setPassword(password);
+        if (userService.updatePassword(userEntity) > 0)
             return userResultBean.userResetPasswordResult().get(0);
         return userResultBean.userResetPasswordResult().get(201);
     }
+
+    @RequestMapping("HandleUserUpdateMotto")
+    @ResponseBody
+    public boolean HandleUserUpdateMotto(String userMotto) {
+        if (StringUtils.isEmpty(userMotto)) return false;
+        if (userMotto.length() > 50) return false;
+        UserEntity userEntity = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (userEntity == null) return false;
+        userEntity.setUserMotto(userMotto);
+        int result = userService.updateUserMotto(userEntity);
+        if (result > 0) {
+            ((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).setUserMotto(userMotto);
+        }
+        return result > 0;
+    }
+
+    @RequestMapping("HandleUserUpdatePassword")
+    @ResponseBody
+    public ResponseResult HandleUserUpdatePassword(String password,String newPassword) {
+        if (StringUtils.isEmpty(password)||StringUtils.isEmpty(newPassword)) return new ResponseResult(-1,"没有输入密码");
+        if (password.length()<6||newPassword.length()<6||password.length() > 20||newPassword.length()>20)
+            return new ResponseResult(-2,"密码长度不在范围内");
+        UserEntity userEntity = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        userEntity=userService.userEntitySelectByUserId(userEntity.getUserId());
+        if(userEntity==null)new ResponseResult(1,"用户不存在");
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        if(!bCryptPasswordEncoder.matches(userEntity.getPassword(),bCryptPasswordEncoder.encode(password)))
+            return new ResponseResult(2,"原密码输入不正确");
+        userEntity.setPassword(bCryptPasswordEncoder.encode(newPassword));
+        if(userService.updatePassword(userEntity) > 0)return new ResponseResult(0,true,"修改完成");
+        return new ResponseResult(-3,"修改失败");
+    }
+
+    @RequestMapping("HandleUserUpdateEmail")
+    @ResponseBody
+    public ResponseResult HandleUserUpdateEmail(String userEmail,String validateCode,String emailValidateCode,HttpServletRequest request) {
+        ResponseResult responseResult = CheckValidateCode(validateCode, request);
+        if (!responseResult.success) return responseResult;
+        if (StringUtils.isEmpty(userEmail)) return new ResponseResult(-1,"没有输入邮箱");
+        if (userEmail.length() > 100) return new ResponseResult(-2,"邮箱地址太长");
+        if (!checkStringTool.CheckEmailAddress(userEmail))
+            return new ResponseResult(-3,"邮箱地址不合法");
+        String rightEmailAddress = (String) request.getSession().getAttribute("emailAddress");
+        request.getSession().setAttribute("emailAddress", null);
+        String rightEmailValidateCode = String.valueOf(request.getSession().getAttribute("emailValidateCode"));
+        request.getSession().setAttribute("emailValidateCode", null);
+        responseResult = emailFeignClient.CheckEmailValidateCode(userEmail, emailValidateCode, rightEmailAddress, rightEmailValidateCode);
+        if (!responseResult.success) return responseResult;
+        UserEntity userEntity = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (userEntity == null) return new ResponseResult(1,"未授权登陆");
+        userEntity.setUserEmail(userEmail);
+        int result = userService.updateUserEmail(userEntity);
+        if (result > 0) {
+            ((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).setUserEmail(userEmail);
+            return new ResponseResult(0,true,"修改成功");
+        }
+        return new ResponseResult(-4,"修改失败");
+    }
+
+    @RequestMapping("HandleUserUpdateLogoSrc")
+    @ResponseBody
+    public ResponseResult HandleUserUpdateLogoSrc(String userLogoSrc) {
+        if (StringUtils.isEmpty(userLogoSrc)||StringUtils.isEmpty(userLogoSrc)) return new ResponseResult(-1,"没有输入");
+        if (userLogoSrc.length()>100) return new ResponseResult(-2,"地址长度太长");
+        UserEntity userEntity = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        userEntity=userService.userEntitySelectByUserId(userEntity.getUserId());
+        if(userEntity==null)new ResponseResult(1,"用户不存在");
+        userEntity.setUserLogoSrc(userLogoSrc);
+        if(userService.updateUserLogoSrc(userEntity) > 0){
+            ((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).setUserLogoSrc(userLogoSrc);
+            return new ResponseResult(0,true,"修改完成");
+        }
+        return new ResponseResult(-3,"修改失败");
+    }
+
 }

@@ -17,18 +17,20 @@ insert into userRole(userRoleId,userRoleName) values(301,'user');
 
 
 create table user(
-    userId bigint UNSIGNED auto_increment,
-    userName VARCHAR(20) NOT NULL,
+    userId bigint auto_increment,
+    username VARCHAR(20) NOT NULL,
+    password char(60) not null,
     userEmail VARCHAR(100) NOT NULL,
     userStatus int default 0,
     userRoleId int default 301,
     userDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     userLogoSrc VARCHAR(100)  NULL,
     userMotto VARCHAR(50)  NULL,
+    userFollowerQuantity bigint default 0,
     PRIMARY KEY (userId)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-insert into user(userName,userEmail,userStatus) values('administrator','3377939225@qq.com',0);
+insert into user(userName,password,userEmail,userStatus) values('administrator','$2a$10$/udjFoC7X2oWoUTP5.Zt6.ydzzndnagYnOKoUqsULcn52DbbatVj2','3377939225@qq.com',0);
 
 create table userPassword(
     password VARCHAR(60) NOT NULL,
@@ -36,8 +38,32 @@ create table userPassword(
     PRIMARY KEY ( userId)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-insert into userPassword(password,userId) values('$2a$10$/udjFoC7X2oWoUTP5.Zt6.ydzzndnagYnOKoUqsULcn52DbbatVj2',1);
 
 select user.userId,userName,userEmail,userStatus,userDate,userLogoSrc,passwordId,password
 from user left join  userPassword
 on user.userId = userPassword.userId
+
+category
+create table category(
+    categoryId bigint auto_increment,
+    categoryName VARCHAR(20) NOT NULL,
+    categoryStatus int default 0 not null,
+    categoryDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    blogQuantity bigint default 0 NOT NULL,
+    userId bigint NOT NULL,
+    PRIMARY KEY (categoryId)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TRIGGER user_category AFTER INSERT ON user FOR EACH ROW
+BEGIN
+INSERT INTO category(categoryName,userId) values("默认",NEW.userId);
+END;
+
+
+DELIMITER $
+create trigger user_category after insert
+on user for each row
+begin
+INSERT INTO category(categoryName,userId) values("默认",NEW.userId);
+end$
+DELIMITER ;

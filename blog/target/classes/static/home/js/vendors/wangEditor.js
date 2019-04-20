@@ -835,7 +835,7 @@
 
             // tab 配置
             var tabsConfig = [{
-                title: '编辑图片',
+                title: '上传文件',
                 tpl: '<div>\n                    <div class="w-e-button-container" style="border-bottom:1px solid #f1f1f1;padding-bottom:5px;margin-bottom:5px;">\n                        <span style="float:left;font-size:14px;margin:4px 5px 0 5px;color:#333;">\u6700\u5927\u5BBD\u5EA6\uFF1A</span>\n                        <button id="' + width30 + '" class="left">30%</button>\n                        <button id="' + width50 + '" class="left">50%</button>\n                        <button id="' + width100 + '" class="left">100%</button>\n                    </div>\n                    <div class="w-e-button-container">\n                        <button id="' + delBtn + '" class="gray left">\u5220\u9664\u56FE\u7247</button>\n                    </dv>\n                </div>',
                 events: [{
                     selector: '#' + width30,
@@ -909,7 +909,7 @@
             // tabs 的配置
             var tabsConfig = [{
                 title: '上传文件',
-                tpl: '<div class="w-e-up-img-container">\n                    <div id="' + upTriggerId + '" class="w-e-up-btn">\n                        <i class="w-e-icon-upload2"></i>\n                    </div>\n                    <div style="display:none;">\n                        <input id="' + upFileId + '" type="file" multiple="multiple" accept="image/jpg,image/jpeg,image/png,image/gif,image/bmp"/>\n                    </div>\n                </div>',
+                tpl: '<div class="w-e-up-img-container">\n                    <div id="' + upTriggerId + '" class="w-e-up-btn">\n                        <i class="w-e-icon-upload2"></i>\n                    </div>\n                    <div style="display:none;">\n                        <input id="' + upFileId + '" type="file" multiple="multiple" accept="*/*"/>\n                    </div>\n                </div>',
                 events: [{
                     // 触发选择文件
                     selector: '#' + upTriggerId,
@@ -942,7 +942,7 @@
                             //上传文件
 
                             //
-                            uploadFile(fileList);
+                            uploadFile(fileElem);
                             //uploadImg.uploadImg(fileList);
                         }
 

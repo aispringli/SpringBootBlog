@@ -10,9 +10,12 @@ package com.f5tv.springbootblog.entity.user;
  */
 public class UserRole {
 
-    public int userRoleId;
+    /**
+     * 用户角色编号id int
+     **/
+    private int userRoleId;
 
-    public String userRoleName;
+    private String userRoleName;
 
     public int getUserRoleId() {
         return userRoleId;

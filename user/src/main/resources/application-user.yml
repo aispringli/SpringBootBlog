@@ -24,3 +24,8 @@ spring:
     prefix: classpath:/template/
     suffix: .html
     mode:  HTML5
+
+# 打印sql
+logging:
+  level:
+    com.f5tv.springbootblog.mapper: debug

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
-      layout:decorator="Home/Layout">
+      layout:decorate="Home/Layout">
 <head>
     <title>首页-SpringBootBlog</title>
 </head>
@@ -34,32 +34,27 @@
         <div class="col-md-9">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Compose new message</h3>
+                    <h3 class="card-title">查看个人信息</h3>
                 </div>
                 <div class="card-body">
-                    <form action="">
-                        <div class="form-group">
-                            <div class="row align-items-center">
-                                <label class="col-sm-2">To:</label>
-                                <div class="col-sm-10">
-                                    <input type="text" class="form-control">
-                                </div>
+                    <div class="row row-cards">
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="card p-3">
+                                <img src="/static/file/logo/demo.jpg"  th:src="@{${#authentication.principal.userLogoSrc}}" alt="个人头像" class="rounded" style="width: 100%;height: 100%;">
                             </div>
                         </div>
-                        <div class="form-group">
-                            <div class="row align-items-center">
-                                <label class="col-sm-2">Subject:</label>
-                                <div class="col-sm-10">
-                                    <input type="text" class="form-control">
-                                </div>
+                        <div class="d-flex align-items-left col-9 px-2">
+                            <div>
+                                <br/>
+                                <div class="alert alert-info">昵称：  <span data-sec-authentication="name">username</span></div>
+                                <div class="alert alert-info">角色：  <span data-sec-authentication="principal.userRoleName">userRoleName</span></div>
+                                <div class="alert alert-info">日期：  <span th:text="${#dates.format(#authentication.principal.userDate, 'yyyy-MM-dd HH:mm')}">userDate</span></div>
+                                <div class="alert alert-info">邮箱：  <span data-sec-authentication="principal.userEmail">userEmail</span></div>
+                                <div class="alert alert-info">签名：  <span data-sec-authentication="principal.userMotto">userMotto</span></div>
+                                <div class="alert alert-info">粉丝：  <span data-sec-authentication="principal.userFollowerQuantity"></span></div>
                             </div>
                         </div>
-                        <textarea rows="10" class="form-control"></textarea>
-                        <div class="btn-list mt-4 text-right">
-                            <button type="button" class="btn btn-secondary btn-space">Cancel</button>
-                            <button type="submit" class="btn btn-primary btn-space">Send message</button>
-                        </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>

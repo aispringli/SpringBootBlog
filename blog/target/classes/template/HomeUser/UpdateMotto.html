@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
-      layout:decorator="Home/Layout">
+      layout:decorate="Home/Layout">
 <head>
     <title>首页-SpringBootBlog</title>
 </head>
@@ -37,16 +37,16 @@
                     <h3 class="card-title">修改个性签名</h3>
                 </div>
                 <div class="card-body">
-                    <form action="">
+                    <form action="" id="form">
                         <div class="form-group">
                             <div class="row align-items-center">
                                 <label class="col-sm-2">个性签名:</label>
-                                <div class="col-sm-10">
-                                    <input type="text" class="form-control" th:value="签名是一种态度" />
+                                <div class="col-sm-9">
+                                    <input name="userMotto" type="text" required maxlength="50" class="form-control" th:value="${#authentication.principal.userMotto}" />
                                 </div>
                             </div>
                         </div>
-                        <div class="btn-list mt-4 text-right">
+                        <div class="btn-list mt-4 text-center">
                             <button type="submit" class="btn btn-primary btn-space">修改</button>
                         </div>
                     </form>
@@ -55,5 +55,65 @@
         </div>
     </div>
 </div>
+<th:block layout:fragment="bodyJs">
+    <script>
+        require(['jquery','jquery-validation'], function ($) {
+
+            $("#modalConfirmBtn").click(function () {
+                var param = $("#form").serialize();
+                $.ajax({
+                    url : "/User/HandleUserUpdateMotto",
+                    type : "post",
+                    dataType : "json",
+                    data: param,
+                    success : function(result) {
+                        $("#modalTipBody").removeClass();
+                        if(result===true) {
+                            $("#modalTipBody").html("修改成功");
+                            $("#modalTipBody").addClass("alert alert-success");
+                        }
+                        else {
+                            $("#modalTipBody").html("修改失败");
+                            $("#modalTipBody").addClass("alert alert-danger");
+                        }
+                        $('#modalTip').modal();
+
+                    },
+                    error:function (event, XMLHttpRequest, ajaxOptions, thrownError) {
+                        if(XMLHttpRequest.status==403||XMLHttpRequest.status==302){
+                            alert('您还没有登陆，请登陆后使用');
+                            location.reload();
+                        }
+                        else alert('发生了错误,请检查网络或稍后刷新重试');
+                    }
+                });
+            });
+
+            $("#form").validate({
+                onsubmit:true,// 是否在提交是验证
+                onfocusout:function (element) { $(element).valid()},// 是否在获取焦点时验证
+                onkeyup :false,// 是否在敲击键盘时验证
+
+                rules: {
+                },
+                messages:{
+                    userMotto:{
+                        required:"请输入个性签名",
+                        maxlength:"最多50个字符长度"
+                    }
+                },
+                submitHandler: function(form) {  //通过之后回调
+                    $("#modalConfirmBody").removeClass();
+                    $("#modalConfirmBody").addClass("alert alert-warning");
+                    $("#modalConfirmBody").html("您确认修改吗？");
+                    $('#modalConfirm').modal();
+                },
+                invalidHandler: function(form, validator) {  //不通过回调
+                    return false;
+                }
+            });
+        });
+    </script>
+</th:block>
 </body>
 </html>

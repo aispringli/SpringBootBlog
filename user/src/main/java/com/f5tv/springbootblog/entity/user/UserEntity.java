@@ -16,19 +16,15 @@ import java.util.*;
  * @Description: TODO
  * @date 9:47 2019/3/11
  */
-public class UserEntity extends UserPassword implements UserDetails, CredentialsContainer {
+public class UserEntity extends UserRole implements UserDetails, CredentialsContainer {
 
-
+    private long userId;
 
     /**
      * 用户邮箱 String
      **/
     private String userEmail;
 
-    /**
-     * 用户角色编号id int
-     **/
-    private int userRoleId;
 
     /**
      * 用户状态 int
@@ -50,7 +46,11 @@ public class UserEntity extends UserPassword implements UserDetails, Credentials
      **/
     private String userMotto;
 
+    private long userFollowerQuantity;
+
+
     private String username;
+    private String password;
     private Set<GrantedAuthority> authorities;
     private boolean accountNonExpired;
     private boolean accountNonLocked;
@@ -230,6 +230,22 @@ public class UserEntity extends UserPassword implements UserDetails, Credentials
 
     // get set methods
 
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
+    public long getUserFollowerQuantity() {
+        return userFollowerQuantity;
+    }
+
+    public void setUserFollowerQuantity(long userFollowerQuantity) {
+        this.userFollowerQuantity = userFollowerQuantity;
+    }
+
     public String getUserEmail() {
         return userEmail;
     }
@@ -274,6 +290,15 @@ public class UserEntity extends UserPassword implements UserDetails, Credentials
         this.username = username;
     }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
     public void setAuthorities(Set<GrantedAuthority> authorities) {
         this.authorities = authorities;
     }
@@ -296,13 +321,5 @@ public class UserEntity extends UserPassword implements UserDetails, Credentials
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
-    }
-
-    public int getUserRoleId() {
-        return userRoleId;
-    }
-
-    public void setUserRoleId(int userRoleId) {
-        this.userRoleId = userRoleId;
     }
 }

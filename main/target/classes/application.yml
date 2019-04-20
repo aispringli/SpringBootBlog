@@ -48,3 +48,12 @@ spring:
     suffix: .html
     mode:  HTML5
     cache: false
+  servlet:
+    multipart:
+      max-file-size: 100Mb
+      max-request-size: 100Mb
+
+# 打印sql
+logging:
+  level:
+    com.f5tv.springbootblog.mapper: debug

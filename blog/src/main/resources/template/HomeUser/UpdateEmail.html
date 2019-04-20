@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
-      layout:decorator="Home/Layout">
+      layout:decorate="Home/Layout">
 <head>
     <title>首页-SpringBootBlog</title>
 </head>
@@ -41,20 +41,55 @@
                         <div class="form-group">
                             <div class="row align-items-center">
                                 <label class="col-sm-2">邮箱旧地址:</label>
-                                <div class="col-sm-10">
-                                    <input type="email" class="form-control" th:value="123456.com">
+                                <div class="col-sm-9">
+                                    <input type="email" disabled class="form-control" th:value="${#authentication.principal.userEmail}">
                                 </div>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="row align-items-center">
                                 <label class="col-sm-2">邮箱新地址:</label>
-                                <div class="col-sm-10">
-                                    <input type="email" class="form-control" th:value="123456.com">
+                                <div class="col-sm-9">
+                                    <input name="userEmail" type="email" required maxlength="100" class="form-control" />
                                 </div>
                             </div>
                         </div>
-                        <div class="btn-list mt-4 text-right">
+                        <div class="form-group">
+                            <div class="row align-items-center">
+                                <label class="col-sm-2">验证码</label>
+                                <div class="input-group col-sm-9">
+                                    <input type="text" name="validateCode" id="validateCode"
+                                           required minlength="4"
+                                           maxlength="4" class="form-control" placeholder="验证码"
+                                           aria-label="验证码"/>
+                                    <span class="input-group-prepend">
+                                    <img src="/VerificationCode/GetImage" style="cursor:pointer;"
+                                    id="validateCodeImg"
+                                    onclick="this.src='/VerificationCode/GetImage?'+Math.random()"
+                                    alt="验证码" title="点击刷新验证码"/>
+                                    </span>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <div class="row align-items-center">
+                                <label class="col-sm-2">邮箱验证码</label>
+                                <div class="input-group col-sm-9">
+                                    <input type="text" required minlength="6" maxlength="6"
+                                           name="emailValidateCode" class="form-control" placeholder="邮箱验证码"
+                                           aria-label="邮箱验证码"/>
+                                    <span class="input-group-prepend">
+                                            <span class="" title="点击发送邮箱验证码">
+                                                <button type="button" class="btn btn-info"
+                                                        id="userEmailBtn">发送邮箱验证码</button>
+                                            </span>
+                                          </span>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="btn-list mt-4 text-center">
                             <button type="submit" id="btnSubmit" class="btn btn-primary btn-space">修改</button>
                         </div>
                     </form>
@@ -66,38 +101,68 @@
 <th:block layout:fragment="bodyJs">
     <script>
         require(['jquery','jquery-validation'], function ($) {
+            $("#modalConfirmBtn").click(function () {
+                var param = $("#form").serialize();
+                $.ajax({
+                    url : "/User/HandleUserUpdateEmail",
+                    type : "post",
+                    dataType : "json",
+                    data: param,
+                    success : function(result) {
+                        $("#modalTipBody").removeClass();
+                        $("#modalTipBody").html(result.message);
+                        $('#modalTip').modal();
+                        if(result===true) {
+                            $("#modalTipBody").addClass("alert alert-success");
+                            location.reload();
+                        }
+                        else {
+                            $("#modalTipBody").addClass("alert alert-danger");
+                        }
+                    },
+                    error:function (event, XMLHttpRequest, ajaxOptions, thrownError) {
+                        if(XMLHttpRequest.status==403||XMLHttpRequest.status==302){
+                            alert('您还没有登陆，请登陆后使用');
+                            location.reload();
+                        }
+                        else alert('发生了错误,请检查网络或稍后刷新重试');
+                    }
+                });
+            });
+
             $("#form").validate({
                 onsubmit:true,// 是否在提交是验证
                 onfocusout:function (element) { $(element).valid()},// 是否在获取焦点时验证
                 onkeyup :false,// 是否在敲击键盘时验证
-
+                errorPlacement: function (error, element) {
+                    if ($(element).attr("name") === "validateCode" || $(element).attr("name") === "emailValidateCode")
+                        error.appendTo(element.parent().parent());
+                    else error.appendTo(element.parent());
+                },
                 rules: {
-
                 },
                 messages:{
-
+                    userEmail:{
+                        required:"请输入邮箱地址",
+                        maxlength:"最多100个字符长度",
+                        email:"请输入合法正确的邮箱地址"
+                    },
+                    validateCode: {
+                        required: "请输入4位正确验证码",
+                        minlength: "请输入4位正确验证码",
+                        maxlength: "请输入4位正确验证码"
+                    },
+                    emailValidateCode: {
+                        required: "请输入6位正确邮箱验证码",
+                        minlength: "请输入6位正确邮箱验证码",
+                        maxlength: "请输入6位正确邮箱验证码"
+                    }
                 },
                 submitHandler: function(form) {  //通过之后回调
-                    //$(form).ajaxSubmit();
-                    alert('tedgdfg')
-                    var param = $("#form").serialize();
-                    $.ajax({
-                        url : "workExtraChange.action",
-                        type : "post",
-                        dataType : "json",
-                        data: param,
-                        success : function(result) {
-                            if(result=='success') {
-                                location.href='allRequisitionList.action';
-                            } else {
-                                var jsonObj = eval('('+result+')');
-                            }
-                        }
-                    });
-                },
-                invalidHandler: function(form, validator) {  //不通过回调
-                    alert('teyst')
-                    return false;
+                    $("#modalConfirmBody").removeClass();
+                    $("#modalConfirmBody").addClass("alert alert-warning");
+                    $("#modalConfirmBody").html("您确认修改吗？");
+                    $('#modalConfirm').modal();
                 }
             });
         });

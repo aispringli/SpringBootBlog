@@ -1,7 +1,6 @@
 package com.f5tv.springbootblog.security.service;
 
 import com.f5tv.springbootblog.entity.user.UserEntity;
-import com.f5tv.springbootblog.entity.user.UserPassword;
 import com.f5tv.springbootblog.entity.user.UserRole;
 import com.f5tv.springbootblog.security.Exception.PasswordNotExistException;
 import com.f5tv.springbootblog.security.Exception.PasswordNotMathException;
@@ -42,26 +41,19 @@ public class MyUserDetailsService implements UserDetailsService {
     @Autowired
     CheckStringTool checkStringTool;
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, PasswordNotExistException, PasswordNotMathException {
+    public UserDetails loadUserByUsername(String userEmail) throws UsernameNotFoundException, PasswordNotExistException, PasswordNotMathException {
 
-        logger.info("登陆用户名:" + username);
+        logger.info("登陆邮箱:" + userEmail);
         UserEntity userEntity;
-        if (checkStringTool.CheckEmailAddress(username)) userEntity = userService.userEntitySelectByUserEmail(username);
-        else userEntity = userService.userEntitySelectByUserName(username);
-        if (userEntity == null) throw new UsernameNotFoundException("用户名或邮箱不存在");
+        userEntity = userService.userEntitySelectByUserEmail(userEmail);
+        if (userEntity == null) throw new UsernameNotFoundException("邮箱没有注册");
 
-        UserPassword userPassword = userService.userPasswordSelectByUserId(userEntity.getUserId());
-        if (userPassword == null) {
-            //此用户没有绑定密码
-            throw new PasswordNotExistException("用户未设置密码");
-        }
         userEntity.setAccountNonExpired(true);
         userEntity.setAccountNonLocked(true);
         userEntity.setCredentialsNonExpired(true);
         if (userEntity.getUserStatus() == 0) userEntity.setEnabled(true);
         else userEntity.setEnabled(false);
-        userEntity.setPassword(userPassword.getPassword());
-        userEntity.setAuthorities(userRoleAuthorities(userEntity.getUserRoleId()));
+        userEntity.setAuthorities(userRoleAuthorities(userEntity.getUserRoleId(),userEntity));
         return userEntity;
     }
 
@@ -72,12 +64,13 @@ public class MyUserDetailsService implements UserDetailsService {
      * @Date 10:59
      * @Param [userRoleId]
      **/
-    public Collection<? extends GrantedAuthority> userRoleAuthorities(int userRoleId) {
+    public Collection<? extends GrantedAuthority> userRoleAuthorities(int userRoleId,UserEntity userEntity) {
         List<UserRole> userRoleList = userRoleService.selectAllUserRole();
         ArrayList<String> rolesArrayList = new ArrayList<>();
-        for (int i = 0; i < userRoleList.size(); i++)
-            if (userRoleList.get(i).userRoleId >= userRoleId) rolesArrayList.add(userRoleList.get(i).userRoleName);
-
+        for (int i = 0; i < userRoleList.size(); i++){
+            if (userRoleList.get(i).getUserRoleId() >= userRoleId) rolesArrayList.add(userRoleList.get(i).getUserRoleName());
+            if (userRoleList.get(i).getUserRoleId() == userRoleId)userEntity.setUserRoleName(userRoleList.get(i).getUserRoleName());
+        }
         return AuthorityUtils.createAuthorityList(rolesArrayList.toArray(new String[rolesArrayList.size()]));
     }
 }

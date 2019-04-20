@@ -36,7 +36,7 @@ public class CheckStringTool {
 
     public static boolean CheckStringHasSpecialChar(String string) {
         if (StringUtils.isEmpty(string)) return false;
-        String Single_String_Regex = "^[\u4e00-\u9fa5a-zA-Z0-9!%$#,.:;]+$";
+        String Single_String_Regex = "^[\u4e00-\u9fa5a-zA-Z0-9!%$#,.:]+$";
         return !string.matches(Single_String_Regex);
     }
 

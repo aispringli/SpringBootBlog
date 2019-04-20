@@ -1,52 +1,67 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.w3.org/1999/xhtml" th:with="index_active='',writeblog_active=''">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+      th:with="index_active='',writeblog_active=''">
 <head th:include="/common/Head::common_header(~{::title},~{::link})">
     <title>首页-SpringBootBlog</title>
     <link href="/static/home/css/dashboard.css" rel="stylesheet"/>
     <link href="/static/home/plugins/charts-c3/plugin.css" rel="stylesheet"/>
     <link href="/static/home/plugins/maps-google/plugin.css" rel="stylesheet"/>
 </head>
-<body class="" >
+<body class="">
 <div class="page">
     <div class="page-main">
         <div class="fixed-top">
             <div class="header py-4">
                 <div class="container">
                     <div class="d-flex">
-                        <a class="header-brand" href="Index.html">
-                            <img src="../../static/demo/brand/tabler.svg" class="header-brand-img" alt="tabler logo">
+                        <a class="header-brand" href="Index">
+                            <img src="/static/file/logo/demo.jpg" class="header-brand-img" alt="tabler logo">
                         </a>
                         <div class="d-flex order-lg-2 ml-auto">
-                            <div class="dropdown">
+                            <div sec:authorize="isAnonymous()">
+                                <button class="btn btn-pill btn-lime" data-toggle="modal" data-target="#signInModal">
+                                    登陆
+                                </button>
+                                <button class="btn btn-pill  btn-azure" data-toggle="modal" data-target="#signUpModal">
+                                    注册
+                                </button>
+                            </div>
+                            <div class="dropdown" sec:authorize="!isAnonymous()">
                                 <a href="#" class="nav-link pr-0 leading-none" data-toggle="dropdown">
-                                    <span class="avatar"
-                                          style="background-image: url(../../static/demo/faces/female/25.jpg)">
+                                    <span class="avatar" th
+                                          style="background-image: url(/static/file/logo/demo.jpg)"
+                                          th:style="'background-image:url('+${#authentication.principal.userLogoSrc}+')'">
                                     </span>
                                     <span class="ml-2 d-none d-lg-block">
-                                        <span class="text-default">Jane Pearson</span>
-                                        <small class="text-muted d-block mt-1">Administrator</small>
+                                        <span class="text-default" data-sec-authentication="name"></span>
+                                        <small class="text-muted d-block mt-1"
+                                               data-sec-authentication="principal.userRoleName"></small>
                                     </span>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
                                     <a class="dropdown-item" href="#">
-                                        <i class="dropdown-icon fe fe-home"></i> 主  页
+                                        <i class="dropdown-icon fe fe-home"></i> 主 页
                                     </a>
                                     <a class="dropdown-item" th:href="@{/Home/Category}">
-                                        <i class="dropdown-icon fe fe-layout"></i> 分  类
+                                        <i class="dropdown-icon fe fe-layout"></i> 分 类
                                     </a>
                                     <a class="dropdown-item" href="#">
-                                        <i class="dropdown-icon fe fe-book-open"></i> 博  客
+                                        <i class="dropdown-icon fe fe-book-open"></i> 博 客
                                     </a>
                                     <a class="dropdown-item" href="#">
-                                        <i class="dropdown-icon fe fe-users"></i> 粉  丝
+                                        <i class="dropdown-icon fe fe-users"></i> 粉 丝
                                     </a>
 
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" th:href="@{/HomeUser/Personal}">
                                         <i class="dropdown-icon fe fe-user"></i> 个人中心
                                     </a>
-                                    <a class="dropdown-item" href="#">
-                                        <i class="dropdown-icon fe fe-log-out"></i> 退  出
+                                    <a class="dropdown-item" href="#" sec:authorize="hasAnyAuthority('管理员')">
+                                        <i class="dropdown-icon fe fe-log-out"></i> 后台管理
+                                    </a>
+                                    <a class="dropdown-item" th:href="@{/User/HandleUserLogout}">
+                                        <i class="dropdown-icon fe fe-log-out"></i> 退 出
                                     </a>
                                 </div>
                             </div>
@@ -77,16 +92,18 @@
                                         <i class="fa fa-internet-explorer" aria-hidden="true"></i> 发现
                                     </a>
                                 </li>
-                                <li class="nav-item">
+                                <li class="nav-item" sec:authorize="!isAnonymous()">
                                     <a href="Index" class="nav-link"><i class="fa fa-rss-square" aria-hidden="true"></i>
                                         关注</a>
                                 </li>
-                                <li class="nav-item">
+                                <li class="nav-item" sec:authorize="!isAnonymous()">
                                     <a href="Index" class="nav-link"><i class="fa fa-heart" aria-hidden="true"></i>
                                         收藏</a>
                                 </li>
-                                <li class="nav-item">
-                                    <a th:href="@{/Home/WriteBlog}" class="nav-link" th:classappend="${writeblog_active}"><i class="fa fa-edit" aria-hidden="true"></i>
+                                <li class="nav-item" sec:authorize="!isAnonymous()">
+                                    <a th:href="@{/Home/WriteBlog}" class="nav-link"
+                                       th:classappend="${writeblog_active}"><i class="fa fa-edit"
+                                                                               aria-hidden="true"></i>
                                         写博客</a>
                                 </li>
                             </ul>
@@ -98,6 +115,225 @@
         <div class="my-3 my-md-5">
             <div class="container" layout:fragment="content">
 
+            </div>
+            <!-- 登陆与注册模态框-->
+            <div class="modal fade" id="signUpModal" sec:authorize="isAnonymous()">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+
+                        <!-- 模态框头部 -->
+                        <div class="modal-header">
+                            <h4 class="modal-title">注册新的博客账户</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+
+                        <!-- 模态框主体 -->
+                        <div class="modal-body">
+                            <form class="" action="" method="post" id="formSignUp">
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <div class="row align-items-center">
+                                            <label class="form-label col-3">昵称</label>
+                                            <div class="col-9">
+                                                <input name="username" minlength="6" maxlength="20" required type="text"
+                                                       class="form-control" placeholder="昵称">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="row align-items-center">
+                                            <label class="form-label col-3">密码</label>
+                                            <div class="col-9">
+                                                <input name="password" required minlength="6" maxlength="20"
+                                                       type="password"
+                                                       id="password"
+                                                       class="form-control" placeholder="密码">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="row align-items-center">
+                                            <label class="form-label col-3">确认密码</label>
+                                            <div class="col-9">
+                                                <input name="repeatpassword" minlength="6" maxlength="20"
+                                                       type="password" required
+                                                       class="form-control" placeholder="密码">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="row align-items-center">
+                                            <label class="form-label col-3">邮箱</label>
+                                            <div class="col-9">
+                                                <input name="userEmail" id="userEmail" required maxlength="100"
+                                                       type="email"
+                                                       class="form-control" placeholder="邮箱">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="row align-items-center">
+                                            <label class="form-label col-3">验证码</label>
+                                            <div class="col-9">
+                                                <div class="input-group">
+                                                    <input type="text" name="validateCode" id="signUpValidateCode"
+                                                           required minlength="4"
+                                                           maxlength="4" class="form-control" placeholder="验证码"
+                                                           aria-label="验证码"/>
+                                                    <span class="input-group-prepend">
+                                              <img src="/VerificationCode/GetImage" style="cursor:pointer;"
+                                                   id="signUpValidateCodeImg"
+                                                   onclick="this.src='/VerificationCode/GetImage?'+Math.random()"
+                                                   alt="验证码" title="点击刷新验证码"/>
+                                          </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="row align-items-center">
+                                            <label class="form-label col-3">邮箱验证码</label>
+                                            <div class="col-9">
+                                                <div class="input-group">
+                                                    <input type="text" required minlength="6" maxlength="6"
+                                                           name="emailValidateCode" class="form-control"
+                                                           placeholder="邮箱验证码"
+                                                           aria-label="邮箱验证码"/>
+                                                    <span class="input-group-prepend">
+                                                        <span class="" title="点击发送邮箱验证码">
+                                                            <button type="button" class="btn btn-info"
+                                                                    id="userEmailBtn">发送邮箱验证码</button>
+                                                        </span>
+                                                      </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-footer">
+                                        <button type="submit" class="btn btn-primary btn-block">注册</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="signInModal" sec:authorize="isAnonymous()">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+
+                        <!-- 模态框头部 -->
+                        <div class="modal-header">
+                            <h4 class="modal-title">登陆您的博客账户</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+
+                        <!-- 模态框主体 -->
+                        <div class="modal-body">
+                            <form class="" action="" method="post" id="formSignIn">
+                                <div class="card-body">
+                                    <div class="form-group ">
+                                        <div class="row align-items-center">
+                                            <label class="form-label col-sm-3">邮箱</label>
+                                            <div class="col-9">
+                                                <input name="userEmail" type="email" required class="form-control"
+                                                       placeholder="邮箱">
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="row align-items-center">
+                                            <label class="form-label col-3">密码</label>
+                                            <div class="col-9">
+                                                <input name="password" minlength="6" maxlength="20" type="password"
+                                                       required
+                                                       class="form-control" placeholder="密码">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="row align-items-center">
+                                            <label class="form-label col-3">验证码</label>
+                                            <div class="col-9">
+                                                <div class="input-group">
+                                                    <input name="validateCode" type="text" required maxlength="4"
+                                                           minlength="4"
+                                                           class="form-control" placeholder="验证码" aria-label="验证码"/>
+                                                    <span class="input-group-prepend">
+                                                  <img src="/VerificationCode/GetImage" style="cursor:pointer;"
+                                                       id="signInValidateCodeImg"
+                                                       onclick="this.src='/VerificationCode/GetImage?'+Math.random()"
+                                                       alt="验证码"/>
+                                                </span>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="custom-control custom-checkbox">
+                                            <input name="remember-me" type="checkbox" class="custom-control-input"/>
+                                            <span class="custom-control-label" style="position: initial;">记住我</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-footer">
+                                        <button type="submit" class="btn btn-primary btn-block">登陆</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modalConfirm">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+
+                        <!-- 模态框头部 -->
+                        <div class="modal-header">
+                            <h4 class="modal-title">警告</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+
+                        <!-- 模态框主体 -->
+                        <div class="modal-body">
+                            <div class="alert alert-warning" id="modalConfirmBody">
+
+                            </div>
+                        </div>
+
+                        <!-- 模态框底部 -->
+                        <div class="modal-footer">
+                            <button type="button" id="modalConfirmBtn" class="btn btn-primary" data-dismiss="modal">确认</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modalTip">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <!-- 模态框头部 -->
+                        <div class="modal-header">
+                            <h4 class="modal-title">提示</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+
+                        <!-- 模态框主体 -->
+                        <div class="modal-body">
+                            <div class="alert alert-success" id="modalTipBody">
+                            </div>
+                        </div>
+                        <!-- 模态框底部 -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -126,12 +362,200 @@
     <script src="/static/home/plugins/jquery-form/plugin.js"></script>
 
     <script>
-        require(['jquery'], function ($) {
+        require(['jquery', 'jquery-validation'], function ($) {
+            $(function () {
+                //登陆或注册 模态框关闭时
+                $('#signUpModal').on('hide.bs.modal', function () {
+                    $('#formSignUp')[0].reset();
+                    $("#formSignUp").validate().resetForm();
+                });
+                $('#signInModal').on('hide.bs.modal', function () {
+                    $('#formSignIn')[0].reset();
+                    $("#formSignIn").validate().resetForm();
+                });
 
+            });
+
+            //登陆部分
+            $("#formSignIn").validate({
+                onsubmit: true,// 是否在提交是验证
+                onfocusout: function (element) {
+                    $(element).valid()
+                },// 是否在获取焦点时验证
+                onkeyup: false,// 是否在敲击键盘时验证
+                errorPlacement: function (error, element) {
+                    if ($(element).attr("name") === "validateCode") error.appendTo(element.parent().parent());
+                    else error.appendTo(element.parent());
+                },
+                rules: {
+                    userEmail: {
+                        required: true,
+                        remote: '/User/CheckUserEmail?type=true'
+                    }
+                },
+                messages: {
+                    userEmail: {
+                        required: "请输入邮箱",
+                        email: "请输入正确的邮箱地址",
+                        remote: "此邮箱未注册"
+                    },
+                    password: {
+                        required: "请输入6-20位密码",
+                        minlength: "请至少输入6位密码",
+                        maxlength: "最多输入20位密码"
+                    },
+                    validateCode: {
+                        required: "请输入4位正确验证码",
+                        minlength: "请输入4位正确验证码",
+                        maxlength: "请输入4位正确验证码"
+                    }
+                },
+                submitHandler: function (form) {  //通过之后回调
+                    var param = $("#formSignIn").serialize();
+                    $.ajax({
+                        url: "/User/HandleSignIn",
+                        type: "post",
+                        data: param,
+                        success: function (result) {
+                            if (result.success) {
+                                location.reload();
+                            } else {
+                                $('#signInValidateCodeImg').click();
+                                $("input[name$='validateCode']").val('')
+                                alert(result.message);
+                            }
+                        },
+                        error: function () {
+                            alert('发生了错误,请检查网络或稍后刷新重试');
+                        }
+                    });
+                },
+                invalidHandler: function (form, validator) {  //不通过回调
+
+                    return false;
+                }
+            });
+
+            $("#formSignUp").validate({
+                onsubmit: true,// 是否在提交是验证
+                onfocusout: function (element) {
+                    $(element).valid()
+                },// 是否在获取焦点时验证
+                onkeyup: false,// 是否在敲击键盘时验证
+                errorPlacement: function (error, element) {
+                    if ($(element).attr("name") === "validateCode" || $(element).attr("name") === "emailValidateCode")
+                        error.appendTo(element.parent().parent());
+                    else error.appendTo(element.parent());
+                },
+                rules: {
+                    userEmail: {
+                        required: true,
+                        remote: '/User/CheckUserEmail?type=false'
+                    }
+                },
+                messages: {
+                    username: {
+                        required: "请输入6-20位昵称",
+                        minlength: "请至少输入6位昵称",
+                        maxlength: "最多输入20位昵称"
+                    },
+                    password: {
+                        required: "请输入6-20位密码",
+                        minlength: "请至少输入6位密码",
+                        maxlength: "最多输入20位密码"
+                    },
+                    repeatpassword: {
+                        required: "请输入6-20位密码",
+                        minlength: "请至少输入6位密码",
+                        maxlength: "最多输入20位密码",
+                        equalTo: "#password"
+                    },
+                    userEmail: {
+                        required: "请输入邮箱",
+                        email: "请输入正确的邮箱地址",
+                        remote: "此邮箱已注册"
+                    },
+
+                    validateCode: {
+                        required: "请输入4位正确验证码",
+                        minlength: "请输入4位正确验证码",
+                        maxlength: "请输入4位正确验证码"
+                    },
+                    emailValidateCode: {
+                        required: "请输入6位正确邮箱验证码",
+                        minlength: "请输入6位正确邮箱验证码",
+                        maxlength: "请输入6位正确邮箱验证码"
+                    }
+                },
+                submitHandler: function (form) {  //通过之后回调
+                    var param = $("#formSignUp").serialize();
+                    $.ajax({
+                        url: "/User/HandleSignUp",
+                        type: "post",
+                        data: param,
+                        success: function (result) {
+                            if (result.success) {
+                                location.reload();
+                            } else {
+                                $('#signUpValidateCodeImg').click();
+                                $("input[name$='validateCode']").val('')
+                                alert(result.message);
+                            }
+                        },
+                        error: function () {
+                            alert('发生了错误,请检查网络或稍后刷新重试');
+                        }
+                    });
+                },
+                invalidHandler: function (form, validator) {  //不通过回调
+
+                    return false;
+                }
+            });
+
+            //发送邮箱验证码
+            $("#userEmailBtn").click(
+                function () {
+                    if (!$("#formSignUp").validate().element($("#signUpValidateCode"))) {
+                        $("#signUpValidateCode").focus();
+                        return;
+                    }
+
+                    if (!$("#formSignUp").validate().element($("#userEmail"))) {
+                        $("#userEmail").focus();
+                        return;
+                    }
+
+                    //请求发送验证码
+                    console.log("验证码已发送");
+
+                    function errorFunction() {
+                        alert('发生了错误,请检查网络或稍后再试');
+                    }
+
+                    function successFunction(result) {
+                        if (result.success) alert("验证码已发送，请到邮箱查收");
+                        else alert(result.message);
+                        $("#signUpValidateCode").val('');
+                        $('#signUpValidateCodeImg').click();
+                    }
+
+                    $.ajax({
+                        url: '/User/SendEmailValidateCode',
+                        type: 'post',
+                        data: {
+                            'emailAddress': $("#userEmail").val(),
+                            'validateCode': $("#signUpValidateCode").val()
+                        },
+                        error: errorFunction,  //错误执行方法
+                        success: successFunction //成功执行方法
+                    })
+                }
+            );
         });
     </script>
 </div>
-<th:block layout:fragment = "bodyJs">
+<th:block layout:fragment="bodyJs">
 
 </th:block>
 </html>

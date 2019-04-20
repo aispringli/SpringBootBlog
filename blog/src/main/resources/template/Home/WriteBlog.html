@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
-      layout:decorator="Home/Layout">
+      layout:decorate="Home/Layout">
 <head>
     <title>欢迎您来写博客-SpringBootBlog</title>
 </head>
@@ -26,8 +26,7 @@
                             <span class="input-group-text">所属分类</span>
                           </span>
                             <select name="beast" id="select-beast" class="form-control custom-select">
-                                <option value="0">Java</option>
-                                <option value="1">C#</option>
+                                <option th:each="category:${categoryLists}" th:value="${category.categoryId}" th:text="${category.categoryName}" ></option>
                             </select>
                         </div>
                     </div>
@@ -41,7 +40,7 @@
             <div class="row">
                 <div class="col-12 form-group">
                     <label class="form-label">博客简介，您可点击按钮自动生成简介和封面图片，亦可手动填写内容和上传图片
-                        <button type="submit" class="btn btn-sm btn-primary">生成简介</button></label>
+                        <button type="button" id="createSummaryBtn" class="btn btn-sm btn-primary">生成简介</button></label>
                 </div>
                 <div class="form-group form-group col-6">
                     <textarea class="form-control" rows="6">简介</textarea>
@@ -58,22 +57,70 @@
 </div>
 <th:block layout:fragment="bodyJs">
     <script>
-        function uploadFile(fileList){
-            alert(fileList);
-        }
-        require(['wangEditor'], function (E) {
-            var editor = new E('#editor');
-            editor.customConfig.zIndex = 0
-            editor.customConfig.uploadImgServer = '/upload';  // 上传图片到服务器
-            editor.create()
-
-        });
-    </script>
-    <script>
-        require(['jquery'], function ($) {
-            $(function () {
-
+        var editor;
+        //上传文件
+        function uploadFile(fileElem){
+            require(['jquery','wangEditor'], function ($) {
+                // 添加文件数据
+                var form_data = new FormData();
+                for(var i=0;i<fileElem.files.length;i++){
+                    console.log(fileElem.files[i].name);
+                    form_data.append("files", fileElem.files[i]);
+                }
+                console.log(fileElem.files);
+                console.log(form_data);
+                $.ajax({
+                    url: "/FileUpload/UploadBlogFile",
+                    type: "post",
+                    data: form_data,
+                    contentType: false,
+                    processData: false,
+                    success: function (result) {
+                        if (result.errno==0) {
+                            //上传成功后处理
+                            $("#modalTipBody").removeClass();
+                            $("#modalTipBody").addClass("alert alert-success");
+                            $("#modalTipBody").html("上传成功");
+                            $('#modalTip').modal();
+                            //显示到编辑器里面的
+                            for(var i=0;i<result.data.length;i++){
+                                var link="<a href='/FileUpload/Download?fileName"+result.data[i]+"'>"+result.name[i]+"</a>";
+                                editor.txt.append(link);
+                            }
+                            return ;
+                        }
+                        else{
+                            $("#modalTipBody").removeClass();
+                            $("#modalTipBody").addClass("alert alert-danger");
+                            $("#modalTipBody").html("发生了错误,请检查网络或稍后刷新重试");
+                            $('#modalTip').modal();
+                        }
+                    },
+                    error: function (event, XMLHttpRequest, ajaxOptions, thrownError) {
+                        $("#modalTipBody").removeClass();
+                        $("#modalTipBody").addClass("alert alert-danger");
+                        $('#modalTip').modal();
+                        if (XMLHttpRequest.status == 403 || XMLHttpRequest.status == 302) {
+                            $("#modalTipBody").html("您还没有登陆,请登陆后使用");
+                            location.reload();
+                        }
+                    }
+                });
             });
+        }
+
+        require(['jquery','wangEditor'], function ($,E) {
+            editor = new E('#editor');
+            editor.customConfig.zIndex = 0;
+            editor.customConfig.uploadFileName = 'files';
+            editor.customConfig.uploadImgMaxSize = 1 * 1024 * 1024;
+            editor.customConfig.uploadImgServer = '/FileUpload/UploadBlogImg';  // 上传图片到服务器
+            editor.create();
+            $("#createSummaryBtn").click(function () {
+                console.log(editor.txt.html());
+                console.log(editor.txt.text());
+            });
+
         });
     </script>
 </th:block>
