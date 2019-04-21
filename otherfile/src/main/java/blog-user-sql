@@ -59,11 +59,10 @@ BEGIN
 INSERT INTO category(categoryName,userId) values("默认",NEW.userId);
 END;
 
-
+//触发器
 DELIMITER $
 create trigger user_category after insert
 on user for each row
 begin
 INSERT INTO category(categoryName,userId) values("默认",NEW.userId);
 end$
-DELIMITER ;

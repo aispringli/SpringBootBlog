@@ -29,3 +29,4 @@ spring:
 logging:
   level:
     com.f5tv.springbootblog.mapper: debug
+    root: DEBUG

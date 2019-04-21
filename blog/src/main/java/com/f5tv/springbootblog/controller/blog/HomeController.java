@@ -3,7 +3,9 @@ package com.f5tv.springbootblog.controller.blog;
 import com.f5tv.springbootblog.entity.user.UserEntity;
 import com.f5tv.springbootblog.service.blog.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -16,14 +18,23 @@ import org.springframework.web.servlet.ModelAndView;
  * @date 11:25 2019/4/12
  */
 @Controller
-@RequestMapping("Home")
+@RequestMapping(value = {"Home","/"})
 public class HomeController {
 
     @Autowired
     CategoryService categoryService;
 
-    @RequestMapping("Index")
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    RememberMeServices rememberMeServices;
+
+
+
+    @RequestMapping(value = {"Index","/"})
     public String Index(){
+
         return "/Home/Index";
     }
 

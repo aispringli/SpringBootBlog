@@ -17,7 +17,7 @@
                           <span class="input-group-prepend">
                             <span class="input-group-text">博客标题</span>
                           </span>
-                            <input type="text" class="form-control"/>
+                            <input type="text" maxlength="20" class="form-control"/>
                         </div>
                     </div>
                     <div class="form-group col-6">
@@ -40,13 +40,21 @@
             <div class="row">
                 <div class="col-12 form-group">
                     <label class="form-label">博客简介，您可点击按钮自动生成简介和封面图片，亦可手动填写内容和上传图片
-                        <button type="button" id="createSummaryBtn" class="btn btn-sm btn-primary">生成简介</button></label>
+                        <button type="button" id="createSummaryBtn" class="btn btn-sm btn-primary">自动生成简介</button>
+                        <label class="custom-checkbox custom-control-inline" style="padding-left: 20px;">
+                            <input type="checkbox" class="custom-control-input" name="" id="isBlogSummaryLogoImg" value="0" checked>
+                            <span class="custom-control-label" style="padding-left: 20px;">是否有封面图片</span>
+                        </label>
+                    </label>
                 </div>
                 <div class="form-group form-group col-6">
-                    <textarea class="form-control" rows="6">简介</textarea>
+                    <textarea maxlength="200" id="blogSummary" class="form-control" rows="6" placeholder="简介"></textarea>
                 </div>
                 <div class="form-group col-6">
-                    <img style="height: 150px;cursor: pointer;" src="/static/demo/photos/adrian-infernus-281832-1500.jpg" alt="点击上传图片" title="点击上传图片" />
+                    <img id="blogSummaryLogoImg" style="height: 150px;cursor: pointer;" src="/static/file/logo/demo.jpg" alt="点击上传图片" title="点击上传图片" />
+                    <form id="form" enctype="multipart/form-data" style="width:auto;">
+                        <input type="file" name="file" id="fileInput" accept="image/*" style="display:none;">
+                    </form>
                 </div>
             </div>
             <div class="card-footer text-center">
@@ -116,10 +124,66 @@
             editor.customConfig.uploadImgMaxSize = 1 * 1024 * 1024;
             editor.customConfig.uploadImgServer = '/FileUpload/UploadBlogImg';  // 上传图片到服务器
             editor.create();
-            $("#createSummaryBtn").click(function () {
-                console.log(editor.txt.html());
-                console.log(editor.txt.text());
+
+            //简介有关的
+            $("#isBlogSummaryLogoImg").click(function () {
+                if($("#isBlogSummaryLogoImg").is(":checked"))$("#blogSummaryLogoImg").show();
+                else $("#blogSummaryLogoImg").hide();
             });
+            //上传封面图片
+            $("#blogSummaryLogoImg").click(function () {
+                    $("#fileInput").click();
+                });
+
+            $("#fileInput").on('input', function (e) {
+                var formData = new FormData($("#form")[0]);
+                $.ajax({
+                    url: "/FileUpload/UploadLogoImg",
+                    type: "post",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (result) {
+                        if (result.success) {
+                            $('#blogSummaryLogoImg').attr("src", result.message);
+                            $("#modalTipBody").removeClass();
+                            $("#modalTipBody").addClass("alert alert-success");
+                            $("#modalTipBody").html("上传成功");
+                            $('#modalTip').modal();
+                            return ;
+                        }
+                        else{
+                            $("#modalTipBody").removeClass();
+                            $("#modalTipBody").addClass("alert alert-danger");
+                            $("#modalTipBody").html("发生了错误,请检查网络或稍后刷新重试");
+                            $('#modalTip').modal();
+                        }
+                    },
+                    error: function (event, XMLHttpRequest, ajaxOptions, thrownError) {
+                        $("#modalTipBody").removeClass();
+                        $("#modalTipBody").addClass("alert alert-danger");
+                        $('#modalTip').modal();
+                        if (XMLHttpRequest.status == 403 || XMLHttpRequest.status == 302) {
+                            $("#modalTipBody").html("您还没有登陆,请登陆后使用");
+                            location.reload();
+                        }
+
+                    }
+                });
+            });
+
+            $("#createSummaryBtn").click(function () {
+                $("#blogSummary").val(editor.txt.text().substr(0,200));
+                var regex = /<img.*?src="(.*?)"/;
+                var list=regex.exec(editor.txt.html());
+                if(list!=null){
+                    $('#blogSummaryLogoImg').attr("src", list[1]);
+                    var src = list[1].replace(window.location.origin,"")
+                    console.log(src);
+                }
+
+            });
+
 
         });
     </script>

@@ -22,6 +22,7 @@ public interface CategoryMapper {
     @Results(id = "categoryResultMap", value =
             {
                     @Result(property = "userId", column = "userId"),
+                    @Result(property = "username", column = "username"),
                     @Result(property = "categoryId", column = "categoryId"),
                     @Result(property = "categoryName", column = "categoryName"),
                     @Result(property = "categoryStatus", column = "categoryStatus"),
@@ -44,7 +45,7 @@ public interface CategoryMapper {
     int updateStatus(Category category);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Update("delete from category  where categoryId = #{categoryId}")
+    @Delete("delete from category  where categoryId = #{categoryId}")
     int delete(long categoryId);
 
 

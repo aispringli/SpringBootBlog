@@ -22,6 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
@@ -29,9 +30,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.resource.HttpResource;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
@@ -55,6 +59,9 @@ public class UserController {
     private AuthenticationManager authenticationManager;
 
     @Autowired
+    RememberMeServices rememberMeServices;
+
+    @Autowired
     UserRoleService userRoleService;
 
     @Autowired
@@ -76,6 +83,17 @@ public class UserController {
     CheckStringTool checkStringTool;
 
 
+    //处理未登陆，判断cookie是否已记住登陆,跳转到首页
+    @RequestMapping("HandleSign")
+    public String HandleSign(HttpServletRequest request, HttpServletResponse response){
+        Authentication authenticatedUser = rememberMeServices.autoLogin(request,response);
+        if(authenticatedUser!=null){
+            SecurityContextHolder.getContext().setAuthentication(authenticatedUser);
+            request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
+        }
+        return "redirect:/";
+    }
+
     /**
      * @param type 判断结果类型
      * @return boolean 结果
@@ -96,6 +114,7 @@ public class UserController {
     }
 
 
+
     @ResponseBody
     @RequestMapping("ShowUserRole")
     public List<UserRole> ShowUserRole() {
@@ -108,8 +127,16 @@ public class UserController {
             UserEntity user = (UserEntity) authentication.getPrincipal();
             logger.info("USER : " + user.getUsername() + " LOGOUT SUCCESS !  ");
             new SecurityContextLogoutHandler().logout(request, response, authentication);
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null)
+                for (Cookie cookie : cookies) {
+                    cookie.setValue("");
+                    cookie.setPath("/");
+                    cookie.setMaxAge(0);
+                    response.addCookie(cookie);
+                }
         }
-        return "redirect:/Home/Index";
+        return "redirect:/";
     }
 
     //登陆
@@ -120,7 +147,7 @@ public class UserController {
     }
 
 
-    private ResponseResult SignAuthentication(UserEntity userEntity, HttpServletRequest request) {
+    private ResponseResult SignAuthentication(UserEntity userEntity, String rememberme, HttpServletRequest request,HttpServletResponse response) {
         try {
             logger.info(userEntity.getUsername());
             logger.info(userEntity.getPassword());
@@ -129,6 +156,12 @@ public class UserController {
             logger.info(userEntity.getPassword());
             token.setDetails(new WebAuthenticationDetails(request));
             Authentication authenticatedUser = authenticationManager.authenticate(token);
+            if(!StringUtils.isEmpty(rememberme)&&"true".equals(rememberme)){
+                rememberme=((UserEntity)authenticatedUser.getPrincipal()).getUsername();
+                ((UserEntity)authenticatedUser.getPrincipal()).setUsername(((UserEntity)authenticatedUser.getPrincipal()).getUserEmail());
+                rememberMeServices.loginSuccess(request,response,authenticatedUser);
+                ((UserEntity)authenticatedUser.getPrincipal()).setUsername(rememberme);
+            }
             SecurityContextHolder.getContext().setAuthentication(authenticatedUser);
             request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
         } catch (UsernameNotFoundException usernameNotFoundException) {
@@ -159,7 +192,7 @@ public class UserController {
     //登陆
     @RequestMapping("HandleSignIn")
     @ResponseBody
-    public ResponseResult HandleSignIn(UserEntity userEntity, String validateCode, HttpServletRequest request) {
+    public ResponseResult HandleSignIn(UserEntity userEntity, String validateCode,@RequestParam(value="remember-me" ,required =false ) String rememberme, HttpServletRequest request, HttpServletResponse response) {
 
         ResponseResult responseResult = CheckValidateCode(validateCode, request);
         if (!responseResult.success) return responseResult;
@@ -171,8 +204,8 @@ public class UserController {
         if (checkStringTool.CheckStringHasSpecialChar(userEntity.getPassword()))
             return userResultBean.userLoginResult().get(402);
         //系统校验部分
-        responseResult = SignAuthentication(userEntity, request);
-        if (!responseResult.success) return responseResult;
+        responseResult = SignAuthentication(userEntity,rememberme, request,response);
+        if (!responseResult.success)return responseResult;
         else return userResultBean.userLoginResult().get(0);
     }
 
@@ -185,7 +218,7 @@ public class UserController {
 
     @RequestMapping("HandleSignUp")
     @ResponseBody
-    public ResponseResult HandleSignUp(UserEntity userEntity, String validateCode, String emailValidateCode, HttpServletRequest request) {
+    public ResponseResult HandleSignUp(UserEntity userEntity, String validateCode, String emailValidateCode, HttpServletRequest request,HttpServletResponse response) {
         ResponseResult responseResult = CheckValidateCode(validateCode, request);
         if (!responseResult.success) return responseResult;
         if (!checkStringTool.CheckStringLength(userEntity.getUsername(), 6, 20))
@@ -213,7 +246,7 @@ public class UserController {
         String password=userEntity.getPassword();
         userService.insert(userEntity);
         userEntity.setPassword(password);;
-        responseResult = SignAuthentication(userEntity, request);
+        responseResult = SignAuthentication(userEntity,null, request,response);
         if (!responseResult.success) return responseResult;
         else return userResultBean.userRegisterResult().get(0);
     }
@@ -319,10 +352,10 @@ public class UserController {
         userEntity=userService.userEntitySelectByUserId(userEntity.getUserId());
         if(userEntity==null)new ResponseResult(1,"用户不存在");
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        if(!bCryptPasswordEncoder.matches(userEntity.getPassword(),bCryptPasswordEncoder.encode(password)))
+        if(!bCryptPasswordEncoder.matches(password,userEntity.getPassword()))
             return new ResponseResult(2,"原密码输入不正确");
         userEntity.setPassword(bCryptPasswordEncoder.encode(newPassword));
-        if(userService.updatePassword(userEntity) > 0)return new ResponseResult(0,true,"修改完成");
+        if(userService.updatePassword(userEntity) > 0)return new ResponseResult(0,true,"修改成功，下次请用新密码登陆");
         return new ResponseResult(-3,"修改失败");
     }
 
