@@ -41,7 +41,83 @@ public class BlogEntity extends Category{
     //评论量
     private long commentQuantity;
 
+    public long getBlogId() {
+        return blogId;
+    }
 
+    public void setBlogId(long blogId) {
+        this.blogId = blogId;
+    }
 
+    public String getTitle() {
+        return title;
+    }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    public String getBlogLogo() {
+        return blogLogo;
+    }
+
+    public void setBlogLogo(String blogLogo) {
+        this.blogLogo = blogLogo;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public Date getBlogDate() {
+        return blogDate;
+    }
+
+    public void setBlogDate(Date blogDate) {
+        this.blogDate = blogDate;
+    }
+
+    public int getBlogStatus() {
+        return blogStatus;
+    }
+
+    public void setBlogStatus(int blogStatus) {
+        this.blogStatus = blogStatus;
+    }
+
+    public long getStarQuantity() {
+        return starQuantity;
+    }
+
+    public void setStarQuantity(long starQuantity) {
+        this.starQuantity = starQuantity;
+    }
+
+    public long getCollectQuantity() {
+        return collectQuantity;
+    }
+
+    public void setCollectQuantity(long collectQuantity) {
+        this.collectQuantity = collectQuantity;
+    }
+
+    public long getCommentQuantity() {
+        return commentQuantity;
+    }
+
+    public void setCommentQuantity(long commentQuantity) {
+        this.commentQuantity = commentQuantity;
+    }
 }

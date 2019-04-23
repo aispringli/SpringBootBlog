@@ -33,7 +33,7 @@
                     <tbody>
                     <tr th:each="category:${categoryLists}">
                         <td><span class="text-muted" th:text="${category.categoryId}">1</span></td>
-                        <td><a href="invoice.html" th:href="@{'/Home/CategoryDetails?categoryId='+${category.categoryId}}" th:text="${category.categoryName}">默认</a></td>
+                        <td><a target="_blank" th:href="@{'/Blog/MyBlog?page=1&categoryId='+${category.categoryId}}" th:text="${category.categoryName}">默认</a></td>
                         <td th:text="${#dates.format(category.categoryDate, 'yyyy-MM-dd HH:mm')}">
                             2019-04-19 12:10
                         </td>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorate="Home/Layout">
+<head>
+    <title>首页-SpringBootBlog</title>
+</head>
+
+<body class="" th:with="index_active=false">
+<div class="container" layout:fragment="content">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header row">
+                <h3 class="card-title col-2">我的博客</h3>
+                <div class="form-group card-title col-4">
+                    <div class="input-group">
+                          <span class="input-group-prepend">
+                            <span class="input-group-text">所属分类</span>
+                          </span>
+                        <select name="categoryId" id="categoryId" class="form-control custom-select">
+                            <option value="0">所有</option>
+                            <option th:each="category:${categoryLists}" th:value="${category.categoryId}"
+                                    th:text="${category.categoryName}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group card-title col-3">
+                    <div class="input-group">
+                          <span class="input-group-prepend">
+                            <span class="input-group-text">显示状态</span>
+                          </span>
+                        <select name="blogStatus" id="blogStatus" class="form-control custom-select">
+                            <option value="-99">所有</option>
+                            <option value="0">正常显示</option>
+                            <option value="1">私密可见</option>
+                            <option value="-1">管理员下架</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group card-title col-2">
+                    <button id="blgSearchBtn" class="btn btn-info">查询</button>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table card-table table-vcenter text-nowrap">
+                    <thead>
+                    <tr>
+                        <th class="w-1">编号</th>
+                        <th>名称</th>
+                        <th>所属分类</th>
+                        <th>创建时间</th>
+                        <th>点赞量</th>
+                        <th>收藏量</th>
+                        <th>评论量</th>
+                        <th>状态</th>
+                        <th>修改</th>
+                        <th>删除</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="blog:${blogLists}">
+                        <td><span class="text-muted" th:text="${blog.blogId}">1</span></td>
+                        <td><a target="_blank" th:href="@{'/Blog/MyBlog?blogId='+${blog.blogId}}"
+                               th:text="${blog.title}">默认</a></td>
+                        <td><a target="_blank" th:href="@{'/Blog/MyBlog?page=1&categoryId='+${blog.categoryId}}"
+                               th:text="${blog.categoryName}">默认</a></td>
+                        <td th:text="${#dates.format(blog.blogDate, 'yyyy-MM-dd HH:mm')}">2019-04-19 12:10</td>
+                        <td th:text="${blog.starQuantity}">0</td>
+                        <td th:text="${blog.collectQuantity}">
+                            0
+                        </td>
+                        <td th:text="${blog.commentQuantity}">
+                            0
+                        </td>
+                        <td>
+                            <div th:if="${blog.blogStatus == 0}">
+                                <span class="status-icon bg-success"></span> 正常显示
+                            </div>
+                            <div th:if="${blog.blogStatus == 1}">
+                                <span class="status-icon bg-secondary"></span> 私密可见
+                            </div>
+                            <div th:if="${blog.blogStatus == -1}">
+                                <span class="status-icon bg-danger"></span> 管理员下架
+                            </div>
+                        </td>
+                        <td>
+                            <a class="icon" target="_blank" th:href="@{'/Blog/BlogUpdate?blogId='+${blog.blogId}}">
+                                <i class="fe fe-edit"></i>
+                            </a>
+                        </td>
+                        <td>
+                            <a class="icon btnDelete" th:id="${blog.blogId}" th:attr="data-blogid=${blog.blogId}">
+                                <i class="fe fe-delete"></i>
+                            </a>
+                        </td>
+
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <hr/>
+            <ul class="pagination" id="myPagination" style="margin: auto;padding-bottom: 1rem;display: none;">
+                <li class="page-item"><a class="page-link" href="#">上一页</a></li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item"><a class="page-link" href="#">4</a></li>
+                <li class="page-item"><a class="page-link" href="#">5</a></li>
+                <li class="page-item"><a class="page-link" href="#">下一页</a></li>
+            </ul>
+        </div>
+
+    </div>
+</div>
+<th:block layout:fragment="bodyJs">
+    <script th:inline="javascript">
+        require(['jquery', 'jquery-validation'], function ($) {
+            $(function () {
+                //处理分页以及查询
+                var page = getQueryString("page");
+                if (page == null || page < 1) page = 1;
+                var categoryId = getQueryString("categoryId");
+                if (categoryId == null || categoryId === "null") categoryId = 0;
+                $("#categoryId").val(categoryId);
+                var blogStatus = getQueryString("blogStatus");
+                if (blogStatus == null || blogStatus === "null") blogStatus = -99;
+                $("#blogStatus").val(blogStatus);
+                var url = changeURLArg(window.location.href, "page", 1);
+                url = changeURLArg(url, "categoryId", $("#categoryId").val());
+                url = changeURLArg(url, "blogStatus", $("#blogStatus").val());
+                $("#blgSearchBtn").click(function () {
+                    url = changeURLArg(window.location.href, "page", 1);
+                    url = changeURLArg(url, "categoryId", $("#categoryId").val());
+                    url = changeURLArg(url, "blogStatus", $("#blogStatus").val());
+                    window.location = url;
+                });
+
+                var pageNum = [[${pageNum}]];
+                if (pageNum == null || pageNum === ""||pageNum==0) pageNum = 1;
+                pageNum = Math.ceil(pageNum / 10);
+                calMyPagination("myPagination", page, pageNum,url);
+            });
+            var deleteFlag = false;
+            var btnDeleteId = 0;
+            $("#modalConfirmBtn").click(function () {
+                deleteFlag = true;
+                $("#" + btnDeleteId).click();
+            });
+            $(".btnDelete").click(function () {
+                btnDeleteId = $(this).data('blogid');
+                if (!deleteFlag) {
+                    $("#modalConfirmBody").removeClass();
+                    $("#modalConfirmBody").addClass("alert alert-warning");
+                    $("#modalConfirmBody").html("您确认删除此博客吗？");
+                    $('#modalConfirm').modal();
+                    return;
+                }
+                deleteFlag = false;
+                $.ajax({
+                    url: "/Blog/HandleBlogDelete",
+                    type: "post",
+                    data: {
+                        "blogId": $(this).data('blogid')
+                    },
+                    success: function (result) {
+                        alert(result.message);
+                        if (result.success) location.reload();
+                    },
+                    error: function (event, XMLHttpRequest, ajaxOptions, thrownError) {
+                        if (XMLHttpRequest.status == 403 || XMLHttpRequest.status == 302) {
+                            alert('您还没有登陆，请登陆后使用');
+                            location.reload();
+                        } else alert('发生了错误,请检查网络或稍后刷新重试');
+                    }
+                });
+
+            });
+        });
+    </script>
+</th:block>
+</body>
+</html>

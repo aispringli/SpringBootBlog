@@ -2,7 +2,6 @@ package com.f5tv.springbootblog.mapper.user;
 
 import com.f5tv.springbootblog.entity.user.UserEntity;
 import org.apache.ibatis.annotations.*;
-import org.eclipse.jetty.server.Authentication;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Component;
 

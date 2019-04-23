@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 指定工作空间，要与接口名相同，源代码没有去看，猜测应该是通过"这里的namespace.下边方法的id"来定位方法的 -->
+<mapper namespace="com.f5tv.springbootblog.mapper.blog.BlogMapper">
+
+
+    <select id="selectBlogByUserId" parameterType="com.f5tv.springbootblog.entity.blog.BlogEntity"
+            resultType="com.f5tv.springbootblog.entity.blog.BlogEntity">
+        select blogId,
+        title,
+        <if test=' summary != "false" '>
+            blogLogo,
+            summary,
+        </if>
+        <if test=' content != "false" '>
+            blogLogo,
+            summary,
+            content,
+        </if>
+        blogDate,
+        blogStatus,
+        starQuantity,
+        collectQuantity,
+        commentQuantity,
+        category.categoryId,
+        categoryName
+        from blog
+        left join category
+        on blog.categoryId = category.categoryId
+        where blog.categoryId in (
+        select categoryId from category
+        where userId = #{userId}
+        <if test=' categoryId != 0 '>
+            and categoryId = #{categoryId}
+        </if>
+        )
+        <if test=' blogStatus != -99 '>
+            and blogStatus = #{blogStatus}
+        </if>
+        order by blogId desc
+    </select>
+
+    <select id="selectBlogAll" parameterType="com.f5tv.springbootblog.entity.blog.BlogEntity"
+            resultType="com.f5tv.springbootblog.entity.blog.BlogEntity">
+        select blogId,
+        title,
+        blogLogo,
+        summary,
+        blogDate,
+        blogStatus,
+        starQuantity,
+        collectQuantity,
+        commentQuantity,
+        category.categoryId,
+        categoryName,
+        user.userId,
+        username,
+        userLogoSrc
+        from blog
+        left join category
+        on blog.categoryId = category.categoryId
+        left join user
+        on category.userId=user.userId
+        <if test=' blogStatus != -99 '>
+            where  blogStatus = #{blogStatus}
+        </if>
+        order by blogId desc
+    </select>
+
+    <select id="selectBlogNumByUserId" parameterType="com.f5tv.springbootblog.entity.blog.BlogEntity"
+            resultType="java.lang.Long">
+        select
+        count(*)
+        from blog
+        where categoryId in (
+        select categoryId from category
+        where userId = #{userId}
+        <if test=' categoryId != 0 '>
+            and categoryId = #{categoryId}
+        </if>
+        )
+        <if test=' blogStatus != -99 '>
+            and blogStatus = #{blogStatus}
+        </if>
+    </select>
+
+    <select id="selectBlogAllNum" parameterType="com.f5tv.springbootblog.entity.blog.BlogEntity"
+            resultType="java.lang.Long">
+        select
+        count(*)
+        from blog
+        left join category
+        on blog.categoryId = category.categoryId
+        left join user
+        on category.userId=user.userId
+        <if test=' blogStatus != -99 '>
+            where  blogStatus = #{blogStatus}
+        </if>
+        order by blogId desc
+    </select>
+
+</mapper>

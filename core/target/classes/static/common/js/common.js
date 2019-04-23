@@ -18,17 +18,84 @@ function getQueryString(name) {
     return null;
 }
 
+//修改url参数
+function changeURLArg(url, arg, arg_val) {
+    var pattern = arg + '=([^&]*)';
+    var replaceText = arg + '=' + arg_val;
+    if (url.match(pattern)) {
+        var tmp = '/(' + arg + '=)([^&]*)/gi';
+        tmp = url.replace(eval(tmp), replaceText);
+        return tmp;
+    } else {
+        if (url.match('[\?]')) {
+            return url + '&' + replaceText;
+        } else {
+            return url + '?' + replaceText;
+        }
+    }
+}
 
 //ajax post csrf解决方法
-$(function () {
-    var token = $("meta[name='_csrf']").attr("content");
-    var header = $("meta[name='_csrf_header']").attr("content");
-    $.ajaxSetup({
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader(header, token);
-        }
+if (typeof ($) != "undefined") {
+    $(function () {
+        var token = $("meta[name='_csrf']").attr("content");
+        var header = $("meta[name='_csrf_header']").attr("content");
+        $.ajaxSetup({
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader(header, token);
+            }
+        });
     });
-});
+}
+
+function calMyPagination(id, page, pageNum, url) {
+    console.log(id + "\t" + page + "\t" + pageNum + "\t" + url);
+
+    pageNum=parseInt(pageNum);
+    page=parseInt(page);
+
+    // ("#myPagination>li:eq(0)>a:eq(3)")
+    $("#" + id + ">li:eq(3)>a:eq(0)").text(page);
+    $("#" + id + ">li:eq(3)>a:eq(0)").attr('href', changeURLArg(url, "page", page));
+
+    $("#" + id + ">li:eq(0)>a:eq(0)").attr('href', changeURLArg(url, "page", page - 1));
+
+    $("#" + id + ">li:eq(1)>a:eq(0)").text(page - 2);
+    $("#" + id + ">li:eq(1)>a:eq(0)").attr('href', changeURLArg(url, "page", page - 2));
+
+    $("#" + id + ">li:eq(2)>a:eq(0)").text(page - 1);
+    $("#" + id + ">li:eq(2)>a:eq(0)").attr('href', changeURLArg(url, "page", page - 1));
+
+    $("#" + id + ">li:eq(4)>a:eq(0)").text(page + 1);
+    $("#" + id + ">li:eq(4)>a:eq(0)").attr('href', changeURLArg(url, "page", page + 1));
+
+    $("#" + id + ">li:eq(5)>a:eq(0)").text(page + 2);
+    $("#" + id + ">li:eq(5)>a:eq(0)").attr('href', changeURLArg(url, "page", page + 2));
+
+    $("#" + id + ">li:eq(6)>a:eq(0)").attr('href', changeURLArg(url, "page", page + 1));
+    if (page === 1) {
+        console.log("page 1");
+        $("#" + id + ">li:eq(0)").addClass("disabled");
+        $("#" + id + ">li:eq(1)").hide();
+        $("#" + id + ">li:eq(2)").hide();
+    }
+    if (page === 2) {
+        console.log("page 2");
+        $("#" + id + ">li:eq(1)").hide();
+    }
+    if (page === pageNum) {
+        console.log("page end");
+        $("#" + id + ">li:eq(6)").addClass("disabled");
+        $("#" + id + ">li:eq(5)").hide();
+        $("#" + id + ">li:eq(4)").hide();
+    }
+    if (page === pageNum - 1) {
+        console.log("page end-1");
+        $("#" + id + ">li:eq(5)").hide();
+    }
+    $("#" + id).show();
+}
+
 
 // 获取cookie
 function getCookie(name) {

@@ -1,10 +1,10 @@
 package com.f5tv.springbootblog;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * @author 34499
@@ -18,8 +18,10 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableCaching
 // 微服务调用feign
 @EnableFeignClients
+@EnableTransactionManagement
 public class SpringBootMainApplicationStart {
     public static void main(String[] args){
         SpringApplication.run(SpringBootMainApplicationStart.class,args);
     }
+
 }

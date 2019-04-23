@@ -37,12 +37,16 @@ public interface CategoryMapper {
     int insert(Category category);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Update("update category set categoryName=#{categoryName},categoryStatus=#{categoryStatus} where categoryId = #{categoryId}")
+    @Update("update category set categoryName = #{categoryName},categoryStatus = #{categoryStatus} where categoryId = #{categoryId}")
     int updateNameAndStatus(Category category);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Update("update category set categoryStatus=#{categoryStatus} where categoryId = #{categoryId}")
+    @Update("update category set categoryStatus = #{categoryStatus} where categoryId = #{categoryId}")
     int updateStatus(Category category);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Update("update category set blogQuantity = blogQuantity + #{blogQuantity} where categoryId = #{categoryId}")
+    int updateBlogQuantity(Category category);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Delete("delete from category  where categoryId = #{categoryId}")

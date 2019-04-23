@@ -1,11 +1,12 @@
 package com.f5tv.springbootblog.controller.blog;
 
+import com.f5tv.springbootblog.entity.blog.BlogEntity;
 import com.f5tv.springbootblog.entity.user.UserEntity;
+import com.f5tv.springbootblog.service.blog.BlogService;
 import com.f5tv.springbootblog.service.blog.CategoryService;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -25,17 +26,21 @@ public class HomeController {
     CategoryService categoryService;
 
     @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    RememberMeServices rememberMeServices;
-
-
+    BlogService blogService;
 
     @RequestMapping(value = {"Index","/"})
-    public String Index(){
+    public ModelAndView Index(Integer page){
 
-        return "/Home/Index";
+        ModelAndView modelAndView=new ModelAndView("/Home/Index");
+        if (page == null || page < 1) page = 1;
+        BlogEntity blogEntity = new BlogEntity();
+        blogEntity.setBlogStatus(-99);
+        blogEntity.setCategoryId(0);
+        blogEntity.setUserId(0);
+        PageHelper.startPage((page - 1) * 10, 10);
+        modelAndView.addObject("blogLists",blogService.selectBlogAll(blogEntity));
+        modelAndView.addObject("pageNum",blogService.selectBlogAllNum(blogEntity));
+        return modelAndView;
     }
 
     @RequestMapping("Category")
@@ -57,5 +62,10 @@ public class HomeController {
         long userId=((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
         modelAndView.addObject("categoryLists",categoryService.categorySelectByUserId(userId));
         return modelAndView;
+    }
+
+    @RequestMapping("404")
+    public String Error404(){
+        return "/Home/Error404";
     }
 }

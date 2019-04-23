@@ -52,8 +52,22 @@ spring:
     multipart:
       max-file-size: 100Mb
       max-request-size: 100Mb
+  http:
+    encoding:
+      force: true
 
 # 打印sql
 logging:
   level:
     com.f5tv.springbootblog.mapper: debug
+
+#pagehelper分页插件配置
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+
+mybatis:
+  mapper-locations: classpath:mapper/**/*.xml

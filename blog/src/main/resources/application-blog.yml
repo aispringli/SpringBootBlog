@@ -25,3 +25,6 @@ spring:
     suffix: .html
     mode:  HTML5
     cache: false
+
+mybatis:
+  mapper-locations: classpath:mapper/**/*.xml

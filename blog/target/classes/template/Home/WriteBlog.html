@@ -10,23 +10,35 @@
 <div class="container" layout:fragment="content">
     <div class="row">
         <div class="col-12">
-            <div class="col-12 col-xl-8 offset-xl-2">
+            <div class="col-12">
                 <div class="row">
                     <div class="form-group col-6">
                         <div class="input-group">
                           <span class="input-group-prepend">
                             <span class="input-group-text">博客标题</span>
                           </span>
-                            <input type="text" maxlength="20" class="form-control"/>
+                            <input id="title" type="text" maxlength="20" class="form-control"/>
                         </div>
                     </div>
-                    <div class="form-group col-6">
+                    <div class="form-group col-3">
                         <div class="input-group">
                           <span class="input-group-prepend">
                             <span class="input-group-text">所属分类</span>
                           </span>
-                            <select name="beast" id="select-beast" class="form-control custom-select">
-                                <option th:each="category:${categoryLists}" th:value="${category.categoryId}" th:text="${category.categoryName}" ></option>
+                            <select name="categoryId" id="categoryId" class="form-control custom-select">
+                                <option th:each="category:${categoryLists}" th:value="${category.categoryId}"
+                                        th:text="${category.categoryName}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group col-3">
+                        <div class="input-group">
+                          <span class="input-group-prepend">
+                            <span class="input-group-text">显示状态</span>
+                          </span>
+                            <select name="blogStatus" id="blogStatus" class="form-control custom-select">
+                                <option value="0" selected>正常显示</option>
+                                <option value="1">私密可见</option>
                             </select>
                         </div>
                     </div>
@@ -42,23 +54,26 @@
                     <label class="form-label">博客简介，您可点击按钮自动生成简介和封面图片，亦可手动填写内容和上传图片
                         <button type="button" id="createSummaryBtn" class="btn btn-sm btn-primary">自动生成简介</button>
                         <label class="custom-checkbox custom-control-inline" style="padding-left: 20px;">
-                            <input type="checkbox" class="custom-control-input" name="" id="isBlogSummaryLogoImg" value="0" checked>
+                            <input type="checkbox" class="custom-control-input" name="" id="isBlogSummaryLogoImg"
+                                   value="0" checked>
                             <span class="custom-control-label" style="padding-left: 20px;">是否有封面图片</span>
                         </label>
                     </label>
                 </div>
                 <div class="form-group form-group col-6">
-                    <textarea maxlength="200" id="blogSummary" class="form-control" rows="6" placeholder="简介"></textarea>
+                    <textarea maxlength="200" id="blogSummary" class="form-control" rows="6"
+                              placeholder="简介"></textarea>
                 </div>
                 <div class="form-group col-6">
-                    <img id="blogSummaryLogoImg" style="height: 150px;cursor: pointer;" src="/static/file/logo/demo.jpg" alt="点击上传图片" title="点击上传图片" />
+                    <img id="blogSummaryLogoImg" style="height: 150px;cursor: pointer;" src="/static/file/logo/demo.jpg"
+                         alt="点击上传图片" title="点击上传图片"/>
                     <form id="form" enctype="multipart/form-data" style="width:auto;">
                         <input type="file" name="file" id="fileInput" accept="image/*" style="display:none;">
                     </form>
                 </div>
             </div>
             <div class="card-footer text-center">
-                <button type="submit" class="btn btn-primary">发表</button>
+                <button type="submit" id="blogAddBtn" class="btn btn-primary">发表</button>
             </div>
         </div>
     </div>
@@ -66,17 +81,25 @@
 <th:block layout:fragment="bodyJs">
     <script>
         var editor;
+
         //上传文件
-        function uploadFile(fileElem){
-            require(['jquery','wangEditor'], function ($) {
+        function uploadFile(fileElem) {
+            require(['jquery', 'wangEditor'], function ($) {
                 // 添加文件数据
                 var form_data = new FormData();
-                for(var i=0;i<fileElem.files.length;i++){
-                    console.log(fileElem.files[i].name);
+                var size = 0;
+                for (var i = 0; i < fileElem.files.length; i++) {
+                    if (fileElem.files[i].size > 100 * 1024 * 1024) {
+                        alert("所选文件中单个文件大于100MB,无法上传");
+                        return;
+                    }
+                    size = size + fileElem.files[i].size;
+                    if (size > 1024 * 1024 * 1024) {
+                        alert("所选文件大于1GB,无法上传");
+                        return;
+                    }
                     form_data.append("files", fileElem.files[i]);
                 }
-                console.log(fileElem.files);
-                console.log(form_data);
                 $.ajax({
                     url: "/FileUpload/UploadBlogFile",
                     type: "post",
@@ -84,20 +107,19 @@
                     contentType: false,
                     processData: false,
                     success: function (result) {
-                        if (result.errno==0) {
+                        if (result.errno == 0) {
                             //上传成功后处理
                             $("#modalTipBody").removeClass();
                             $("#modalTipBody").addClass("alert alert-success");
                             $("#modalTipBody").html("上传成功");
                             $('#modalTip').modal();
                             //显示到编辑器里面的
-                            for(var i=0;i<result.data.length;i++){
-                                var link="<a href='/FileUpload/Download?fileName"+result.data[i]+"'>"+result.name[i]+"</a>";
+                            for (var i = 0; i < result.data.length; i++) {
+                                var link = "<p><a href='/FileUpload/Download?fileName" + result.data[i] + "'>" + result.name[i] + "</a></p>";
                                 editor.txt.append(link);
                             }
-                            return ;
-                        }
-                        else{
+                            return;
+                        } else {
                             $("#modalTipBody").removeClass();
                             $("#modalTipBody").addClass("alert alert-danger");
                             $("#modalTipBody").html("发生了错误,请检查网络或稍后刷新重试");
@@ -117,7 +139,7 @@
             });
         }
 
-        require(['jquery','wangEditor'], function ($,E) {
+        require(['jquery', 'wangEditor'], function ($, E) {
             editor = new E('#editor');
             editor.customConfig.zIndex = 0;
             editor.customConfig.uploadFileName = 'files';
@@ -127,13 +149,13 @@
 
             //简介有关的
             $("#isBlogSummaryLogoImg").click(function () {
-                if($("#isBlogSummaryLogoImg").is(":checked"))$("#blogSummaryLogoImg").show();
+                if ($("#isBlogSummaryLogoImg").is(":checked")) $("#blogSummaryLogoImg").show();
                 else $("#blogSummaryLogoImg").hide();
             });
             //上传封面图片
             $("#blogSummaryLogoImg").click(function () {
-                    $("#fileInput").click();
-                });
+                $("#fileInput").click();
+            });
 
             $("#fileInput").on('input', function (e) {
                 var formData = new FormData($("#form")[0]);
@@ -150,9 +172,8 @@
                             $("#modalTipBody").addClass("alert alert-success");
                             $("#modalTipBody").html("上传成功");
                             $('#modalTip').modal();
-                            return ;
-                        }
-                        else{
+                            return;
+                        } else {
                             $("#modalTipBody").removeClass();
                             $("#modalTipBody").addClass("alert alert-danger");
                             $("#modalTipBody").html("发生了错误,请检查网络或稍后刷新重试");
@@ -173,18 +194,74 @@
             });
 
             $("#createSummaryBtn").click(function () {
-                $("#blogSummary").val(editor.txt.text().substr(0,200));
+                $("#blogSummary").val(editor.txt.text().substr(0, 200).replace(/&nbsp;/g, "  "));
+                if (!$("#isBlogSummaryLogoImg").is(":checked")) return;
                 var regex = /<img.*?src="(.*?)"/;
-                var list=regex.exec(editor.txt.html());
-                if(list!=null){
+                var list = regex.exec(editor.txt.html());
+                if (list != null) {
                     $('#blogSummaryLogoImg').attr("src", list[1]);
-                    var src = list[1].replace(window.location.origin,"")
+                    var src = list[1].replace(window.location.origin, "");
                     console.log(src);
                 }
-
             });
 
+            $("#blogAddBtn").click(function () {
 
+                $("#modalTipBody").removeClass();
+                $("#modalTipBody").addClass("alert alert-danger");
+                if ($("#title").val() == null || $("#title").val() === "") {
+                    $("#modalTipBody").html("未输入标题内容");
+                    $('#modalTip').modal();
+                    return;
+                }
+                if (editor.txt.html() == null || editor.txt.html() === "") {
+                    $("#modalTipBody").html("未输入博客内容");
+                    $('#modalTip').modal();
+                    return;
+                }
+
+                $("#modalConfirmBody").removeClass();
+                $("#modalConfirmBody").addClass("alert alert-warning");
+                $("#modalConfirmBody").html("您确认要发表吗？");
+                $('#modalConfirm').modal();
+            });
+            $("#modalConfirmBtn").click(function () {
+                var blogSummaryLogoImg = "";
+                if ($("#isBlogSummaryLogoImg").is(":checked")) blogSummaryLogoImg = $('#blogSummaryLogoImg').attr("src");
+                $.ajax({
+                    url: "/Blog/HandleBlogAdd",
+                    type: "post",
+                    data: {
+                        "title": $("#title").val(),
+                        "categoryId": $("#categoryId").val(),
+                        "blogStatus": $("#blogStatus").val(),
+                        "content": editor.txt.html(),
+                        "blogLogo": blogSummaryLogoImg,
+                        "summary": $("#blogSummary").val()
+                    },
+                    success: function (result) {
+                        $("#modalTipBody").html(result.message);
+                        $("#modalTipBody").removeClass();
+                        if (result.success) {
+                            //上传成功后处理
+                            $("#modalTipBody").addClass("alert alert-success");
+                            editor.txt.html("");
+                            $("#blogSummary").val("");
+                            $("#title").val("")
+                        } else $("#modalTipBody").addClass("alert alert-danger");
+                        $('#modalTip').modal();
+                    },
+                    error: function (event, XMLHttpRequest, ajaxOptions, thrownError) {
+                        $("#modalTipBody").removeClass();
+                        $("#modalTipBody").addClass("alert alert-danger");
+                        $('#modalTip').modal();
+                        if (XMLHttpRequest.status == 403 || XMLHttpRequest.status == 302) {
+                            $("#modalTipBody").html("您还没有登陆,请登陆后使用");
+                            location.reload();
+                        }
+                    }
+                });
+            });
         });
     </script>
 </th:block>
