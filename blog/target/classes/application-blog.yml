@@ -6,7 +6,7 @@ spring:
     static-locations: classpath:/static/
   datasource:
     driver-class-name: com.mysql.jdbc.Driver               #配置oracle驱动类
-    url: jdbc:mysql://localhost:3306/springBootBlog?useUnicode=true&amp;characterEncoding=UTF-8&useSSL=false&autoReconnect=true             #配置数据库连接地址
+    url: jdbc:mysql://localhost:3306/springBootBlog?useAffectedRows=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true             #配置数据库连接地址
     username: root                                         #配置数据库连接用户名
     password: 123456                                         #配置数据库连接用户密码
     type: com.zaxxer.hikari.HikariDataSource

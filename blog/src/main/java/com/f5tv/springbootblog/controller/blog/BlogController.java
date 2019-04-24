@@ -6,6 +6,7 @@ import com.f5tv.springbootblog.entity.core.ResponseResult;
 import com.f5tv.springbootblog.entity.user.UserEntity;
 import com.f5tv.springbootblog.service.blog.BlogService;
 import com.f5tv.springbootblog.service.blog.CategoryService;
+import com.f5tv.springbootblog.service.user.UserService;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,6 +34,9 @@ public class BlogController {
     @Autowired
     CategoryService categoryService;
 
+    @Autowired
+    UserService userService;
+
     @RequestMapping("HandleBlogAdd")
     @ResponseBody
     public ResponseResult HandleBlogAdd(BlogEntity blogEntity) {
@@ -43,7 +47,6 @@ public class BlogController {
     @RequestMapping("MyBlog")
     public ModelAndView MyBlog(Integer page, Long categoryId, Integer blogStatus) {
         if (page == null || page < 1) page = 1;
-
         ModelAndView modelAndView = new ModelAndView("Blog/MyBlog");
         long userId = ((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
         List<Category> categoryLists = categoryService.categorySelectByUserId(userId);
@@ -56,10 +59,55 @@ public class BlogController {
         blogEntity.setUserId(userId);
         blogEntity.setContent("false");
         blogEntity.setSummary("false");
-        PageHelper.startPage((page - 1) * 10, 10);
+        PageHelper.startPage(page, 10);
         System.out.println("page: " + page);
         modelAndView.addObject("blogLists", blogService.selectBlogByUserId(blogEntity));
         modelAndView.addObject("pageNum", blogService.selectBlogNumByUserId(blogEntity));
+        return modelAndView;
+    }
+
+    @RequestMapping("BlogDetails")
+    public ModelAndView BlogDetails(Long blogId) {
+        if (blogId == null) return new ModelAndView("/Home/Error404");
+        BlogEntity blogEntity = blogService.selectBlogByBlogId(blogId);
+        if (blogEntity == null) return new ModelAndView("/Home/Error404");
+        //非公开的只能个人或管理员浏览
+        if (blogEntity.getBlogStatus() != 0 && (SecurityContextHolder.getContext().getAuthentication().getPrincipal() == null
+                || ((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId() != blogEntity.getUserId()))
+            return new ModelAndView("/Home/Error404");
+        List<Category> categoryLists = categoryService.categorySelectByUserId(blogEntity.getUserId());
+        ModelAndView modelAndView = new ModelAndView("Blog/BlogDetails");
+        modelAndView.addObject("categoryLists", categoryLists);
+        modelAndView.addObject("blogEntity", blogEntity);
+        return modelAndView;
+    }
+
+    @RequestMapping("BlogDashboard")
+    public ModelAndView BlogDashboard(Long userId, Long categoryId, Integer page) {
+        if (page == null || page < 1) page = 1;
+        if (userId == null) return new ModelAndView("/Home/Error404");
+        UserEntity userEntity = userService.userEntitySelectByUserId(userId);
+        if (userEntity == null) return new ModelAndView("/Home/Error404");
+        ModelAndView modelAndView = new ModelAndView("Blog/BlogDashboard");
+        modelAndView.addObject("userEntity", userEntity);
+        List<Category> categoryLists = categoryService.categorySelectByUserId(userId);
+
+        modelAndView.addObject("categoryLists", categoryLists);
+        PageHelper.startPage(1, 10);
+        BlogEntity blogEntity = new BlogEntity();
+        blogEntity.setUserId(userId);
+        if (categoryId != null) {
+            blogEntity.setCategoryId(categoryId);
+            modelAndView.addObject("categoryId", categoryId);
+        } else {
+            blogEntity.setCategoryId(0);
+            modelAndView.addObject("categoryId", 0);
+        }
+        blogEntity.setBlogStatus(0);
+        blogEntity.setContent("false");
+        PageHelper.startPage(page, 10);
+        List<BlogEntity> blogLists = blogService.selectBlogByUserId(blogEntity);
+        modelAndView.addObject("blogLists", blogLists);
         return modelAndView;
     }
 
@@ -97,17 +145,20 @@ public class BlogController {
         return blogService.BlogDelete(blogId, userId);
     }
 
-    @RequestMapping("HandleBlogSelectAllNormal")
-    @ResponseBody
-    public List<BlogEntity> HandleBlogSelectAllNormal(Integer page) {
+
+    @RequestMapping("HandleBlogSelectAllNormalAjax")
+    public ModelAndView HandleBlogSelectAllNormalAjax(Integer page, Long userId, Long categoryId) {
+        ModelAndView modelAndView = new ModelAndView("/Blog/blogListsTemplate");
         if (page == null || page < 1) page = 1;
         BlogEntity blogEntity = new BlogEntity();
-        blogEntity.setBlogStatus(-99);
-        blogEntity.setCategoryId(0);
-        blogEntity.setUserId(0);
-        PageHelper.startPage((page - 1) * 10, 10);
-        return blogService.selectBlogAll(blogEntity);
+        if (userId != null && userId > 0) {
+            blogEntity.setUserId(userId);
+            if (categoryId != null && categoryId > 0) blogEntity.setCategoryId(categoryId);
+            else blogEntity.setCategoryId(0);
+        }
+        PageHelper.startPage(page, 10);
+        modelAndView.addObject("blogLists", blogService.selectBlogAll(blogEntity));
+        return modelAndView;
     }
-
 
 }

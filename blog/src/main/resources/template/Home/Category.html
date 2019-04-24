@@ -57,7 +57,7 @@
                             </a>
                         </td>
                         <td>
-                            <a class="icon btnDelete" th:id="${category.categoryId}"  th:attr="data-categoryid=${category.categoryId}">
+                            <a class="icon btnDelete" th:id="${category.categoryId}"  th:attr="data-categoryid=${category.categoryId},data-categoryname=${category.categoryName}">
                                 <i class="fe fe-delete"></i>
                             </a>
                         </td>
@@ -171,11 +171,19 @@
                 $('#updateCategoryModal').on('show.bs.modal', function (event) {
                     var btnThis = $(event.relatedTarget); //触发事件的按钮
                     //var modal = $(this);  //当前模态框
-                    var modalId = btnThis.data('id');   //解析出data-id的内容
+                    //var modalId = btnThis.data('id');   //解析出data-id的内容
                     $("#updateCategoryIdInput").val(btnThis.data('categoryid'));
                     $("#categoryStatus").val(btnThis.data('categorystatus'));
                     $("#updateCategoryNameInput").val(btnThis.data('categoryname'));
-
+                    if(btnThis.data('categoryname')=="默认"||btnThis.data('categorystatus')==-1){
+                        $("#modalTipBody").removeClass();
+                        $("#modalTipBody").addClass("alert alert-danger");
+                        $('#modalTip').modal();
+                        if(btnThis.data('categoryname')=="默认")$("#modalTipBody").html("默认分类无法修改");
+                        else $("#modalTipBody").html("被管理员下架的无法修改");
+                        $(this).removeData("bs.modal");
+                        return event.preventDefault();
+                    }
                     //var content = btnThis.closest('tr').find('td').eq(2).text();
                 });
             });
@@ -268,6 +276,13 @@
                 $("#"+btnDeleteId).click();
             });
             $(".btnDelete").click(function () {
+                if($(this).data('categoryname')=="默认"){
+                    $("#modalTipBody").removeClass();
+                    $("#modalTipBody").addClass("alert alert-danger");
+                    $('#modalTip').modal();
+                    $("#modalTipBody").html("默认分类无法删除");
+                    return event.preventDefault();
+                }
                 btnDeleteId=$(this).data('categoryid');
                 if(!deleteFlag){
                     $("#modalConfirmBody").removeClass();

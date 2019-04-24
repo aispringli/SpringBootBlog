@@ -15,7 +15,7 @@
             <div class="header py-4">
                 <div class="container">
                     <div class="d-flex">
-                        <a class="header-brand" href="Index">
+                        <a class="header-brand" href="/Home/Index">
                             <img src="/static/file/logo/demo.jpg" class="header-brand-img" alt="tabler logo">
                         </a>
                         <div class="d-flex order-lg-2 ml-auto">
@@ -40,7 +40,7 @@
                                     </span>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                                    <a class="dropdown-item" href="#">
+                                    <a class="dropdown-item" th:href="@{'/Blog/BlogDashboard?userId='+${#authentication.principal.userId}}">
                                         <i class="dropdown-icon fe fe-home"></i> 主 页
                                     </a>
                                     <a class="dropdown-item" th:href="@{/Home/Category}">
@@ -235,7 +235,7 @@
                                 <div class="card-body">
                                     <div class="form-group ">
                                         <div class="row align-items-center">
-                                            <label class="form-label col-sm-3">邮箱</label>
+                                            <label class="form-label col-3">邮箱</label>
                                             <div class="col-9">
                                                 <input name="userEmail" type="email" required class="form-control"
                                                        placeholder="邮箱">

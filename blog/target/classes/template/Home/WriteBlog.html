@@ -115,7 +115,7 @@
                             $('#modalTip').modal();
                             //显示到编辑器里面的
                             for (var i = 0; i < result.data.length; i++) {
-                                var link = "<p><a href='/FileUpload/Download?fileName" + result.data[i] + "'>" + result.name[i] + "</a></p>";
+                                var link = "<p><a href='/FileUpload/Download?fileNameId=" + result.data[i] + "&fileName="+result.name[i] +"'>" + result.name[i] + "</a></p>";
                                 editor.txt.append(link);
                             }
                             return;
@@ -239,7 +239,7 @@
                         "blogLogo": blogSummaryLogoImg,
                         "summary": $("#blogSummary").val()
                     },
-                    success: function (result) {
+                    success: function (result,textStatus, xhr) {
                         $("#modalTipBody").html(result.message);
                         $("#modalTipBody").removeClass();
                         if (result.success) {

@@ -62,10 +62,51 @@
         on blog.categoryId = category.categoryId
         left join user
         on category.userId=user.userId
-        <if test=' blogStatus != -99 '>
-            where  blogStatus = #{blogStatus}
-        </if>
+        <where>
+            <if test=' userId >0 '>
+                user.userId = #{userId}
+            </if>
+            <if test=' categoryId >0 '>
+                and category.categoryId = #{categoryId}
+            </if>
+            <if test=' blogStatus != -99 '>
+                and blogStatus = #{blogStatus}
+            </if>
+        </where>
+
+
         order by blogId desc
+    </select>
+
+
+    <select id="selectBlogByBlogId" parameterType="java.lang.Long"
+            resultType="com.f5tv.springbootblog.entity.blog.BlogEntity">
+        select blogId,
+               title,
+               blogLogo,
+               summary,
+               blogLogo,
+               summary,
+               content,
+               blogDate,
+               blogStatus,
+               starQuantity,
+               collectQuantity,
+               commentQuantity,
+               category.categoryId,
+               categoryName,
+               category.userId,
+               username,
+               userEmail,
+               userLogoSrc,
+               userMotto,
+               userFollowerQuantity
+        from blog
+                 left join category
+                           on blog.categoryId = category.categoryId
+                 left join user
+                           on category.userId = user.userId
+        where blog.blogId = #{blogId}
     </select>
 
     <select id="selectBlogNumByUserId" parameterType="com.f5tv.springbootblog.entity.blog.BlogEntity"
@@ -95,9 +136,26 @@
         left join user
         on category.userId=user.userId
         <if test=' blogStatus != -99 '>
-            where  blogStatus = #{blogStatus}
+            where blogStatus = #{blogStatus}
         </if>
         order by blogId desc
     </select>
 
+    <update id="updateBlogStatus" parameterType="com.f5tv.springbootblog.entity.blog.BlogEntity">
+        update blog
+        set blogStatus = #{blogStatus}
+        <if test=' blogId >0 '>
+            where blogId = #{blogId}
+        </if>
+        <if test=' categoryId >0 '>
+            where categoryId in(select categoryId from category where categoryId = #{categoryId})
+        </if>
+        <if test=' userId >0 '>
+            where categoryId in(select categoryId from category where userId = #{userId})
+        </if>
+        <if test=' categoryStatus ==-1 '>
+            and blogStatus >-1
+        </if>
+
+    </update>
 </mapper>

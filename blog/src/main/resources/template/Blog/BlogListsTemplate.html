@@ -1,0 +1,41 @@
+<div class="card card-aside" th:each="blog: ${blogLists}">
+    <div class="card-body d-flex flex-column" style="padding-right: 160px;">
+        <h4><a target="_blank" th:href="@{'/Blog/BlogDetails?blogId='+${blog.blogId}}"
+               th:text="${blog.title}">title</a></h4>
+        <a class="text-muted" th:href="@{'/Blog/BlogDetails?blogId='+${blog.blogId}}" target="_blank"
+           style="word-break: break-all;" th:text="${blog.summary}+'...'">summary</a>
+        <div class="d-flex align-items-center pt-5 mt-auto">
+            <a class="avatar avatar-md mr-3" th:href="@{'/Blog/BlogDashboard?userId='+${blog.userId}}"
+               target="_blank"
+               th:style="'background-image:url('+${blog.userLogoSrc}+')'"></a>
+            <div>
+                <a th:href="@{'/Blog/BlogDashboard?userId='+${blog.userId}}" target="_blank" class="text-default"
+                   th:text="${blog.username}">username</a>
+                <small class="d-block text-muted"
+                       th:text="${#dates.format(blog.blogDate, 'yyyy-MM-dd HH:mm')}">3 days ago
+                </small>
+            </div>
+            <div>
+                <h5 style="margin: 5px 15px;"><a
+                        th:href="@{'/Blog/BlogDashboard?userId='+${blog.userId}+'&categoryId='+${blog.categoryId}}"
+                        target="_blank" class="text-default" th:text="${blog.categoryName}">username</a></h5>
+            </div>
+            <div class="text-muted">
+                <a href="#" class="d-none d-md-inline-block ml-3"><i class="fa fa-heart" aria-hidden="true"
+                                                                     style="color: red;"></i></a><span
+                    style="margin-left: 10px;" th:text="${blog.collectQuantity}"></span>
+                <a href="#" class="d-none d-md-inline-block ml-3"><i class="fa fa-thumbs-o-up"
+                                                                     aria-hidden="true"></i></a><span
+                    style="margin-left: 10px;" th:text="${blog.starQuantity}"></span>
+                <span class="d-none d-md-inline-block ml-3"><i class="fa fa-comments-o"
+                                                               aria-hidden="true"></i><span
+                        style="margin-left: 10px;" th:text="${blog.commentQuantity}"></span></span>
+            </div>
+        </div>
+    </div>
+    <div th:if="${blog.blogLogo != ''}" style="width: 155px;height: 100%;position: absolute;right: 5px;">
+        <a th:href="@{'/Blog/BlogDetails?blogId='+${blog.blogId}}" target="_blank" class="card-aside-column">
+            <img th:src="${blog.blogLogo}" style="width: 100%;height: auto;margin-top: 10px;"/>
+        </a>
+    </div>
+</div>

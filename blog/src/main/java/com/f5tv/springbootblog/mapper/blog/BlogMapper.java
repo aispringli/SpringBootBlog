@@ -48,7 +48,6 @@ public interface BlogMapper {
     int blogInsert(BlogEntity blogEntity);
 
     @Lock(LockModeType.PESSIMISTIC_READ)
-    @Select("select * from blog where blogId = #{blogId}")
     BlogEntity selectBlogByBlogId(long blogId);
 
     @Lock(LockModeType.PESSIMISTIC_READ)
@@ -74,8 +73,7 @@ public interface BlogMapper {
 
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Update("update blog set blogStatus = #{blogStatus} where blogId = #{blogId}")
-    int updateBlogStatus(BlogEntity blogEntity);
+    long updateBlogStatus(BlogEntity blogEntity);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Update("update blog set title = #{title}, summary = #{summary}, blogLogo = #{blogLogo}, content = #{content}, " +

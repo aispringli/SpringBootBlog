@@ -9,32 +9,142 @@
 <body class="" th:with="index_active='active'">
 <div class="container" layout:fragment="content">
     <div class="row row-cards row-deck">
-        <div class="col-lg-8 offset-lg-2" th:each="blog: ${blogLists}">
-            <div class="card card-aside">
+        <div class="col-lg-8 offset-lg-2">
+            <div class="card card-aside" th:each="blog: ${blogLists}">
                 <div class="card-body d-flex flex-column" style="padding-right: 160px;">
-                    <h4><a href="#" th:text="${blog.title}">title</a></h4>
-                    <div class="text-muted" style="word-break: break-all;" th:text="${blog.summary}+'...'">summary</div>
+                    <h4><a target="_blank" th:href="@{'/Blog/BlogDetails?blogId='+${blog.blogId}}"
+                           th:text="${blog.title}">title</a></h4>
+                    <a class="text-muted" th:href="@{'/Blog/BlogDetails?blogId='+${blog.blogId}}" target="_blank"
+                       style="word-break: break-all;" th:text="${blog.summary}+'...'">summary</a>
                     <div class="d-flex align-items-center pt-5 mt-auto">
-                        <div class="avatar avatar-md mr-3" th:style="'background-image:url('+${blog.userLogoSrc}+')'"></div>
+                        <a class="avatar avatar-md mr-3" th:href="@{'/Blog/BlogDashboard?userId='+${blog.userId}}"
+                           target="_blank"
+                           th:style="'background-image:url('+${blog.userLogoSrc}+')'"></a>
                         <div>
-                            <a href="./profile.html" class="text-default" th:text="${blog.username}">username</a>
-                            <small class="d-block text-muted" th:text="${#dates.format(blog.blogDate, 'yyyy-MM-dd HH:mm')}">3 days ago</small>
+                            <a th:href="@{'/Blog/BlogDashboard?userId='+${blog.userId}}" target="_blank"
+                               class="text-default" th:text="${blog.username}">username</a>
+                            <small class="d-block text-muted"
+                                   th:text="${#dates.format(blog.blogDate, 'yyyy-MM-dd HH:mm')}">3 days ago
+                            </small>
+                        </div>
+                        <div>
+                            <h5 style="margin: 5px 15px;"><a
+                                    th:href="@{'/Blog/BlogDashboard?userId='+${blog.userId}+'&categoryId='+${blog.categoryId}}"
+                                    target="_blank" class="text-default" th:text="${blog.categoryName}">username</a>
+                            </h5>
                         </div>
                         <div class="text-muted">
-                            <a href="javascript:void(0)" class="d-none d-md-inline-block ml-3"><i class="fe fe-heart mr-1"></i></a>
+                            <a href="#" class="d-none d-md-inline-block ml-3"><i class="fa fa-heart" aria-hidden="true"
+                                                                                 style="color: red;"></i></a><span
+                                style="margin-left: 10px;" th:text="${blog.collectQuantity}"></span>
+                            <a href="#" class="d-none d-md-inline-block ml-3"><i class="fa fa-thumbs-o-up"
+                                                                                 aria-hidden="true"></i></a><span
+                                style="margin-left: 10px;" th:text="${blog.starQuantity}"></span>
+                            <span class="d-none d-md-inline-block ml-3"><i class="fa fa-comments-o"
+                                                                           aria-hidden="true"></i><span
+                                    style="margin-left: 10px;" th:text="${blog.commentQuantity}"></span></span>
                         </div>
                     </div>
                 </div>
                 <div th:if="${blog.blogLogo != ''}" style="width: 155px;height: 100%;position: absolute;right: 5px;">
-                    <a href="#" class="card-aside-column" >
-                        <img th:src="${blog.blogLogo}" style="width: 100%;height: auto;margin-top: 10px;" />
+                    <a th:href="@{'/Blog/BlogDetails?blogId='+${blog.blogId}}" target="_blank"
+                       class="card-aside-column">
+                        <img th:src="${blog.blogLogo}" style="width: 100%;height: auto;margin-top: 10px;"/>
                     </a>
                 </div>
-
             </div>
 
+            <div class="">
+                <a href="#">
+                    <div class="alert alert-icon alert-primary text-center" role="alert" id="loadMoreBtn">
+                        <div>
+                            <i class="fa fa-angle-double-down" aria-hidden="true"></i> 阅读更多
+                        </div>
+                </a>
+            </div>
+        </div>
+        <div class="side-tool" style="position:fixed;right:60px;bottom:50px;display: none;">
+            <ul style="list-style: none;">
+                <li class="text-center" id="backTopBtn" data-placement="left" data-toggle="tooltip"
+                    data-container="body"
+                    data-original-title="回到顶部"
+                    style="border: 1px solid #dcdcdc;border-bottom: none;background-color: #fff;transition: .1s ease-in;line-height: 20px;width: 50px;padding: 5px 0;cursor:pointer;">
+                    <a style=""><i class="fa fa-angle-up fa-2x"></i></a></li> <!---->
+                <li class="text-center" data-placement="left" data-toggle="tooltip" data-container="body"
+                    data-original-title="回到顶部"
+                    style="border:1px solid #dcdcdc;background-color: #fff;transition: .1s ease-in;line-height: 20px;width: 50px;padding: 5px 0;cursor:pointer;">
+                    <a style="padding: 9px 0;"><i class="fa fa-angle-up fa-2x"></i></a></li> <!---->
+            </ul>
         </div>
     </div>
 </div>
+</div>
+<th:block layout:fragment="bodyJs">
+    <script th:inline="javascript">
+        require(['jquery', 'jquery-validation'], function ($) {
+            var page = 2;
+            $("#loadMoreBtn").click(function () {
+                $.ajax({
+                    url: "/Blog/HandleBlogSelectAllNormalAjax",
+                    type: "post",
+                    data: {
+                        "page": page
+                    },
+                    success: function (result, textStatus, xhr) {
+                        $("#loadMoreBtn").parent().before(result);
+                        page = page + 1;
+                        if (!(result == null || result === "" || result.split("card-aside").length < 11)) {
+                            return;
+                        }
+                        console.log("暂无更多");
+                        $("#loadMoreBtn").removeClass("alert-primary");
+                        $("#loadMoreBtn").addClass("alert-warning");
+                        $("#loadMoreBtn").html("<div><i class='fa fa-angle-double-up' aria-hidden='true'></i> 暂无更多</div>");
+                    },
+                    error: function (event, XMLHttpRequest, ajaxOptions, thrownError) {
+                        if (XMLHttpRequest.status == 403 || XMLHttpRequest.status == 302) {
+                            alert('您还没有登陆，请登陆后使用');
+                            location.reload();
+                        } else alert('发生了错误,请检查网络或稍后刷新重试');
+                    }
+                });
+
+                return false;
+            });
+
+            $(function () {
+
+                var pagelookheight = document.documentElement.clientHeight;//获取屏幕的高度
+                //滚动超出高度，显示按钮，否则隐藏
+                var backtop = document.documentElement.scrollTop;
+                if (backtop >= pagelookheight - $(".fixed-top").height()) {//  滚动超过一频    应该显示
+                    $(".side-tool").show();
+                } else {
+                    $(".side-tool").hide();
+                }
+                window.onscroll = function () {
+                    //滚动超出高度，显示按钮，否则隐藏
+                    backtop = document.documentElement.scrollTop;
+                    if (backtop >= pagelookheight - $(".fixed-top").height()) {//  滚动超过一频    应该显示
+                        $(".side-tool").show();
+                    } else {
+                        $(".side-tool").hide();
+                    }
+                };
+                $("#backTopBtn").click(function () {
+                    var timer = setInterval(function () {
+                        var backtop = document.documentElement.scrollTop;
+                        var speedtop = 50;//速度操作  减速
+                        document.documentElement.scrollTop = backtop - speedtop;  //高度不断减少
+                        if (backtop == 0) {  //滑动到顶端
+                            clearInterval(timer);  //清除计时器
+                        }
+                    }, 30);
+
+                });
+            });
+        });
+    </script>
+</th:block>
 </body>
 </html>

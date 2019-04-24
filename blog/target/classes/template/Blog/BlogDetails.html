@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorate="Home/Layout">
+<head>
+    <title>首页-SpringBootBlog</title>
+</head>
+
+<body class="">
+<div class="container" layout:fragment="content">
+    <div class="row">
+        <div class="col-md-2">
+            <h3 class="page-title" th:text="${blogEntity.username}" >username</h3>
+            <a href="#" class="btn btn-pill btn-lime"><i class="fe fe-plus"></i> 关注</a>
+            <div style="padding-top: 15px;">
+                <div class="list-group list-group-transparent mb-0">
+                    <div th:each="category:${categoryLists}">
+                        <a th:href="@{'/Blog/BlogDashboard?userId='+${blogEntity.userId}+'&categoryId='+${category.categoryId}}" th:if="${category.categoryId == blogEntity.categoryId}" class="list-group-item list-group-item-action d-flex align-items-center active">
+                            <span th:text="${category.categoryName}"></span><span th:text="'（'+${category.blogQuantity}+'）'"></span>
+                        </a>
+                        <a th:href="@{'/Blog/BlogDashboard?userId='+${blogEntity.userId}+'&categoryId='+${category.categoryId}}" th:if="${category.categoryId != blogEntity.categoryId}"  class="list-group-item list-group-item-action d-flex align-items-center">
+                            <span th:text="${category.categoryName}"></span></span><span th:text="'（'+${category.blogQuantity}+'）'"></span>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-10">
+            <div class="card">
+                <div class="card-header">
+                    <h3 th:text="${blogEntity.title}">title</h3>
+                    <span th:text="${#dates.format(blogEntity.blogDate, 'yyyy-MM-dd HH:mm')}" style="padding: 0 10px;"></span>
+                    <span style="padding: 0 10px;">收藏  <span th:text="${blogEntity.collectQuantity}"></span></span>
+                    <span style="padding: 0 10px;">点赞  <span th:text="${blogEntity.starQuantity}"></span></span>
+                    <span style="padding: 0 10px;">评论  <span th:text="${blogEntity.commentQuantity}"></span></span>
+                </div>
+                <div class="card-body">
+                    <th:block th:utext="${blogEntity.content}"></th:block>
+                    <p th:content="${blogEntity.content}"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block layout:fragment="bodyJs">
+    <script th:inline="javascript">
+        require(['jquery', 'jquery-validation'], function ($) {
+
+            $.ajax({
+                url: "/Blog/HandleBlogDelete",
+                type: "post",
+                data: {
+                    "blogId": 0
+                },
+                success: function (result,textStatus, xhr) {
+                    console.log(xhr.status);
+                },
+                error: function (event, XMLHttpRequest, ajaxOptions, thrownError) {
+                    if (XMLHttpRequest.status == 403 || XMLHttpRequest.status == 302) {
+                        alert('您还没有登陆，请登陆后使用');
+                        location.reload();
+                    } else alert('发生了错误,请检查网络或稍后刷新重试');
+                }
+            });
+        });
+    </script>
+</th:block>
+</body>
+</html>

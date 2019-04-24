@@ -34,12 +34,12 @@ public class HomeController {
         ModelAndView modelAndView=new ModelAndView("/Home/Index");
         if (page == null || page < 1) page = 1;
         BlogEntity blogEntity = new BlogEntity();
-        blogEntity.setBlogStatus(-99);
+        blogEntity.setBlogStatus(0);
         blogEntity.setCategoryId(0);
         blogEntity.setUserId(0);
-        PageHelper.startPage((page - 1) * 10, 10);
+        PageHelper.startPage(page, 10);
         modelAndView.addObject("blogLists",blogService.selectBlogAll(blogEntity));
-        modelAndView.addObject("pageNum",blogService.selectBlogAllNum(blogEntity));
+//        modelAndView.addObject("pageNum",blogService.selectBlogAllNum(blogEntity));
         return modelAndView;
     }
 
