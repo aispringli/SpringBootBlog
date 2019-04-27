@@ -64,8 +64,5 @@ public class HomeController {
         return modelAndView;
     }
 
-    @RequestMapping("404")
-    public String Error404(){
-        return "/Home/Error404";
-    }
+
 }

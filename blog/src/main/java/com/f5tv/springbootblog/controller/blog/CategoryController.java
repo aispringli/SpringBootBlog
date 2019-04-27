@@ -1,6 +1,6 @@
 package com.f5tv.springbootblog.controller.blog;
 
-import com.f5tv.springbootblog.entity.blog.Category;
+import com.f5tv.springbootblog.entity.blog.CategoryEntity;
 import com.f5tv.springbootblog.entity.core.ResponseResult;
 import com.f5tv.springbootblog.entity.user.UserEntity;
 import com.f5tv.springbootblog.service.blog.CategoryService;
@@ -27,30 +27,30 @@ public class CategoryController {
 
     @RequestMapping("HandleCategoryAdd")
     @ResponseBody
-    public ResponseResult HandleCategoryAdd(Category category){
-        category.setUserId(((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId());
-        return categoryService.CategoryAdd(category);
+    public ResponseResult HandleCategoryAdd(CategoryEntity categoryEntity){
+        categoryEntity.setUserId(((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId());
+        return categoryService.CategoryAdd(categoryEntity);
     }
 
     @RequestMapping("HandleCategoryUpdateNameAndStatus")
     @ResponseBody
-    public ResponseResult HandleCategoryUpdateNameAndStatus(Category category){
-        category.setUserId(((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId());
-        return categoryService.CategoryUpdateNameAndStatus(category);
+    public ResponseResult HandleCategoryUpdateNameAndStatus(CategoryEntity categoryEntity){
+        categoryEntity.setUserId(((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId());
+        return categoryService.CategoryUpdateNameAndStatus(categoryEntity);
     }
 
     //管理员修改状态
     @Secured({"管理员"})//此方法只允许 管理员 角色 访问
     @RequestMapping("HandleCategoryUpdateStatus")
     @ResponseBody
-    public ResponseResult HandleCategoryUpdateStatus(Category category){
-        return categoryService.CategoryUpdateStatus(category);
+    public ResponseResult HandleCategoryUpdateStatus(CategoryEntity categoryEntity){
+        return categoryService.CategoryUpdateStatus(categoryEntity);
     }
 
     @RequestMapping("HandleCategoryDelete")
     @ResponseBody
-    public ResponseResult HandleCategoryDelete(Category category){
-        category.setUserId(((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId());
-        return categoryService.CategoryDelete(category);
+    public ResponseResult HandleCategoryDelete(CategoryEntity categoryEntity){
+        categoryEntity.setUserId(((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId());
+        return categoryService.CategoryDelete(categoryEntity);
     }
 }

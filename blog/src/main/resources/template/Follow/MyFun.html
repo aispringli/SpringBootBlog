@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorate="Home/Layout">
+<head>
+    <title>404错误页面-SpringBootBlog</title>
+</head>
+
+<body class="">
+<div class="container" layout:fragment="content">
+    <div class="row row-cards">
+        <div class="col-lg-8 offset-lg-2">
+            <div class="card">
+                <table class="table card-table table-vcenter">
+                    <tbody>
+                    <tr th:each="follow:${followEntityList}">
+                        <td>
+                            <a th:href="'/Blog/BlogDashboard?userId='+${follow.userId}">
+                                    <span class="avatar" th:style="'background-image:url('+${follow.userLogoSrc}+')'">
+                                    </span>
+                            </a>
+                        </td>
+                        <td>
+                            <th:block th:text="${follow.username}"></th:block>
+                            <div class="badge badge-default badge-md" th:text="${follow.userMotto}">motto</div>
+                        </td>
+                        <td th:text="${#dates.format(follow.followDate, 'yyyy-MM-dd HH:mm')}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <ul class="pagination" id="myPagination" style="margin: auto;padding-bottom: 1rem;display: none;">
+                <li class="page-item"><a class="page-link" href="#">上一页</a></li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item"><a class="page-link" href="#">4</a></li>
+                <li class="page-item"><a class="page-link" href="#">5</a></li>
+                <li class="page-item"><a class="page-link" href="#">下一页</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<th:block layout:fragment="bodyJs">
+    <script th:inline="javascript">
+        require(['jquery', 'jquery-validation'], function ($) {
+            //处理分页
+            $(function () {
+                //处理分页以及查询
+                var page = getQueryString("page");
+                if (page == null || page < 1) page = 1;
+                var url = changeURLArg(window.location.href, "page", 1);
+                var pageNum = [[${pageNum}]];
+                if (pageNum == null || pageNum === ""||pageNum==0) pageNum = 1;
+                pageNum = Math.ceil(pageNum / 10);
+                calMyPagination("myPagination", page, pageNum,url);
+            });
+        });
+    </script>
+</th:block>
+</body>
+</html>

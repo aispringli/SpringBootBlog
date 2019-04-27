@@ -1,7 +1,7 @@
 package com.f5tv.springbootblog.controller.blog;
 
 import com.f5tv.springbootblog.entity.blog.BlogEntity;
-import com.f5tv.springbootblog.entity.blog.Category;
+import com.f5tv.springbootblog.entity.blog.CategoryEntity;
 import com.f5tv.springbootblog.entity.core.ResponseResult;
 import com.f5tv.springbootblog.entity.user.UserEntity;
 import com.f5tv.springbootblog.service.blog.BlogService;
@@ -49,7 +49,7 @@ public class BlogController {
         if (page == null || page < 1) page = 1;
         ModelAndView modelAndView = new ModelAndView("Blog/MyBlog");
         long userId = ((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
-        List<Category> categoryLists = categoryService.categorySelectByUserId(userId);
+        List<CategoryEntity> categoryLists = categoryService.categorySelectByUserId(userId);
         modelAndView.addObject("categoryLists", categoryLists);
         BlogEntity blogEntity = new BlogEntity();
         if (categoryId == null || categoryId < 1) categoryId = 0L;
@@ -68,14 +68,14 @@ public class BlogController {
 
     @RequestMapping("BlogDetails")
     public ModelAndView BlogDetails(Long blogId) {
-        if (blogId == null) return new ModelAndView("/Home/Error404");
+        if (blogId == null) return new ModelAndView("/Error/404");
         BlogEntity blogEntity = blogService.selectBlogByBlogId(blogId);
-        if (blogEntity == null) return new ModelAndView("/Home/Error404");
+        if (blogEntity == null) return new ModelAndView("/Error/404");
         //非公开的只能个人或管理员浏览
         if (blogEntity.getBlogStatus() != 0 && (SecurityContextHolder.getContext().getAuthentication().getPrincipal() == null
                 || ((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId() != blogEntity.getUserId()))
-            return new ModelAndView("/Home/Error404");
-        List<Category> categoryLists = categoryService.categorySelectByUserId(blogEntity.getUserId());
+            return new ModelAndView("/Error/404");
+        List<CategoryEntity> categoryLists = categoryService.categorySelectByUserId(blogEntity.getUserId());
         ModelAndView modelAndView = new ModelAndView("Blog/BlogDetails");
         modelAndView.addObject("categoryLists", categoryLists);
         modelAndView.addObject("blogEntity", blogEntity);
@@ -85,12 +85,12 @@ public class BlogController {
     @RequestMapping("BlogDashboard")
     public ModelAndView BlogDashboard(Long userId, Long categoryId, Integer page) {
         if (page == null || page < 1) page = 1;
-        if (userId == null) return new ModelAndView("/Home/Error404");
+        if (userId == null) return new ModelAndView("/Error/404");
         UserEntity userEntity = userService.userEntitySelectByUserId(userId);
-        if (userEntity == null) return new ModelAndView("/Home/Error404");
+        if (userEntity == null) return new ModelAndView("/Error/404");
         ModelAndView modelAndView = new ModelAndView("Blog/BlogDashboard");
         modelAndView.addObject("userEntity", userEntity);
-        List<Category> categoryLists = categoryService.categorySelectByUserId(userId);
+        List<CategoryEntity> categoryLists = categoryService.categorySelectByUserId(userId);
 
         modelAndView.addObject("categoryLists", categoryLists);
         PageHelper.startPage(1, 10);
@@ -116,9 +116,9 @@ public class BlogController {
         if (blogId != null && blogId > 0) {
             long userId = ((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
             BlogEntity blogEntity = blogService.selectBlogByBlogId(blogId);
-            if (blogEntity == null) return new ModelAndView("redirect:/Home/404");
-            List<Category> categoryLists = categoryService.categorySelectByUserId(userId);
-            for (Category category : categoryLists) {
+            if (blogEntity == null) return new ModelAndView("redirect:/Error/404");
+            List<CategoryEntity> categoryLists = categoryService.categorySelectByUserId(userId);
+            for (CategoryEntity category : categoryLists) {
                 if (category.getCategoryId() == blogEntity.getCategoryId()) {
                     ModelAndView modelAndView = new ModelAndView("Blog/UpdateBlog");
                     modelAndView.addObject("categoryLists", categoryLists);
@@ -127,7 +127,7 @@ public class BlogController {
                 }
             }
         }
-        return new ModelAndView("redirect:/Home/404");
+        return new ModelAndView("redirect:/Error/404");
     }
 
     @RequestMapping("HandleBlogUpdate")

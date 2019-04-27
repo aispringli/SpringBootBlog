@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorate="Home/Layout">
+<head>
+    <title>404错误页面-SpringBootBlog</title>
+</head>
+
+<body class="" th:with="follow_active='active'">
+<div class="container" layout:fragment="content">
+    <div class="row row-cards">
+        <div class="col-lg-8 offset-lg-2">
+            <div class="card">
+                <table class="table card-table table-vcenter">
+                    <tbody>
+                    <tr th:each="follow:${followEntityList}">
+                        <td>
+                            <a th:href="'/Blog/BlogDashboard?userId='+${follow.userId}">
+                                    <span class="avatar" th:style="'background-image:url('+${follow.userLogoSrc}+')'">
+                                    </span>
+                            </a>
+                        </td>
+                        <td>
+                            <th:block th:text="${follow.username}"></th:block>
+                            <div class="badge badge-default badge-md" th:text="${follow.userMotto}">motto</div>
+                        </td>
+                        <td th:text="${#dates.format(follow.followDate, 'yyyy-MM-dd HH:mm')}"></td>
+                        <td class="text-right">
+                            <a class="icon btnDelete" th:id="${follow.userId}" th:attr="data-userid=${follow.userId}">
+                                <strong>取消关注</strong>
+                                <i class="fe fe-delete"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <ul class="pagination" id="myPagination" style="margin: auto;padding-bottom: 1rem;display: none;">
+                <li class="page-item"><a class="page-link" href="#">上一页</a></li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item"><a class="page-link" href="#">4</a></li>
+                <li class="page-item"><a class="page-link" href="#">5</a></li>
+                <li class="page-item"><a class="page-link" href="#">下一页</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<th:block layout:fragment="bodyJs">
+    <script th:inline="javascript">
+        require(['jquery'], function ($) {
+            //处理分页
+            $(function () {
+                //处理分页以及查询
+                var page = getQueryString("page");
+                if (page == null || page < 1) page = 1;
+                var url = changeURLArg(window.location.href, "page", 1);
+                var pageNum = [[${pageNum}]];
+                if (pageNum == null || pageNum === ""||pageNum==0) pageNum = 1;
+                pageNum = Math.ceil(pageNum / 10);
+                calMyPagination("myPagination", page, pageNum,url);
+            });
+
+            //处理取消关注
+            $(function () {
+                var deleteFlag = false;
+                var btnDeleteId = 0;
+                $("#modalConfirmBtn").click(function () {
+                    deleteFlag = true;
+                    $("#" + btnDeleteId).click();
+                });
+                $(".btnDelete").click(function () {
+                    btnDeleteId = $(this).data('userid');
+                    if (!deleteFlag) {
+                        $("#modalConfirmBody").removeClass();
+                        $("#modalConfirmBody").addClass("alert alert-warning");
+                        $("#modalConfirmBody").html("您确认要取消此关注吗？");
+                        $('#modalConfirm').modal();
+                        return;
+                    }
+                    deleteFlag = false;
+                    $.ajax({
+                        url: "/Follow/UserDeleteFollowByUserId",
+                        type: "post",
+                        data: {
+                            "userId": $(this).data('userid')
+                        },
+                        success: function (result) {
+                            alert(result.message);
+                            if (result.success) location.reload();
+                        },
+                        error: function (event, XMLHttpRequest, ajaxOptions, thrownError) {
+                            if (XMLHttpRequest.status == 403 || XMLHttpRequest.status == 302) {
+                                alert('您还没有登陆，请登陆后使用');
+                                location.reload();
+                            } else alert('发生了错误,请检查网络或稍后刷新重试');
+                        }
+                    });
+                })
+            });
+        });
+    </script>
+</th:block>
+</body>
+</html>

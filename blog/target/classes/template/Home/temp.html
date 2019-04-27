@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorate="Home/Layout">
+<head>
+    <title>404错误页面-SpringBootBlog</title>
+</head>
+
+<body class="">
+<div class="container" layout:fragment="content">
+
+</div>
+<th:block layout:fragment="bodyJs">
+    <script th:inline="javascript">
+        require(['jquery', 'jquery-validation'], function ($) {
+
+        });
+    </script>
+</th:block>
+</body>
+</html>

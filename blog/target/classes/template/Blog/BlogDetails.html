@@ -11,7 +11,7 @@
     <div class="row">
         <div class="col-md-2">
             <h3 class="page-title" th:text="${blogEntity.username}" >username</h3>
-            <a href="#" class="btn btn-pill btn-lime"><i class="fe fe-plus"></i> 关注</a>
+            <a href="#" class="btn btn-pill btn-lime" id="followBtn" th:attr="data-userid=${blogEntity.userId}" style="visibility:hidden;"><i class="fe fe-plus"></i> 关注</a>
             <div style="padding-top: 15px;">
                 <div class="list-group list-group-transparent mb-0">
                     <div th:each="category:${categoryLists}">
@@ -41,28 +41,246 @@
                 </div>
             </div>
         </div>
+
+        <div class="side-tool" style="position:fixed;right:60px;bottom:50px;visibility:hidden;">
+            <ul style="list-style: none;">
+                <li class="text-center" id="backTopBtn" data-placement="left" data-toggle="tooltip"
+                    data-container="body"
+                    data-original-title="回到顶部"
+                    style="border: 1px solid #dcdcdc;border-bottom: none;background-color: #fff;transition: .1s ease-in;line-height: 20px;width: 50px;padding: 5px 0;cursor:pointer;">
+                    <a style=""><i class="fa fa-angle-up fa-2x"></i></a></li> <!---->
+                <li class="text-center" id="collectBtn" data-placement="left" data-toggle="tooltip"
+                    data-container="body"
+                    data-original-title="收藏以后阅读更方便"
+                    style="border: 1px solid #dcdcdc;border-bottom: none;background-color: #fff;transition: .1s ease-in;line-height: 20px;width: 50px;padding: 5px 0;cursor:pointer;">
+                    <a style=""><i class="fa fa-heart fa-2x"></i></a></li> <!---->
+
+                <li class="text-center" id="starBtn" data-placement="left" data-toggle="tooltip" data-container="body"
+                    data-original-title="点个赞支持作者"
+                    style="border:1px solid #dcdcdc;background-color: #fff;transition: .1s ease-in;line-height: 20px;width: 50px;padding: 5px 0;cursor:pointer;">
+                    <a style="padding: 9px 0;"><i class="fa fa-thumbs-o-up fa-2x"></i></a></li> <!---->
+            </ul>
+        </div>
     </div>
 </div>
 <th:block layout:fragment="bodyJs">
     <script th:inline="javascript">
         require(['jquery', 'jquery-validation'], function ($) {
 
-            $.ajax({
-                url: "/Blog/HandleBlogDelete",
-                type: "post",
-                data: {
-                    "blogId": 0
-                },
-                success: function (result,textStatus, xhr) {
-                    console.log(xhr.status);
-                },
-                error: function (event, XMLHttpRequest, ajaxOptions, thrownError) {
-                    if (XMLHttpRequest.status == 403 || XMLHttpRequest.status == 302) {
-                        alert('您还没有登陆，请登陆后使用');
-                        location.reload();
-                    } else alert('发生了错误,请检查网络或稍后刷新重试');
+
+            //已登陆后
+            $(function () {
+                if ( $("#signUpModal").length == 0 ) {
+                    //判断是否关注
+                    $.ajax({
+                        url: "/Follow/CheckUserIsFollowByUserId",
+                        type: "post",
+                        data: {
+                            "userId": $("#followBtn").data('userid')
+                        },
+                        success: function (result, textStatus, xhr) {
+                            if(result.success){
+                                $("#followBtn").html("<i class='fe fe-check'></i> 已关注</a>");
+                            }
+                            $("#followBtn").css("visibility","visible");
+                        },
+                        error: function (event, XMLHttpRequest, ajaxOptions, thrownError) {
+                            if (XMLHttpRequest.status == 403 || XMLHttpRequest.status == 302) {
+                                alert('您还没有登陆，请登陆后使用');
+                                location.reload();
+                            } else alert('发生了错误,请检查网络或稍后刷新重试');
+                        }
+                    });
+
+                    //判断是否收藏
+                    $.ajax({
+                        url: "/Collect/HandleIsCollect",
+                        type: "post",
+                        data: {
+                            "blogId":getQueryString("blogId")
+                        },
+                        success: function (result, textStatus, xhr) {
+                            if(result.success){
+                                $("#collectBtn").attr("data-original-title", "已收藏");
+                                $("#collectBtn").css("color","red");
+                            }
+
+                        },
+                        error: function (event, XMLHttpRequest, ajaxOptions, thrownError) {
+                            if (XMLHttpRequest.status == 403 || XMLHttpRequest.status == 302) {
+                                alert('您还没有登陆，请登陆后使用');
+                                location.reload();
+                            } else alert('发生了错误,请检查网络或稍后刷新重试');
+                        }
+                    });
+
+                    //判断是否点赞
+                    $.ajax({
+                        url: "/Star/HandleIsStar",
+                        type: "post",
+                        data: {
+                            "blogId": getQueryString("blogId")
+                        },
+                        success: function (result, textStatus, xhr) {
+                            if(result.success){
+                                $("#starBtn").attr("data-original-title", "已点赞");
+                                $("#starBtn").css("color","#33cccc");
+                            }
+                            $(".side-tool").css("visibility","visible");
+                        },
+                        error: function (event, XMLHttpRequest, ajaxOptions, thrownError) {
+                            if (XMLHttpRequest.status == 403 || XMLHttpRequest.status == 302) {
+                                alert('您还没有登陆，请登陆后使用');
+                                location.reload();
+                            } else alert('发生了错误,请检查网络或稍后刷新重试');
+                        }
+                    });
                 }
             });
+
+
+            $("#followBtn").click(function () {
+
+                if ( $("#signUpModal").length > 0 ) {
+                    $("#signUpModal").modal();
+                    return false;
+                }
+
+                var url="/Follow/UserFollowByUserId";
+                if($("#followBtn").html().indexOf("已关注")!=-1)
+                    url="/Follow/UserDeleteFollowByUserId";
+                $.ajax({
+                    url: url,
+                    type: "post",
+                    data: {
+                        "userId": $("#followBtn").data('userid')
+                    },
+                    success: function (result, textStatus, xhr) {
+                        $("#modalTipBody").removeClass();
+                        $("#modalTipBody").html(result.message);
+                        if(result.success){
+                            $("#modalTipBody").addClass("alert alert-success");
+                            if($("#followBtn").html().indexOf("已关注")==-1)
+                                $("#followBtn").html("<i class='fe fe-check'></i> 已关注</a>");
+                            else $("#followBtn").html("<i class='fe fe-plus'></i> 关注</a>");
+                        }
+                        else $("#modalTipBody").addClass("alert alert-danger");;
+                        $("#modalTip").modal();
+                    },
+                    error: function (event, XMLHttpRequest, ajaxOptions, thrownError) {
+                        if (XMLHttpRequest.status == 403 || XMLHttpRequest.status == 302) {
+                            alert('您还没有登陆，请登陆后使用');
+                            location.reload();
+                        } else alert('发生了错误,请检查网络或稍后刷新重试');
+                    }
+                });
+
+
+            });
+
+            //返回顶部
+            $(function () {
+                var pagelookheight = document.documentElement.clientHeight;//获取屏幕的高度
+                //滚动超出高度，显示按钮，否则隐藏
+                var backtop = document.documentElement.scrollTop;
+                $("#backTopBtn").click(function () {
+                    var timer = setInterval(function () {
+                        var backtop = document.documentElement.scrollTop;
+                        var speedtop = 50;//速度操作  减速
+                        document.documentElement.scrollTop = backtop - speedtop;  //高度不断减少
+                        if (backtop == 0) {  //滑动到顶端
+                            clearInterval(timer);  //清除计时器
+                        }
+                    }, 30);
+                });
+            });
+
+            $("#collectBtn").click(function () {
+                if ( $("#signUpModal").length > 0 ) {
+                    $("#signUpModal").modal();
+                    return false;
+                }
+                var type=1;
+                var url="/Collect/HandleCollectAdd";
+                if($("#collectBtn").attr("data-original-title").indexOf("已收藏")!=-1){
+                    type=0;
+                    url="/Collect/HandleCollectDelete";
+                }
+
+                $.ajax({
+                    url: url,
+                    type: "post",
+                    data: {
+                        "blogId":getQueryString("blogId")
+                    },
+                    success: function (result, textStatus, xhr) {
+                        $("#modalTipBody").removeClass();
+                        $("#modalTipBody").html(result.message);
+                        if(result.success){
+                            $("#modalTipBody").addClass("alert alert-success");
+                            if(type==0){
+                                $("#collectBtn").attr("data-original-title", "收藏以后阅读更方便");
+                                $("#collectBtn").css("color","black");
+                            }
+                            else{
+                                $("#collectBtn").attr("data-original-title", "已收藏");
+                                $("#collectBtn").css("color","red");
+                            }
+                        }else $("#modalTipBody").addClass("alert alert-danger");
+                        $("#modalTip").modal();
+                    },
+                    error: function (event, XMLHttpRequest, ajaxOptions, thrownError) {
+                        if (XMLHttpRequest.status == 403 || XMLHttpRequest.status == 302) {
+                            alert('您还没有登陆，请登陆后使用');
+                            location.reload();
+                        } else alert('发生了错误,请检查网络或稍后刷新重试');
+                    }
+                });
+            });
+
+            $("#starBtn").click(function () {
+                if ( $("#signUpModal").length > 0 ) {
+                    $("#signUpModal").modal();
+                    return false;
+                }
+                var type=1;
+                var url="/Star/HandleStarAdd";
+                if($("#starBtn").attr("data-original-title").indexOf("已点赞")!=-1){
+                    type=0;
+                    url="/Star/HandleStarDelete";
+                }
+
+                $.ajax({
+                    url: url,
+                    type: "post",
+                    data: {
+                        "blogId":getQueryString("blogId")
+                    },
+                    success: function (result, textStatus, xhr) {
+                        $("#modalTipBody").removeClass();
+                        $("#modalTipBody").html(result.message);
+                        if(result.success){
+                            $("#modalTipBody").addClass("alert alert-success");
+                            if(type==0){
+                                $("#starBtn").attr("data-original-title", "点个赞支持作者");
+                                $("#starBtn").css("color","black");
+                            }
+                            else{
+                                $("#starBtn").attr("data-original-title", "已点赞");
+                                $("#starBtn").css("color","#33cccc");
+                            }
+                        }else $("#modalTipBody").addClass("alert alert-danger");
+                        $("#modalTip").modal();
+                    },
+                    error: function (event, XMLHttpRequest, ajaxOptions, thrownError) {
+                        if (XMLHttpRequest.status == 403 || XMLHttpRequest.status == 302) {
+                            alert('您还没有登陆，请登陆后使用');
+                            location.reload();
+                        } else alert('发生了错误,请检查网络或稍后刷新重试');
+                    }
+                });
+            });
+
         });
     </script>
 </th:block>

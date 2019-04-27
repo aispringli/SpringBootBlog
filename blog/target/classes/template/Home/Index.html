@@ -63,17 +63,13 @@
                 </a>
             </div>
         </div>
-        <div class="side-tool" style="position:fixed;right:60px;bottom:50px;display: none;">
+        <div class="side-tool" style="position:fixed;right:60px;bottom:50px;visibility:hidden;">
             <ul style="list-style: none;">
                 <li class="text-center" id="backTopBtn" data-placement="left" data-toggle="tooltip"
                     data-container="body"
                     data-original-title="回到顶部"
-                    style="border: 1px solid #dcdcdc;border-bottom: none;background-color: #fff;transition: .1s ease-in;line-height: 20px;width: 50px;padding: 5px 0;cursor:pointer;">
+                    style="border: 1px solid #dcdcdc;background-color: #fff;transition: .1s ease-in;line-height: 20px;width: 50px;padding: 5px 0;cursor:pointer;">
                     <a style=""><i class="fa fa-angle-up fa-2x"></i></a></li> <!---->
-                <li class="text-center" data-placement="left" data-toggle="tooltip" data-container="body"
-                    data-original-title="回到顶部"
-                    style="border:1px solid #dcdcdc;background-color: #fff;transition: .1s ease-in;line-height: 20px;width: 50px;padding: 5px 0;cursor:pointer;">
-                    <a style="padding: 9px 0;"><i class="fa fa-angle-up fa-2x"></i></a></li> <!---->
             </ul>
         </div>
     </div>
@@ -111,24 +107,28 @@
 
                 return false;
             });
-
+            //返回顶部
             $(function () {
 
                 var pagelookheight = document.documentElement.clientHeight;//获取屏幕的高度
                 //滚动超出高度，显示按钮，否则隐藏
                 var backtop = document.documentElement.scrollTop;
                 if (backtop >= pagelookheight - $(".fixed-top").height()) {//  滚动超过一频    应该显示
-                    $(".side-tool").show();
+                    $(".side-tool").css("visibility","visible");
                 } else {
-                    $(".side-tool").hide();
+                    $(".side-tool").css("visibility","hidden");
                 }
                 window.onscroll = function () {
                     //滚动超出高度，显示按钮，否则隐藏
                     backtop = document.documentElement.scrollTop;
                     if (backtop >= pagelookheight - $(".fixed-top").height()) {//  滚动超过一频    应该显示
-                        $(".side-tool").show();
+                        //$(".side-tool").show();
+                        $(".side-tool").css("visibility","visible");
+                        //$("[data-toggle=tooltip]").tooltip("show")
                     } else {
-                        $(".side-tool").hide();
+                        $("[data-toggle=tooltip]").tooltip("hide");
+                        $(".side-tool").css("visibility","hidden");
+                        //$(".side-tool").hide();
                     }
                 };
                 $("#backTopBtn").click(function () {

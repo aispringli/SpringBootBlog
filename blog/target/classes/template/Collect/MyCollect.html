@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorate="Home/Layout">
+<head>
+    <title>404错误页面-SpringBootBlog</title>
+</head>
+
+<body class="" th:with="collect_active='active'">
+<div class="container" layout:fragment="content">
+    <div class="row row-cards row-deck">
+        <div class="col-lg-8 offset-lg-2">
+            <div class="card">
+                <div class="table-responsive">
+                    <table class="table card-table table-vcenter text-nowrap">
+                        <thead>
+                        <tr>
+                            <th class="w-1">编号</th>
+                            <th>名称</th>
+                            <th>作者</th>
+                            <th>所属分类</th>
+                            <th>收藏时间</th>
+                            <th>点赞量</th>
+                            <th>收藏量</th>
+                            <th>评论量</th>
+                            <th>取消关注</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="collect:${collectLists}">
+                            <td><span class="text-muted" th:text="${collect.blogId}">1</span></td>
+                            <td><a target="_blank" th:href="@{'/Blog/BlogDetails?blogId='+${collect.blogId}}"
+                                   th:text="${collect.title}">title</a></td>
+                            <td><a target="_blank" th:href="@{'/Blog/BlogDashboard?userId='+${collect.userId}}"
+                                   th:text="${collect.username}">username</a></td>
+                            <td><a target="_blank" th:href="@{'/Blog/BlogDashboard?page=1&categoryId='+${collect.categoryId}+'userId='+${collect.userId}}"
+                                   th:text="${collect.categoryName}">默认</a></td>
+                            <td th:text="${#dates.format(collect.collectDate, 'yyyy-MM-dd HH:mm')}">2019-04-19 12:10</td>
+                            <td th:text="${collect.starQuantity}">0</td>
+                            <td th:text="${collect.collectQuantity}">
+                                0
+                            </td>
+                            <td th:text="${collect.commentQuantity}">
+                                0
+                            </td>
+                            <td>
+                                <a class="icon btnDelete" th:id="${collect.blogId}" th:attr="data-blogid=${collect.blogId}">
+                                    <i class="fe fe-delete"></i>
+                                </a>
+                            </td>
+
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <hr/>
+                <ul class="pagination" id="myPagination" style="margin: auto;padding-bottom: 1rem;display: none;">
+                    <li class="page-item"><a class="page-link" href="#">上一页</a></li>
+                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item"><a class="page-link" href="#">4</a></li>
+                    <li class="page-item"><a class="page-link" href="#">5</a></li>
+                    <li class="page-item"><a class="page-link" href="#">下一页</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block layout:fragment="bodyJs">
+    <script th:inline="javascript">
+        require(['jquery'], function ($) {
+            //处理分页
+            $(function () {
+                //处理分页以及查询
+                var page = getQueryString("page");
+                if (page == null || page < 1) page = 1;
+                var url = changeURLArg(window.location.href, "page", 1);
+                var pageNum = [[${pageNum}]];
+                if (pageNum == null || pageNum === ""||pageNum==0) pageNum = 1;
+                pageNum = Math.ceil(pageNum / 10);
+                calMyPagination("myPagination", page, pageNum,url);
+            });
+
+            //处理取消收藏
+            $(function () {
+                var deleteFlag = false;
+                var btnDeleteId = 0;
+                $("#modalConfirmBtn").click(function () {
+                    deleteFlag = true;
+                    $("#" + btnDeleteId).click();
+                });
+                $(".btnDelete").click(function () {
+                    btnDeleteId = $(this).data('userid');
+                    if (!deleteFlag) {
+                        $("#modalConfirmBody").removeClass();
+                        $("#modalConfirmBody").addClass("alert alert-warning");
+                        $("#modalConfirmBody").html("您确认要删除此收藏吗？");
+                        $('#modalConfirm').modal();
+                        return;
+                    }
+                    deleteFlag = false;
+                    $.ajax({
+                        url: "/Collect/HandleCollectDelete",
+                        type: "post",
+                        data: {
+                            "blogId": $(this).data('blogid')
+                        },
+                        success: function (result) {
+                            alert(result.message);
+                            if (result.success) location.reload();
+                        },
+                        error: function (event, XMLHttpRequest, ajaxOptions, thrownError) {
+                            if (XMLHttpRequest.status == 403 || XMLHttpRequest.status == 302) {
+                                alert('您还没有登陆，请登陆后使用');
+                                location.reload();
+                            } else alert('发生了错误,请检查网络或稍后刷新重试');
+                        }
+                    });
+                })
+            });
+        });
+    </script>
+</th:block>
+</body>
+</html>

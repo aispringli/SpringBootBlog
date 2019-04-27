@@ -11,7 +11,7 @@
     <div class="row">
         <div class="col-md-2">
             <h3 class="page-title" th:text="${userEntity.username}">username</h3>
-            <a href="#" class="btn btn-pill btn-lime"><i class="fe fe-plus"></i> 关注</a>
+            <a href="#" class="btn btn-pill btn-lime" id="followBtn" th:attr="data-userid=${userEntity.userId}" style="visibility:hidden;"><i class="fe fe-plus"></i> 关注</a>
             <div style="padding-top: 15px;">
                 <div class="list-group list-group-transparent mb-0">
                     <div th:each="category:${categoryLists}">
@@ -92,7 +92,15 @@
                 </a>
             </div>
         </div>
-
+        <div class="side-tool" style="position:fixed;right:60px;bottom:50px;visibility:hidden;">
+            <ul style="list-style: none;">
+                <li class="text-center" id="backTopBtn" data-placement="left" data-toggle="tooltip"
+                    data-container="body"
+                    data-original-title="回到顶部"
+                    style="border: 1px solid #dcdcdc;background-color: #fff;transition: .1s ease-in;line-height: 20px;width: 50px;padding: 5px 0;cursor:pointer;">
+                    <a style=""><i class="fa fa-angle-up fa-2x"></i></a></li> <!---->
+            </ul>
+        </div>
     </div>
 </div>
 <th:block layout:fragment="bodyJs">
@@ -126,8 +134,106 @@
                         } else alert('发生了错误,请检查网络或稍后刷新重试');
                     }
                 });
-
                 return false;
+            });
+
+
+            if ( $("#signUpModal").length == 0 ) {
+                $.ajax({
+                    url: "/Follow/CheckUserIsFollowByUserId",
+                    type: "post",
+                    data: {
+                        "userId": $("#followBtn").data('userid')
+                    },
+                    success: function (result, textStatus, xhr) {
+                        if(result.success){
+                            $("#followBtn").html("<i class='fe fe-check'></i> 已关注</a>");
+                        }
+                        $("#followBtn").css("visibility","visible");
+                    },
+                    error: function (event, XMLHttpRequest, ajaxOptions, thrownError) {
+                        if (XMLHttpRequest.status == 403 || XMLHttpRequest.status == 302) {
+                            alert('您还没有登陆，请登陆后使用');
+                            location.reload();
+                        } else alert('发生了错误,请检查网络或稍后刷新重试');
+                    }
+                });
+            }
+
+            $("#followBtn").click(function () {
+
+                if ( $("#signUpModal").length > 0 ) {
+                    $("#signUpModal").modal();
+                    return false;
+                }
+
+                var url="/Follow/UserFollowByUserId";
+                if($("#followBtn").html().indexOf("已关注")!=-1)
+                    url="/Follow/UserDeleteFollowByUserId";
+                $.ajax({
+                    url: url,
+                    type: "post",
+                    data: {
+                        "userId": $("#followBtn").data('userid')
+                    },
+                    success: function (result, textStatus, xhr) {
+                        $("#modalTipBody").removeClass();
+                        $("#modalTipBody").html(result.message);
+                        if(result.success){
+                            $("#modalTipBody").addClass("alert alert-success");
+                            if($("#followBtn").html().indexOf("已关注")==-1)
+                                $("#followBtn").html("<i class='fe fe-check'></i> 已关注</a>");
+                            else $("#followBtn").html("<i class='fe fe-plus'></i> 关注</a>");
+                        }
+                        else $("#modalTipBody").addClass("alert alert-danger");;
+                        $("#modalTip").modal();
+                    },
+                    error: function (event, XMLHttpRequest, ajaxOptions, thrownError) {
+                        if (XMLHttpRequest.status == 403 || XMLHttpRequest.status == 302) {
+                            alert('您还没有登陆，请登陆后使用');
+                            location.reload();
+                        } else alert('发生了错误,请检查网络或稍后刷新重试');
+                    }
+                });
+
+
+            });
+
+            //返回顶部
+            $(function () {
+
+                var pagelookheight = document.documentElement.clientHeight;//获取屏幕的高度
+                //滚动超出高度，显示按钮，否则隐藏
+                var backtop = document.documentElement.scrollTop;
+                if (backtop >= pagelookheight - $(".fixed-top").height()) {//  滚动超过一频    应该显示
+                    $(".side-tool").css("visibility","visible");
+                } else {
+                    $(".side-tool").css("visibility","hidden");
+                }
+                window.onscroll = function () {
+                    //滚动超出高度，显示按钮，否则隐藏
+                    backtop = document.documentElement.scrollTop;
+                    if (backtop >= pagelookheight - $(".fixed-top").height()) {//  滚动超过一频    应该显示
+                        //$(".side-tool").show();
+                        $(".side-tool").css("visibility","visible");
+                        //$("[data-toggle=tooltip]").tooltip("show")
+                    } else {
+                        $("[data-toggle=tooltip]").tooltip("hide");
+                        $(".side-tool").css("visibility","hidden");
+                        //$(".side-tool").hide();
+                    }
+                };
+                $("#backTopBtn").click(function () {
+                    var timer = setInterval(function () {
+                        var backtop = document.documentElement.scrollTop;
+                        var speedtop = 50;//速度操作  减速
+                        document.documentElement.scrollTop = backtop - speedtop;  //高度不断减少
+                        if (backtop == 0) {  //滑动到顶端
+                            clearInterval(timer);  //清除计时器
+                        }
+                    }, 30);
+
+                });
             });
         });
     </script>

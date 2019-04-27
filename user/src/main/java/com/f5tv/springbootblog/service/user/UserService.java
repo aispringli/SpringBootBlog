@@ -92,11 +92,6 @@ public class UserService {
         return userMapper.updateUserLogoSrc(userEntity);
     }
 
-    //修改粉丝数量
-    public int updateUserFollowerQuantity(UserEntity userEntity){
-        return userMapper.updateUserFollowerQuantity(userEntity);
-    }
-
     //修改权限
     public int updateUserRoleId(UserEntity userEntity) {
         int result = userMapper.updateUserRoleId(userEntity);

@@ -1,10 +1,12 @@
 package com.f5tv.springbootblog.service.blog;
 
 import com.f5tv.springbootblog.entity.blog.BlogEntity;
-import com.f5tv.springbootblog.entity.blog.Category;
+import com.f5tv.springbootblog.entity.blog.CategoryEntity;
 import com.f5tv.springbootblog.entity.core.ResponseResult;
 import com.f5tv.springbootblog.mapper.blog.BlogMapper;
 import com.f5tv.springbootblog.mapper.blog.CategoryMapper;
+import com.f5tv.springbootblog.mapper.blog.CollectMapper;
+import com.f5tv.springbootblog.mapper.blog.StarMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -29,6 +31,12 @@ public class BlogService {
     @Autowired
     BlogMapper blogMapper;
 
+    @Autowired
+    CollectMapper collectMapper;
+
+    @Autowired
+    StarMapper starMapper;
+
     ResponseResult checkBlog(BlogEntity blogEntity, long userId) {
         if (StringUtils.isEmpty(blogEntity.getTitle()) || blogEntity.getTitle().length() > 20)
             return new ResponseResult(1, "请输入长度不超过20的标题");
@@ -39,7 +47,7 @@ public class BlogService {
         if (blogEntity.getSummary().length() > 200) return new ResponseResult(2, "简介最大200字符长度");
         if (blogEntity.getBlogLogo().length() > 100) return new ResponseResult(3, "非法参数");
         if (blogEntity.getContent().length() > 16777215) return new ResponseResult(6, "内容超出最大限度");
-        Category category = categoryMapper.categorySelectByCategoryId(blogEntity.getCategoryId());
+        CategoryEntity category = categoryMapper.categorySelectByCategoryId(blogEntity.getCategoryId());
         if (category == null || category.getUserId() != userId) return new ResponseResult(4, "分类参数不合法");
         return null;
     }
@@ -50,7 +58,7 @@ public class BlogService {
         if (responseResult != null) return responseResult;
         try {
             if (blogMapper.blogInsert(blogEntity) > 0) {
-                Category category = new Category();
+                CategoryEntity category = new CategoryEntity();
                 category.setBlogQuantity(1);
                 category.setCategoryId(blogEntity.getCategoryId());
                 categoryMapper.updateBlogQuantity(category);
@@ -88,15 +96,32 @@ public class BlogService {
         ResponseResult responseResult = checkBlog(blogEntity, userId);
         if (responseResult != null) return responseResult;
         try {
-            if (blogMapper.updateBlogContent(blogEntity) > 0&&blogMapper.updateBlogStatus(blogEntity)>0) {
-                return new ResponseResult(0, true, "修改成功");
-            } else return new ResponseResult(5, "修改失败");
+            boolean flag=false;
+            BlogEntity blogEntityConfirm=blogMapper.selectBlogByBlogId(blogEntity.getBlogId());
+            if (blogMapper.updateBlogContent(blogEntity) > 0)
+                flag=true;
+            if(blogEntityConfirm.getCategoryId()!=blogEntity.getCategoryId()){
+                //同步分类的数量
+                CategoryEntity category = new CategoryEntity();
+                category.setBlogQuantity(1);
+                category.setCategoryId(blogEntity.getCategoryId());
+                categoryMapper.updateBlogQuantity(category);
+                category.setBlogQuantity(-1);
+                category.setCategoryId(blogEntityConfirm.getCategoryId());
+                categoryMapper.updateBlogQuantity(category);
+            }
+            blogEntity.setCategoryId(0);
+            blogEntity.setCategoryStatus(-1);
+            if(blogMapper.updateBlogStatus(blogEntity)>0)flag=true;
+            if(flag) return new ResponseResult(0, true, "修改成功");
+            else return new ResponseResult(5, "未进行任何修改");
         } catch (Exception e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             e.printStackTrace();
             return new ResponseResult(5, "修改失败,发生了异常");
         }
     }
+
 
     @Transactional
     public ResponseResult BlogDelete(long blogId, long userId) {
@@ -109,11 +134,14 @@ public class BlogService {
             if(responseResult!=null)return responseResult;
             if(blogMapper.deleteBlogByBlogId(blogId)>0){
                 //相应的操作
-                Category category = new Category();
+                CategoryEntity category = new CategoryEntity();
                 category.setBlogQuantity(-1);
                 category.setCategoryId(blogEntity.getCategoryId());
+                //删除点赞，收藏，评论等
                 categoryMapper.updateBlogQuantity(category);
 
+                collectMapper.deleteByBlogId(blogId);
+                starMapper.deleteByBlogId(blogId);
                 return new ResponseResult(0,true, "删除成功");
             }
 

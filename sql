@@ -29,7 +29,6 @@ create table user(
     userDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     userLogoSrc VARCHAR(100)  NULL,
     userMotto VARCHAR(50)  NULL,
-    userFollowerQuantity bigint default 0,
     PRIMARY KEY (userId)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -86,3 +85,34 @@ create table blog(
     categoryId bigint not null,
     PRIMARY KEY (blogId)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+follow
+
+create table follow(
+    followId bigint auto_increment,
+    userId bigint not null,
+    userFollowId bigint not null,
+    followDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (followId)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+create table star(
+    starId bigint auto_increment,
+    userId bigint not null,
+    blogId bigint not null,
+    starDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (starId)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+create table collect(
+    collectId bigint auto_increment,
+    userId bigint not null,
+    blogId bigint not null,
+    collectDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (collectId)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+
+

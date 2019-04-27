@@ -60,7 +60,7 @@
                     <tbody>
                     <tr th:each="blog:${blogLists}">
                         <td><span class="text-muted" th:text="${blog.blogId}">1</span></td>
-                        <td><a target="_blank" th:href="@{'/Blog/MyBlog?blogId='+${blog.blogId}}"
+                        <td><a target="_blank" th:href="@{'/Blog/BlogDetails?blogId='+${blog.blogId}}"
                                th:text="${blog.title}">默认</a></td>
                         <td><a target="_blank" th:href="@{'/Blog/MyBlog?page=1&categoryId='+${blog.categoryId}}"
                                th:text="${blog.categoryName}">默认</a></td>

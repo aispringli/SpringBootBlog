@@ -1,6 +1,6 @@
 package com.f5tv.springbootblog.mapper.blog;
 
-import com.f5tv.springbootblog.entity.blog.Category;
+import com.f5tv.springbootblog.entity.blog.CategoryEntity;
 import org.apache.ibatis.annotations.*;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Component;
@@ -34,19 +34,19 @@ public interface CategoryMapper {
     @Insert("INSERT INTO category(userId,categoryName, categoryStatus,blogQuantity) " +
             "VALUES (#{userId},#{categoryName}, #{categoryStatus}, #{blogQuantity})")
     @Options(useGeneratedKeys = true, keyProperty = "categoryId", keyColumn = "categoryId")
-    int insert(Category category);
+    int insert(CategoryEntity categoryEntity);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Update("update category set categoryName = #{categoryName},categoryStatus = #{categoryStatus} where categoryId = #{categoryId}")
-    int updateNameAndStatus(Category category);
+    int updateNameAndStatus(CategoryEntity categoryEntity);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Update("update category set categoryStatus = #{categoryStatus} where categoryId = #{categoryId}")
-    int updateStatus(Category category);
+    int updateStatus(CategoryEntity categoryEntity);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Update("update category set blogQuantity = blogQuantity + #{blogQuantity} where categoryId = #{categoryId}")
-    int updateBlogQuantity(Category category);
+    int updateBlogQuantity(CategoryEntity categoryEntity);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Delete("delete from category  where categoryId = #{categoryId}")
@@ -55,13 +55,13 @@ public interface CategoryMapper {
 
     @Lock(LockModeType.PESSIMISTIC_READ)
     @Select("select * from category order by categoryId")
-    List<Category> categorySelectAll();
+    List<CategoryEntity> categorySelectAll();
 
     @Lock(LockModeType.PESSIMISTIC_READ)
     @Select("select * from category where userId = #{userId} order by categoryId")
-    List<Category> categorySelectByUserId(long userId);
+    List<CategoryEntity> categorySelectByUserId(long userId);
 
     @Lock(LockModeType.PESSIMISTIC_READ)
     @Select("select * from category where categoryId = #{categoryId}")
-    Category categorySelectByCategoryId(long categoryId);
+    CategoryEntity categorySelectByCategoryId(long categoryId);
 }

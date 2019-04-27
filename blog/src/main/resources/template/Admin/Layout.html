@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+      th:with="index_active='',user_active='',category_active='',blog_active='',comment_active=''">
+<head th:include="/common/Head::common_header(~{::title},~{::link},~{::style})">
+    <title>首页-SpringBootBlog</title>
+
+    <link rel="stylesheet" href="/static/admin/css/font-icon-style.css">
+    <link rel="stylesheet" href="/static/admin/css/style.default.css" id="theme-stylesheet">
+
+    <!-- Core stylesheets -->
+    <link rel="stylesheet" href="/static/admin/css/ui-elements/card.css">
+    <link rel="stylesheet" href="/static/admin/css/style.css">
+
+    <link href="/static/home/css/dashboard.css" rel="stylesheet"/>
+    <style rel="stylesheet">
+    </style>
+</head>
+<body>
+<!--====================================================
+                         MAIN NAVBAR
+======================================================-->
+<header class="">
+    <nav class="navbar navbar-expand-lg ">
+        <div class="search-box">
+            <button class="dismiss"><i class="icon-close"></i></button>
+            <form id="searchForm" action="#" role="search">
+                <input type="search" placeholder="Search Now" class="form-control">
+            </form>
+        </div>
+        <div class="container-fluid ">
+            <div class="navbar-holder d-flex align-items-center justify-content-between">
+                <div class="navbar-header">
+                    <a href="index.html" class="navbar-brand">
+                        <div class="brand-text brand-big hidden-lg-down">
+                            <img src="/static/file/logo/logo.jpg" alt="Logo" class="img-fluid"
+                                 style="height: 30px; width: 30px;"></div>
+                        <div class="brand-text brand-small">
+                            <img src="/static/file/logo/logo.jpg" alt="Logo" class="img-fluid"
+                                 style="height: 30px; width: 30px;">
+                        </div>
+                    </a>
+                    <a id="toggle-btn" href="#" class="menu-btn active">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </a>
+                </div>
+            </div>
+            <ul class="nav-menu list-unstyled d-flex flex-md-row align-items-md-center">
+                <!-- Expand-->
+                <li class="nav-item d-flex align-items-center full_scr_exp"><a class="nav-link" href="#"><img
+                        src="/static/admin/img/expand.png" onclick="toggleFullScreen(document.body)" class="img-fluid"
+                        alt=""></a>
+                </li>
+                <li class="nav-item dropdown"><a id="profile" class="nav-link logout" data-target="#" href="#"
+                                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img
+                        th:src="${#authentication.principal.userLogoSrc}" alt="..." class="img-fluid rounded-circle"
+                        style="height: 30px; width: 30px;"></a>
+                    <ul aria-labelledby="profile" class="dropdown-menu profile">
+                        <li>
+                            <a rel="nofollow" href="#" class="dropdown-item d-flex">
+                                <div class="msg-profile">
+                                    <img th:src="${#authentication.principal.userLogoSrc}" alt="..."
+                                         class="img-fluid rounded-circle" style="height: 45px; width: 45px;">
+                                </div>
+                                <div class="msg-body">
+                                    <h3 class="h5" data-sec-authentication="principal.username"></h3><span
+                                        data-sec-authentication="principal.userEmail">admin@f5tv.com</span>
+                                </div>
+                            </a>
+                            <hr>
+                        </li>
+                        <li>
+                            <a rel="nofollow" th:href="@{/User/HandleUserLogout}" class="dropdown-item">
+                                <div class="notification">
+                                    <div class="notification-content"><i class="fa fa-power-off"></i>退出</div>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
+
+<!--====================================================
+                        PAGE CONTENT
+======================================================-->
+<div class="d-flex align-items-stretch">
+
+    <!--***** SIDE NAVBAR *****-->
+    <nav class="side-navbar">
+        <div class="sidebar-header d-flex align-items-center">
+            <div class="avatar"><img th:src="${#authentication.principal.userLogoSrc}" alt="..."
+                                     class="img-fluid rounded-circle" style="height: 55px; width: 55px;"></div>
+            <div class="title">
+                <h1 class="h4" data-sec-authentication="principal.username">username</h1>
+                <span data-sec-authentication="principal.userRoleName"></span>
+            </div>
+        </div>
+        <hr>
+        <!-- Sidebar Navidation Menus-->
+        <ul class="list-unstyled">
+            <li class="" th:classappend="${index_active}"><a th:href="@{/Admin/Index}"><i class="fa fa-home"
+                                                                                          aria-hidden="true"></i>首页面板</a>
+            </li>
+            <li class="" th:classappend="${user_active}"><a th:href="@{/Admin/UserManger}"><i class="fa fa-user-secret"
+                                                                                              aria-hidden="true"></i>用户管理</a>
+            </li>
+            <li class="" th:classappend="${category_active}"><a th:href="@{/Admin/CategoryManger}"><i
+                    class="fa fa-th-list" aria-hidden="true"></i>分类管理</a></li>
+            <li class="" th:classappend="${blog_active}"><a th:href="@{/Admin/BlogManger}"><i class="fa fa-book"
+                                                                                              aria-hidden="true"></i>博客管理</a>
+            </li>
+            <li class="" th:classappend="${comment_active}"><a th:href="@{/Admin/CommentManger}"><i
+                    class="fa fa-comment" aria-hidden="true"></i>评论管理</a></li>
+        </ul>
+        <span class="heading">其他</span>
+        <ul class="list-unstyled">
+            <li><a th:href="@{/User/HandleUserLogout}"> <i class="fa fa-sign-out" aria-hidden="true"></i>退出登陆 </a></li>
+        </ul>
+
+        <ul class="list-unstyled" style="visibility: hidden">
+            <li class="" th:classappend="${index_active}"><a th:href="@{/Admin/Index}"><i class="fa fa-home"
+                                                                                          aria-hidden="true"></i>首页面板</a>
+            </li>
+            <li class="" th:classappend="${user_active}"><a th:href="@{/Admin/UserManger}"><i class="fa fa-user-secret"
+                                                                                              aria-hidden="true"></i>用户管理</a>
+            </li>
+            <li class="" th:classappend="${category_active}"><a th:href="@{/Admin/CategoryManger}"><i
+                    class="fa fa-th-list" aria-hidden="true"></i>分类管理</a></li>
+            <li class="" th:classappend="${blog_active}"><a th:href="@{/Admin/BlogManger}"><i class="fa fa-book"
+                                                                                              aria-hidden="true"></i>博客管理</a>
+            </li>
+            <li class="" th:classappend="${comment_active}"><a th:href="@{/Admin/CommentManger}"><i
+                    class="fa fa-comment" aria-hidden="true"></i>评论管理</a></li>
+        </ul>
+        <ul class="list-unstyled" style="visibility: hidden">
+            <li class="" th:classappend="${index_active}"><a th:href="@{/Admin/Index}"><i class="fa fa-home"
+                                                                                          aria-hidden="true"></i>首页面板</a>
+            </li>
+            <li class="" th:classappend="${user_active}"><a th:href="@{/Admin/UserManger}"><i class="fa fa-user-secret"
+                                                                                              aria-hidden="true"></i>用户管理</a>
+            </li>
+        </ul>
+    </nav>
+    <div class="content-inner" layout:fragment="content">
+
+    </div>
+</div>
+<footer th:replace="/common/Footer::common_footer">
+</footer>
+
+<div th:include="/common/Head::common_js(~{::script})">
+    <script></script>
+</div>
+<th:block layout:fragment="bodyJs">
+    <script></script>
+</th:block>
+</body>
+</html>

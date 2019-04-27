@@ -148,7 +148,7 @@
             where blogId = #{blogId}
         </if>
         <if test=' categoryId >0 '>
-            where categoryId in(select categoryId from category where categoryId = #{categoryId})
+            where categoryId = #{categoryId}
         </if>
         <if test=' userId >0 '>
             where categoryId in(select categoryId from category where userId = #{userId})

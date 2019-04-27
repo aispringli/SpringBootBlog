@@ -28,8 +28,7 @@ public interface UserMapper  {
                     @Result(property = "userStatus", column = "userStatus"),
                     @Result(property = "userDate", column = "userDate"),
                     @Result(property = "userLogoSrc", column = "userLogoSrc"),
-                    @Result(property = "userMotto", column = "userMotto"),
-                    @Result(property = "userFollowerQuantity", column = "userFollowerQuantity"),
+                    @Result(property = "userMotto", column = "userMotto")
             })
 
     @Lock(LockModeType.PESSIMISTIC_READ)
@@ -72,9 +71,6 @@ public interface UserMapper  {
     @Update("update user set userLogoSrc=#{userLogoSrc} where userId = #{userId}")
     int updateUserLogoSrc(UserEntity userEntity);
 
-    //修改粉丝数量
-    @Update("update user set userFollowerQuantity=#{userFollowerQuantity} where userId = #{userId}")
-    int updateUserFollowerQuantity(UserEntity userEntity);
 
     //修改权限
     @Update("update user set userRoleId=#{userRoleId} where userId = #{userId}")

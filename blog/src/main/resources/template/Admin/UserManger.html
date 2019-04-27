@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorate="Admin/Layout">
+<head>
+    <title>首页-SpringBootBlog</title>
+</head>
+<body th:with="user_active='active'">
+<div class="content-inner" layout:fragment="content">
+    <div class="row" id="">
+        <div class="col-lg-10 offset-lg-1">
+            <div class="card container">
+                <div class="card-header row">
+                    <div class="col-lg-5 col-md-6">
+                        <div class="form-group">
+                            <div class="input-group">
+                              <span class="input-group-prepend">
+                                <span class="input-group-text">昵称</span>
+                              </span>
+                                <form class="input-icon">
+                                    <input type="search" class="form-control header-search" placeholder="Search…"
+                                           tabindex="1">
+                                    <div class="input-icon-addon">
+                                        <i class="fe fe-search"></i>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-5 col-md-6">
+                        <div class="form-group">
+                            <div class="input-group">
+                              <span class="input-group-prepend">
+                                <span class="input-group-text">邮箱</span>
+                              </span>
+                                <form class="input-icon">
+                                    <input type="search" class="form-control header-search" placeholder="Search…"
+                                           tabindex="1">
+                                    <div class="input-icon-addon">
+                                        <i class="fe fe-search"></i>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-1">
+                        <a href="#" class="btn btn-primary">查询</a>
+                    </div>
+
+                    <div class="col-5 col-lg-4">
+                        <div class="form-group">
+                            <div class="input-group">
+                          <span class="input-group-prepend">
+                            <span class="input-group-text">显示状态</span>
+                          </span>
+                                <select name="blogStatus" id="blogStatus" class="form-control custom-select">
+                                    <option value="0" selected>正常显示</option>
+                                    <option value="1">私密可见</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-5 col-lg-4">
+                        <div class="form-group">
+                            <div class="input-group">
+                          <span class="input-group-prepend">
+                            <span class="input-group-text">显示状态</span>
+                          </span>
+                                <select name="blogStatus" id="userStatus" class="form-control custom-select">
+                                    <option value="0" selected>正常显示</option>
+                                    <option value="1">私密可见</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table card-table table-vcenter text-nowrap">
+                        <thead>
+                        <tr>
+                            <th>用户id</th>
+                            <th>昵称</th>
+                            <th>邮箱</th>
+                            <th>角色权限</th>
+                            <th>操作</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="">
+                            <td>1</td>
+                            <td>administrator</td>
+                            <td>3377939225@qq.com</td>
+                            <td style="color: orange;">管理员</td>
+                            <td><a href="#" class="btn btn-info">取消管理员</a></td>
+                            <td>正常登陆</td>
+                            <td><a href="#" class="btn btn-danger">禁止登陆</a></td>
+                        </tr>
+                        <tr class="">
+                            <td>2</td>
+                            <td>user</td>
+                            <td>user@f5tv.com</td>
+                            <td>普通用户</td>
+                            <td><a href="#" class="btn btn-warning">设为管理员</a></td>
+                            <td style="color: red;">禁止登陆</td>
+                            <td><a href="#" class="btn btn-success">允许登陆</a></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<th:block layout:fragment="bodyJs">
+</th:block>
+</html>

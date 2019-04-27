@@ -356,7 +356,7 @@ public class UserController {
             return new ResponseResult(2,"原密码输入不正确");
         userEntity.setPassword(bCryptPasswordEncoder.encode(newPassword));
         if(userService.updatePassword(userEntity) > 0)return new ResponseResult(0,true,"修改成功，下次请用新密码登陆");
-        return new ResponseResult(-3,"修改失败");
+        return new ResponseResult(-3,"未进行任何修改");
     }
 
     @RequestMapping("HandleUserUpdateEmail")
@@ -382,7 +382,7 @@ public class UserController {
             ((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).setUserEmail(userEmail);
             return new ResponseResult(0,true,"修改成功");
         }
-        return new ResponseResult(-4,"修改失败");
+        return new ResponseResult(-4,"未进行任何修改");
     }
 
     @RequestMapping("HandleUserUpdateLogoSrc")
@@ -398,7 +398,7 @@ public class UserController {
             ((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).setUserLogoSrc(userLogoSrc);
             return new ResponseResult(0,true,"修改完成");
         }
-        return new ResponseResult(-3,"修改失败");
+        return new ResponseResult(-3,"未进行任何修改");
     }
 
 }

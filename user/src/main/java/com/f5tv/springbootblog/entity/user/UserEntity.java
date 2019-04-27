@@ -46,7 +46,6 @@ public class UserEntity extends UserRole implements UserDetails, CredentialsCont
      **/
     private String userMotto;
 
-    private long userFollowerQuantity;
 
 
     private String username;
@@ -238,13 +237,6 @@ public class UserEntity extends UserRole implements UserDetails, CredentialsCont
         this.userId = userId;
     }
 
-    public long getUserFollowerQuantity() {
-        return userFollowerQuantity;
-    }
-
-    public void setUserFollowerQuantity(long userFollowerQuantity) {
-        this.userFollowerQuantity = userFollowerQuantity;
-    }
 
     public String getUserEmail() {
         return userEmail;

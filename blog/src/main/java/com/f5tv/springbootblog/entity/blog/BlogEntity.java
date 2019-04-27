@@ -9,7 +9,7 @@ import java.util.Date;
  * @Description: //TODO
  * @date 13:15 2019/4/21
  */
-public class BlogEntity extends Category{
+public class BlogEntity extends CategoryEntity {
 
     //主键id
     private long blogId;

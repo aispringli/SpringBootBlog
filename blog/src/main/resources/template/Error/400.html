@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorate="Home/Layout">
+<head>
+    <title>404错误页面-SpringBootBlog</title>
+</head>
+
+<body class="">
+<div class="container" layout:fragment="content">
+    <div class="page-content">
+        <div class="container text-center">
+            <div class="display-1 text-muted mb-5"><i class="si si-exclamation"></i> 400</div>
+            <h1 class="h2">参数不正确</h1>
+            <p class="h4 text-muted font-weight-normal">如您确认参数没问题，请联系我们解决问题</p>
+            <p class="h4 font-weight-normal mb-7" style="color:red;">系统将在 <span id="mes">5</span> 秒钟后返回首页！</p>
+            <a class="btn btn-primary" href="javascript:window.location='/'">
+                <i class="fe fe-arrow-left mr-2"></i>点击返回首页
+            </a>
+        </div>
+    </div>
+    <script>
+        var i = 5;
+        var intervalid;
+        intervalid = setInterval("fun()", 1000);
+        function fun() {
+            if (i === 0) {
+                window.location.href = "/";
+                clearInterval(intervalid);
+            }
+            document.getElementById("mes").innerHTML = i;
+            i--;
+        }
+    </script>
+</div>
+</body>
+</html>

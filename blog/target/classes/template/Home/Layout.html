@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.w3.org/1999/xhtml"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
-      th:with="index_active='',writeblog_active=''">
-<head th:include="/common/Head::common_header(~{::title},~{::link})">
+      th:with="index_active='',writeblog_active='',follow_active='',collect_active=''">
+<head th:include="/common/Head::common_header(~{::title},~{::link},~{::style})">
     <title>首页-SpringBootBlog</title>
     <link href="/static/home/css/dashboard.css" rel="stylesheet"/>
     <link href="/static/home/plugins/charts-c3/plugin.css" rel="stylesheet"/>
     <link href="/static/home/plugins/maps-google/plugin.css" rel="stylesheet"/>
+    <style></style>
 </head>
 <body class="">
 <div class="page">
@@ -16,7 +17,7 @@
                 <div class="container">
                     <div class="d-flex">
                         <a class="header-brand" href="/Home/Index">
-                            <img src="/static/file/logo/demo.jpg" class="header-brand-img" alt="tabler logo">
+                            <img src="/static/file/logo/logo.jpg" class="header-brand-img" alt="tabler logo">
                         </a>
                         <div class="d-flex order-lg-2 ml-auto">
                             <div sec:authorize="isAnonymous()">
@@ -29,8 +30,7 @@
                             </div>
                             <div class="dropdown" sec:authorize="!isAnonymous()">
                                 <a href="#" class="nav-link pr-0 leading-none" data-toggle="dropdown">
-                                    <span class="avatar" th
-                                          style="background-image: url(/static/file/logo/demo.jpg)"
+                                    <span class="avatar"  style="background-image: url(/static/file/logo/demo.jpg)"
                                           th:style="'background-image:url('+${#authentication.principal.userLogoSrc}+')'">
                                     </span>
                                     <span class="ml-2 d-none d-lg-block">
@@ -49,7 +49,7 @@
                                     <a class="dropdown-item" th:href="@{/Blog/MyBlog}">
                                         <i class="dropdown-icon fe fe-book-open"></i> 博 客
                                     </a>
-                                    <a class="dropdown-item" href="#">
+                                    <a class="dropdown-item" th:href="@{/Follow/MyFun}">
                                         <i class="dropdown-icon fe fe-users"></i> 粉 丝
                                     </a>
 
@@ -57,7 +57,7 @@
                                     <a class="dropdown-item" th:href="@{/HomeUser/Personal}">
                                         <i class="dropdown-icon fe fe-user"></i> 个人中心
                                     </a>
-                                    <a class="dropdown-item" href="#" sec:authorize="hasAnyAuthority('管理员')">
+                                    <a class="dropdown-item" th:href="@{/Admin/Index}" sec:authorize="hasAnyAuthority('管理员')">
                                         <i class="dropdown-icon fe fe-log-out"></i> 后台管理
                                     </a>
                                     <a class="dropdown-item" th:href="@{/User/HandleUserLogout}">
@@ -93,11 +93,11 @@
                                     </a>
                                 </li>
                                 <li class="nav-item" sec:authorize="!isAnonymous()">
-                                    <a href="Index" class="nav-link"><i class="fa fa-rss-square" aria-hidden="true"></i>
+                                    <a th:href="@{/Follow/MyFollow}"  class="nav-link" th:classappend="${follow_active}"><i class="fa fa-rss-square" aria-hidden="true"></i>
                                         关注</a>
                                 </li>
                                 <li class="nav-item" sec:authorize="!isAnonymous()">
-                                    <a href="Index" class="nav-link"><i class="fa fa-heart" aria-hidden="true"></i>
+                                    <a href="/Collect/MyCollect" class="nav-link" th:classappend="${collect_active}"><i class="fa fa-heart" aria-hidden="true"></i>
                                         收藏</a>
                                 </li>
                                 <li class="nav-item" sec:authorize="!isAnonymous()">

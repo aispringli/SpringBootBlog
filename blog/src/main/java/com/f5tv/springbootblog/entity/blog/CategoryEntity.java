@@ -10,7 +10,7 @@ import com.f5tv.springbootblog.entity.user.UserEntity;
  * @Description: //TODO
  * @date 10:41 2019/4/19
  */
-public class Category extends UserEntity {
+public class CategoryEntity extends UserEntity {
 
     //主键id
     private long categoryId;
