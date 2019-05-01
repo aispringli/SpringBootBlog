@@ -85,8 +85,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .ignoringAntMatchers("/Email/**")
                 .and()
                 .authorizeRequests()
-                .antMatchers("/User/HandleSignIn","/User/CheckUserEmail","/User/HandleSignUp","/User/HandleSign","/","/Home/Index","/Blog/BlogDetails","/Blog/BlogDashboard","/FileUpload/Download","Blog/HandleBlogSelectAllNormalAjax",
-                        "/User/SendEmailValidateCode","/static/**","/VerificationCode/**","favicon.ico","/Email/**").permitAll()
+                .antMatchers("/User/HandleSignIn","/User/CheckUserEmail","/User/HandleSignUp","/User/HandleSign","/","/Home/Index","/Blog/BlogDetails","/Blog/BlogDashboard","/FileUpload/Download","/Blog/HandleBlogSelectAllNormalAjax",
+                        "/Comment/SelectComment","/User/SendEmailValidateCode","/static/**","/VerificationCode/**","favicon.ico","/Email/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()

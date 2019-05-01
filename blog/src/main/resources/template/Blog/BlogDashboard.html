@@ -4,6 +4,7 @@
       layout:decorate="Home/Layout">
 <head>
     <title>首页-SpringBootBlog</title>
+    <th:block layout:fragment="title" th:text="${userEntity.username}+'的博客列表'">title</th:block>
 </head>
 
 <body class="">

@@ -3,7 +3,7 @@
       xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
       layout:decorate="Home/Layout">
 <head>
-    <title>404错误页面-SpringBootBlog</title>
+    <th:block layout:fragment="title" th:text="${#authentication.principal.username}+'的收藏列表'">title</th:block>
 </head>
 
 <body class="" th:with="collect_active='active'">

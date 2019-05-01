@@ -111,15 +111,16 @@ public class CategoryService {
     }
 
     @Transactional
-    public ResponseResult CategoryUpdateStatus(CategoryEntity categoryEntity) {
-        if (categoryEntity.getCategoryStatus() != 0 && categoryEntity.getCategoryStatus() != 1 && categoryEntity.getCategoryStatus() != -1)
-            return new ResponseResult(-1, "非法参数，修改失败");
-        if (categoryEntity.getCategoryId() < 1 || categoryEntity.getUserId() < 1) return new ResponseResult(-1, "非法参数，修改失败");
+    public ResponseResult CategoryUpdateStatus(Long categoryId) {
+        CategoryEntity categoryEntity=categoryMapper.categorySelectByCategoryId(categoryId);
+        if(categoryEntity==null)return  new ResponseResult(1, "分类不存在，参数非法");
+        if(categoryEntity.getCategoryStatus()==-1)categoryEntity.setCategoryStatus(0);
+        else categoryEntity.setCategoryStatus(-1);
         try {
             if (categoryMapper.updateStatus(categoryEntity) > 0) {
                 BlogEntity blogEntity = new BlogEntity();
-                if(categoryEntity.getUserId()>0)blogEntity.setUserId(categoryEntity.getUserId());
-                else blogEntity.setCategoryId(categoryEntity.getCategoryId());
+
+                blogEntity.setCategoryId(categoryEntity.getCategoryId());
                 blogEntity.setBlogStatus(categoryEntity.getCategoryStatus());
                 blogEntity.setCategoryStatus(0);
                 long num = blogMapper.updateBlogStatus(blogEntity);
@@ -128,14 +129,18 @@ public class CategoryService {
         } catch (Exception ex) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             ex.printStackTrace();
-            new ResponseResult(-3, "删除失败");
+            new ResponseResult(-3, "修改失败");
         }
         return new ResponseResult(-2, "修改失败");
     }
 
 
-    public List<CategoryEntity> categorySelectAll() {
-        return categoryMapper.categorySelectAll();
+    public List<CategoryEntity> categorySelectAll(CategoryEntity categoryEntity) {
+        return categoryMapper.categorySelectAll(categoryEntity);
+    }
+
+    public int categorySelectAllCount(CategoryEntity categoryEntity) {
+        return categoryMapper.categorySelectAllCount(categoryEntity);
     }
 
     public List<CategoryEntity> categorySelectByUserId(long userId) {

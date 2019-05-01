@@ -72,9 +72,10 @@
             <if test=' blogStatus != -99 '>
                 and blogStatus = #{blogStatus}
             </if>
+            <if test=' title != null and title !="" '>
+                and title like #{title}
+            </if>
         </where>
-
-
         order by blogId desc
     </select>
 
@@ -135,10 +136,20 @@
         on blog.categoryId = category.categoryId
         left join user
         on category.userId=user.userId
-        <if test=' blogStatus != -99 '>
-            where blogStatus = #{blogStatus}
-        </if>
-        order by blogId desc
+        <where>
+            <if test=' userId >0 '>
+                user.userId = #{userId}
+            </if>
+            <if test=' categoryId >0 '>
+                and category.categoryId = #{categoryId}
+            </if>
+            <if test=' blogStatus != -99 '>
+                and blogStatus = #{blogStatus}
+            </if>
+            <if test=' title != null and title !="" '>
+                and title like #{title}
+            </if>
+        </where>
     </select>
 
     <update id="updateBlogStatus" parameterType="com.f5tv.springbootblog.entity.blog.BlogEntity">

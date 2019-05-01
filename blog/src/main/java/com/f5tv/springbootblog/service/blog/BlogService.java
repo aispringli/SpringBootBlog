@@ -3,14 +3,12 @@ package com.f5tv.springbootblog.service.blog;
 import com.f5tv.springbootblog.entity.blog.BlogEntity;
 import com.f5tv.springbootblog.entity.blog.CategoryEntity;
 import com.f5tv.springbootblog.entity.core.ResponseResult;
-import com.f5tv.springbootblog.mapper.blog.BlogMapper;
-import com.f5tv.springbootblog.mapper.blog.CategoryMapper;
-import com.f5tv.springbootblog.mapper.blog.CollectMapper;
-import com.f5tv.springbootblog.mapper.blog.StarMapper;
+import com.f5tv.springbootblog.mapper.blog.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -36,6 +34,9 @@ public class BlogService {
 
     @Autowired
     StarMapper starMapper;
+
+    @Autowired
+    CommentMapper commentMapper;
 
     ResponseResult checkBlog(BlogEntity blogEntity, long userId) {
         if (StringUtils.isEmpty(blogEntity.getTitle()) || blogEntity.getTitle().length() > 20)
@@ -82,6 +83,7 @@ public class BlogService {
     public long selectBlogAllNum(BlogEntity blogEntity) {
         return blogMapper.selectBlogAllNum(blogEntity);
     }
+
     public List<BlogEntity> selectBlogAll(BlogEntity blogEntity) {
         return blogMapper.selectBlogAll(blogEntity);
     }
@@ -142,6 +144,7 @@ public class BlogService {
 
                 collectMapper.deleteByBlogId(blogId);
                 starMapper.deleteByBlogId(blogId);
+                commentMapper.deleteByBlogId(blogId);
                 return new ResponseResult(0,true, "删除成功");
             }
 
@@ -155,4 +158,16 @@ public class BlogService {
         return null;
     }
 
+    public ResponseResult updateBlogStatus(long blogId){
+        BlogEntity blogEntity=blogMapper.selectBlogByBlogId(blogId);
+        if(blogEntity==null)return new ResponseResult(-1,"博客不存在，处理失败");
+        if(blogEntity.getBlogStatus()==-1)blogEntity.setBlogStatus(0);
+        else blogEntity.setBlogStatus(-1);
+        blogEntity.setCategoryId(0);
+        blogEntity.setUserId(0);
+        blogEntity.setCategoryStatus(0);
+
+        if(blogMapper.updateBlogStatus(blogEntity)>0)return new ResponseResult(0,true,"处理成功");
+        else return new ResponseResult(2,"处理失败");
+    }
 }

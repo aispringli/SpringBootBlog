@@ -16,7 +16,6 @@
         <module>email</module>
         <module>blog</module>
         <module>manger</module>
-
     </modules>
 
     <!-- 基础属性-->

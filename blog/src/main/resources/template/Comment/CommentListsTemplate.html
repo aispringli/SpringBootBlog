@@ -1,0 +1,17 @@
+<li class="list-group-item py-5" th:each="comment:${commentLists}">
+    <div class="media">
+        <a class="avatar avatar-md mr-3" th:href="@{'/Blog/BlogDashboard?userId='+${comment.userId}}"
+           target="_blank">
+            <div class="media-object avatar avatar-md mr-4" th:style="'background-image:url('+${comment.userLogoSrc}+')'"></div>
+        </a>
+        <div class="media-body">
+            <div class="media-heading">
+                <small class="float-right text-muted" th:text="${#dates.format(comment.commentDate, 'yyyy-MM-dd HH:mm')}">12 min</small>
+                <h5 th:text="${comment.username}">username</h5>
+            </div>
+            <div th:text="${comment.commentContent}">
+
+            </div>
+        </div>
+    </div>
+</li>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 指定工作空间，要与接口名相同，源代码没有去看，猜测应该是通过"这里的namespace.下边方法的id"来定位方法的 -->
+<mapper namespace="com.f5tv.springbootblog.mapper.blog.CategoryMapper">
+
+
+    <select id="categorySelectAll" parameterType="com.f5tv.springbootblog.entity.blog.CategoryEntity" resultType="com.f5tv.springbootblog.entity.blog.CategoryEntity">
+        select category.userId,categoryId,username,categoryName,categoryStatus,blogQuantity,categoryDate from category left join user on category.userId = user.userId
+        <where>
+            <if test=' categoryStatus >-99 '>
+                and category.categoryStatus = #{categoryStatus}
+            </if>
+            <if test=' userId >0 '>
+                and category.userId = #{userId}
+            </if>
+        </where>
+        order by categoryId desc
+    </select>
+
+    <select id="categorySelectAllCount" parameterType="com.f5tv.springbootblog.entity.blog.CategoryEntity" resultType="java.lang.Integer">
+        select count(0) from category
+        <where>
+            <if test=' categoryStatus >-99 '>
+                and category.categoryStatus = #{categoryStatus}
+            </if>
+            <if test=' userId >0 '>
+                and category.userId = #{userId}
+            </if>
+        </where>
+    </select>
+
+</mapper>

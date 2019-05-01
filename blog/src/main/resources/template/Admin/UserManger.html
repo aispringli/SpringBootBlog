@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
       layout:decorate="Admin/Layout">
 <head>
-    <title>首页-SpringBootBlog</title>
+    <th:block layout:fragment="title" th:text="'欢迎'+${#authentication.principal.username}+'来管理用户'">title</th:block>
 </head>
 <body th:with="user_active='active'">
 <div class="content-inner" layout:fragment="content">
     <div class="row" id="">
-        <div class="col-lg-10 offset-lg-1">
+        <div class="col-12">
             <div class="card container">
                 <div class="card-header row">
                     <div class="col-lg-5 col-md-6">
@@ -18,7 +19,8 @@
                                 <span class="input-group-text">昵称</span>
                               </span>
                                 <form class="input-icon">
-                                    <input type="search" class="form-control header-search" placeholder="Search…"
+                                    <input type="search" id="username" class="form-control header-search"
+                                           placeholder="搜索昵称…"
                                            tabindex="1">
                                     <div class="input-icon-addon">
                                         <i class="fe fe-search"></i>
@@ -28,15 +30,15 @@
                         </div>
                     </div>
 
-                    <div class="col-lg-5 col-md-6">
+                    <div class="col-lg-5 col-md-5">
                         <div class="form-group">
                             <div class="input-group">
                               <span class="input-group-prepend">
                                 <span class="input-group-text">邮箱</span>
                               </span>
                                 <form class="input-icon">
-                                    <input type="search" class="form-control header-search" placeholder="Search…"
-                                           tabindex="1">
+                                    <input type="search" id="userEmail" class="form-control header-search"
+                                           placeholder="搜索邮箱…">
                                     <div class="input-icon-addon">
                                         <i class="fe fe-search"></i>
                                     </div>
@@ -46,38 +48,40 @@
                     </div>
 
                     <div class="col-1">
-                        <a href="#" class="btn btn-primary">查询</a>
+                        <a href="#" class="btn btn-info" id="userSearchBtn">查询</a>
                     </div>
 
-                    <div class="col-5 col-lg-4">
+                    <div class="col-5">
                         <div class="form-group">
                             <div class="input-group">
                           <span class="input-group-prepend">
-                            <span class="input-group-text">显示状态</span>
+                            <span class="input-group-text">角色</span>
                           </span>
-                                <select name="blogStatus" id="blogStatus" class="form-control custom-select">
-                                    <option value="0" selected>正常显示</option>
-                                    <option value="1">私密可见</option>
+                                <select name="userRoleId" id="userRoleId" class="form-control custom-select">
+                                    <option value="0" sec:authorize="hasAnyAuthority('超级管理员')">所有</option>
+                                    <option value="201" sec:authorize="hasAnyAuthority('超级管理员')">管理员</option>
+                                    <option value="301" selected>普通用户</option>
                                 </select>
                             </div>
                         </div>
                     </div>
 
-
-                    <div class="col-5 col-lg-4">
+                    <div class="col-5">
                         <div class="form-group">
                             <div class="input-group">
                           <span class="input-group-prepend">
-                            <span class="input-group-text">显示状态</span>
+                            <span class="input-group-text">用户状态</span>
                           </span>
-                                <select name="blogStatus" id="userStatus" class="form-control custom-select">
-                                    <option value="0" selected>正常显示</option>
-                                    <option value="1">私密可见</option>
+                                <select name="userStatus" id="userStatus" class="form-control custom-select">
+                                    <option value="-99" selected>所有</option>
+                                    <option value="0">正常登陆</option>
+                                    <option value="-1">禁止登陆</option>
                                 </select>
                             </div>
                         </div>
 
                     </div>
+
                 </div>
                 <div class="table-responsive">
                     <table class="table card-table table-vcenter text-nowrap">
@@ -86,39 +90,143 @@
                             <th>用户id</th>
                             <th>昵称</th>
                             <th>邮箱</th>
+                            <th>注册时间</th>
                             <th>角色权限</th>
-                            <th>操作</th>
+                            <th sec:authorize="hasAnyAuthority('超级管理员')">操作</th>
                             <th>状态</th>
                             <th>操作</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr class="">
-                            <td>1</td>
-                            <td>administrator</td>
-                            <td>3377939225@qq.com</td>
-                            <td style="color: orange;">管理员</td>
-                            <td><a href="#" class="btn btn-info">取消管理员</a></td>
-                            <td>正常登陆</td>
-                            <td><a href="#" class="btn btn-danger">禁止登陆</a></td>
-                        </tr>
-                        <tr class="">
-                            <td>2</td>
-                            <td>user</td>
-                            <td>user@f5tv.com</td>
-                            <td>普通用户</td>
-                            <td><a href="#" class="btn btn-warning">设为管理员</a></td>
-                            <td style="color: red;">禁止登陆</td>
-                            <td><a href="#" class="btn btn-success">允许登陆</a></td>
+                        <tr th:each="userEntity:${userLists}">
+                            <td><a th:href="'/Blog/BlogDashboard?userId='+${userEntity.userId}" th:text="${userEntity.userId}" target="_blank" title="点击访问用户主页">1</a> </td>
+                            <td><a th:href="'/Admin/UserManger?username='+${userEntity.username}" th:text="${userEntity.username}" th:title="'搜索 '+${userEntity.username}" target="_blank"></a> </td>
+                            <td><a th:href="'/Admin/UserManger?userEmail='+${userEntity.userEmail}" th:text="${userEntity.userEmail}" th:title="'搜索 '+${userEntity.userEmail}"  target="_blank" ></a></td>
+                            <td th:text="${#dates.format(userEntity.userDate, 'yyyy-MM-dd HH:mm')}"></td>
+                            <td th:if="${userEntity.userRoleId} == 301" th:text="${userEntity.userRoleName}"></td>
+                            <td th:if="${userEntity.userRoleId} == 201" th:text="${userEntity.userRoleName}"
+                                style="color: orange;"></td>
+                            <td th:if="${userEntity.userRoleId} == 101" th:text="${userEntity.userRoleName}"
+                                style="color: #7bd235;"></td>
+                            <td sec:authorize="hasAnyAuthority('超级管理员')">
+                                <a href="#" th:if="${userEntity.userRoleId} == 301" th:attr="data-userid=${userEntity.userId}" class="btn btn-warning">设为管理员</a>
+                                <a href="#" th:if="${userEntity.userRoleId} == 201" th:attr="data-userid=${userEntity.userId}" class="btn btn-primary">取消管理员</a>
+                                <a href="#" th:if="${userEntity.userRoleId} == 101" class="btn btn-info">无</a>
+                            </td>
+                            <th:block th:if="${userEntity.userStatus} == 0">
+                                <td>正常</td>
+                                <td th:if="${userEntity.userRoleId} == 101"><a href="#" class="btn btn-info">无</a>
+                                </td>
+                                <td th:if="${userEntity.userRoleId} != 101"><a href="#" class="btn btn-danger" th:attr="data-userid=${userEntity.userId}">禁止登陆</a>
+                                </td>
+                            </th:block>
+                            <th:block th:if="${userEntity.userStatus} == -1">
+                                <td style="color: red;">禁用</td>
+                                <td><a href="#" class="btn btn-success" th:attr="data-userid=${userEntity.userId}">允许登陆</a>
+                                </td>
+                            </th:block>
                         </tr>
                         </tbody>
                     </table>
                 </div>
+                <hr/>
+                <ul class="pagination" id="myPagination" style="margin: auto;padding-bottom: 1rem;display: none;">
+                    <li class="page-item"><a class="page-link" href="#">上一页</a></li>
+                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item"><a class="page-link" href="#">4</a></li>
+                    <li class="page-item"><a class="page-link" href="#">5</a></li>
+                    <li class="page-item"><a class="page-link" href="#">下一页</a></li>
+                </ul>
             </div>
         </div>
     </div>
 </div>
 </body>
 <th:block layout:fragment="bodyJs">
+    <script>
+        $(function () {
+            //处理分页以及查询
+            var page = getQueryString("page");
+            if (page == null || page < 1) page = 1;
+
+            var userStatus = getQueryString("userStatus");
+            if (userStatus == null || userStatus === "null") userStatus = -99;
+            $("#userStatus").val(userStatus);
+
+            var userRoleId = getQueryString("userRoleId");
+            if (userRoleId == null || userRoleId === "null") userRoleId = 301;
+            $("#userRoleId").val(userRoleId);
+
+            var username=getQueryString("username");
+            if (username == null || username === "null") username = "";
+            $("#username").val(username);
+            var userEmail=getQueryString("userEmail");
+            if (userEmail == null || userEmail === "null") userEmail = "";
+            $("#userEmail").val(userEmail);
+            var url = changeURLArg(window.location.href, "page", 1);
+            url = changeURLArg(url, "userStatus", $("#userStatus").val());
+            url = changeURLArg(url, "userRoleId", $("#userRoleId").val());
+            url = changeURLArg(url, "username", username);
+            url = changeURLArg(url, "userEmail", userEmail);
+
+            $("#userSearchBtn").click(function () {
+                url = changeURLArg(window.location.href, "page", 1);
+                url = changeURLArg(url, "userStatus", $("#userStatus").val());
+                url = changeURLArg(url, "userRoleId", $("#userRoleId").val());
+                url = changeURLArg(url, "username", $("#username").val());
+                url = changeURLArg(url, "userEmail", $("#userEmail").val());
+                window.location = url;
+            });
+            var pageNum = [[${pageNum}]];
+            if (pageNum == null || pageNum === "" || pageNum == 0) pageNum = 1;
+            pageNum = Math.ceil(pageNum / 10);
+            calMyPagination("myPagination", page, pageNum, url);
+        });
+
+        //处理权限
+        $(".btn-warning , .btn-primary").click(function () {
+            $.ajax({
+                url: "/User/HandleUpdateUserRole",
+                type: "post",
+                data: {
+                    "userId": $(this).data('userid')
+                },
+                success: function (result) {
+                    alert(result.message);
+                    if (result.success) location.reload();
+                },
+                error: function (event, XMLHttpRequest, ajaxOptions, thrownError) {
+                    if (XMLHttpRequest.status == 403 || XMLHttpRequest.status == 302) {
+                        alert('您还没有登陆，请登陆后使用');
+                        location.reload();
+                    } else alert('发生了错误,请检查网络或稍后刷新重试');
+                }
+            });
+        });
+
+        //处理登陆与否
+        $(".btn-danger , .btn-success").click(function () {
+            $.ajax({
+                url: "/User/HandleUpdateUserStatus",
+                type: "post",
+                data: {
+                    "userId": $(this).data('userid')
+                },
+                success: function (result) {
+                    alert(result.message);
+                    if (result.success) location.reload();
+                },
+                error: function (event, XMLHttpRequest, ajaxOptions, thrownError) {
+                    if (XMLHttpRequest.status == 403 || XMLHttpRequest.status == 302) {
+                        alert('您还没有登陆，请登陆后使用');
+                        location.reload();
+                    } else alert('发生了错误,请检查网络或稍后刷新重试');
+                }
+            });
+        });
+
+    </script>
 </th:block>
 </html>

@@ -28,7 +28,7 @@ public class StarController {
     @RequestMapping("HandleIsStar")
     @ResponseBody
     public ResponseResult HandleIsStar(Long blogId){
-        if(blogId==null||blogId<1)return new ResponseResult(-1,"非法参数");
+        if(blogId==null||blogId<1)return new ResponseResult(-1,"参数非法，处理失败");
         StarEntity starEntity=new StarEntity();
         starEntity.setBlogId(blogId);
         starEntity.setUserId(((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId());
@@ -41,7 +41,7 @@ public class StarController {
     @RequestMapping("HandleStarAdd")
     @ResponseBody
     public ResponseResult HandleStarAdd(Long blogId){
-        if(blogId==null||blogId<1)return new ResponseResult(-1,"非法参数");
+        if(blogId==null||blogId<1)return new ResponseResult(-1,"参数非法，处理失败");
         StarEntity starEntity=new StarEntity();
         starEntity.setBlogId(blogId);
         starEntity.setUserId(((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId());
@@ -52,7 +52,7 @@ public class StarController {
     @ResponseBody
     public ResponseResult HandleStarDelete(Long blogId){
         StarEntity starEntity=new StarEntity();
-        if(blogId==null||blogId<1)return new ResponseResult(-1,"非法参数");
+        if(blogId==null||blogId<1)return new ResponseResult(-1,"参数非法，处理失败");
         starEntity.setBlogId(blogId);
         starEntity.setUserId(((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId());
         return starService.delete(starEntity);

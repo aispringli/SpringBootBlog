@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 指定工作空间，要与接口名相同，源代码没有去看，猜测应该是通过"这里的namespace.下边方法的id"来定位方法的 -->
+<mapper namespace="com.f5tv.springbootblog.mapper.blog.CommentMapper">
+
+
+    <select id="selectAll" parameterType="com.f5tv.springbootblog.entity.blog.CommentEntity" resultType="com.f5tv.springbootblog.entity.blog.CommentEntity">
+        select commentId,comment.userId,comment.blogId,title,commentContent,commentDate,commentStatus,username,userLogoSrc
+        from comment left join user on comment.userId = user.userId
+        left join blog on comment.blogId = blog.blogId
+        <where>
+            <if test=' userId >0 '>
+                and comment.userId = #{userId}
+            </if>
+            <if test=' blogId >0 '>
+                and comment.blogId = #{blogId}
+            </if>
+            <if test=' commentStatus >-99 '>
+                and comment.commentStatus = #{commentStatus}
+            </if>
+            <if test=' commentContent != null and commentContent !="" '>
+                and commentContent like #{commentContent}
+            </if>
+        </where>
+        order by commentId desc
+    </select>
+
+    <select id="selectAllCount" parameterType="com.f5tv.springbootblog.entity.blog.CommentEntity" resultType="java.lang.Integer">
+        select count(0) from comment
+        <where>
+            <if test=' userId >0 '>
+                and comment.userId = #{userId}
+            </if>
+            <if test=' blogId >0 '>
+                and comment.blogId = #{blogId}
+            </if>
+            <if test=' commentStatus >-99 '>
+                and comment.commentStatus = #{commentStatus}
+            </if>
+            <if test=' commentContent != null and commentContent !="" '>
+                and commentContent like #{commentContent}
+            </if>
+        </where>
+    </select>
+
+</mapper>

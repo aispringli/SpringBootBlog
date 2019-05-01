@@ -54,8 +54,10 @@ public interface CategoryMapper {
 
 
     @Lock(LockModeType.PESSIMISTIC_READ)
-    @Select("select * from category order by categoryId")
-    List<CategoryEntity> categorySelectAll();
+    List<CategoryEntity> categorySelectAll(CategoryEntity categoryEntity);
+
+    int categorySelectAllCount(CategoryEntity categoryEntity);
+
 
     @Lock(LockModeType.PESSIMISTIC_READ)
     @Select("select * from category where userId = #{userId} order by categoryId")

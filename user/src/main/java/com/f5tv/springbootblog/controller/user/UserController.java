@@ -20,6 +20,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.RememberMeServices;
@@ -82,6 +83,8 @@ public class UserController {
     @Autowired
     CheckStringTool checkStringTool;
 
+    @Autowired
+    private SessionRegistry sessionRegistry;
 
     //处理未登陆，判断cookie是否已记住登陆,跳转到首页
     @RequestMapping("HandleSign")
@@ -89,7 +92,7 @@ public class UserController {
         Authentication authenticatedUser = rememberMeServices.autoLogin(request,response);
         if(authenticatedUser!=null){
             SecurityContextHolder.getContext().setAuthentication(authenticatedUser);
-            request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
+            //request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
         }
         return "redirect:/";
     }
@@ -162,8 +165,7 @@ public class UserController {
                 rememberMeServices.loginSuccess(request,response,authenticatedUser);
                 ((UserEntity)authenticatedUser.getPrincipal()).setUsername(rememberme);
             }
-            SecurityContextHolder.getContext().setAuthentication(authenticatedUser);
-            request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
+           SecurityContextHolder.getContext().setAuthentication(authenticatedUser);
         } catch (UsernameNotFoundException usernameNotFoundException) {
             //用户名不存在
             if (userEntity.getUserEmail() != null) return userResultBean.userLoginResult().get(303);
@@ -180,6 +182,7 @@ public class UserController {
             //其他异常
             return commonResultBean.publicErrorResult().get(-102);
         }
+
         return new ResponseResult(0, true, "授权成功");
     }
 
@@ -327,6 +330,22 @@ public class UserController {
         return userResultBean.userResetPasswordResult().get(201);
     }
 
+
+    @RequestMapping("HandleUserUpdateUsername")
+    @ResponseBody
+    public ResponseResult HandleUserUpdateUsername(String username) {
+        if (StringUtils.isEmpty(username)||StringUtils.isEmpty(username)) return new ResponseResult(-1,"没有输入昵称");
+        if (username.length()<6||username.length() > 20) return new ResponseResult(-2,"昵称长度不在范围内");
+        UserEntity userEntity = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        userEntity.setUsername(username);
+        if(userService.updateUsername(userEntity) > 0){
+            ((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).setUsername(username);
+            return new ResponseResult(0,true,"修改成功");
+        }
+        return new ResponseResult(-3,"未进行任何修改");
+    }
+
+
     @RequestMapping("HandleUserUpdateMotto")
     @ResponseBody
     public boolean HandleUserUpdateMotto(String userMotto) {
@@ -399,6 +418,33 @@ public class UserController {
             return new ResponseResult(0,true,"修改完成");
         }
         return new ResponseResult(-3,"未进行任何修改");
+    }
+
+    @RequestMapping("HandleUpdateUserRole")
+    @ResponseBody
+    public ResponseResult HandleUpdateUserRole(Long userId){
+        if(userId==null)return new ResponseResult(1,"非法参数,用户不存在");
+        if(((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserRoleId()!=101)
+            return new ResponseResult(2,"权限不足");
+        UserEntity userEntity=userService.userEntitySelectByUserId(userId);
+        if(userEntity==null)return new ResponseResult(3,"非法参数,用户不存在");
+        if(userEntity.getUserRoleId()==201)userEntity.setUserRoleId(301);
+        else if(userEntity.getUserRoleId()==301)userEntity.setUserRoleId(201);
+        else return new ResponseResult(4,"非法参数");
+        if(userService.updateUserRoleId(userEntity)>0)return new ResponseResult(0,true,"处理成功");
+        else return new ResponseResult(-1,"处理失败");
+    }
+
+    @RequestMapping("HandleUpdateUserStatus")
+    @ResponseBody
+    public ResponseResult HandleUpdateUserStatus(Long userId){
+        if(userId==null)return new ResponseResult(1,"非法参数,用户不存在");
+        UserEntity userEntity=userService.userEntitySelectByUserId(userId);
+        if(userEntity==null)return new ResponseResult(3,"非法参数,用户不存在");
+        if(userEntity.getUserStatus()==0)userEntity.setUserStatus(-1);
+        else userEntity.setUserStatus(0);
+        if(userService.updateUserStatus(userEntity)>0)return new ResponseResult(0,true,"处理成功");
+        else return new ResponseResult(-1,"处理失败");
     }
 
 }

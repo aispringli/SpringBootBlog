@@ -3,13 +3,165 @@
       xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
       layout:decorate="Admin/Layout">
 <head>
-    <title>首页-SpringBootBlog</title>
+    <th:block layout:fragment="title" th:text="'欢迎'+${#authentication.principal.username}+'来管理分类'">title</th:block>
 </head>
 <body th:with="category_active='active'">
 <div class="content-inner" layout:fragment="content">
+    <div class="row" id="">
+        <div class="col-12">
+            <div class="card container">
+                <div class="card-header row">
+                    <div class="col-5">
+                        <div class="form-group">
+                            <div class="input-group">
+                              <span class="input-group-prepend">
+                                <span class="input-group-text">用户ID</span>
+                              </span>
+                                <form class="input-icon">
+                                    <input type="search" id="userId" class="form-control header-search"
+                                           placeholder="用户ID…"
+                                           tabindex="1">
+                                    <div class="input-icon-addon">
+                                        <i class="fe fe-search"></i>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
 
+                    <div class="col-5">
+                        <div class="form-group">
+                            <div class="input-group">
+                          <span class="input-group-prepend">
+                            <span class="input-group-text">分类状态</span>
+                          </span>
+                                <select name="categoryStatus" id="categoryStatus" class="form-control custom-select">
+                                    <option value="-99" selected>所有</option>
+                                    <option value="0">正常显示</option>
+                                    <option value="1">个人可见</option>
+                                    <option value="-1">管理员下架</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-1">
+                        <a href="#" class="btn btn-info" id="categorySearchBtn">查询</a>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table card-table table-vcenter text-nowrap">
+                        <thead>
+                        <tr>
+                            <th>分类Id</th>
+                            <th>名称</th>
+                            <th>昵称</th>
+                            <th>博客数量</th>
+                            <th>添加时间</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="category:${categoryLists}">
+                            <td th:text="${category.categoryId}">2</td>
+                            <td><a th:href="'/Blog/BlogDashboard?userId='+${category.userId}+'&categoryId='+${category.categoryId}" th:title="'访问该分类主页'" th:text="${category.categoryName}" target="_blank"></a> </td>
+                            <td><a th:href="'/Admin/CategoryManger?userId='+${category.userId}" th:text="${category.username}" th:title="'点击查看 '+${category.username}+'用户下所有分类'" target="_blank"></a> </td>
+                            <td th:text="${category.blogQuantity}"></td>
+                            <td th:text="${#dates.format(category.categoryDate, 'yyyy-MM-dd HH:mm')}"></td>
+                            <th:block th:if="${category.categoryStatus} == 0">
+                                <td>正常显示</td>
+                                <td><a href="#" class="btn btn-danger"
+                                       th:attr="data-categoryid=${category.categoryId}">下架</a>
+                                </td>
+                            </th:block>
+
+                            <th:block th:if="${category.categoryStatus} == 1">
+                                <td style="color: #7bd235;">个人可见</td>
+                                <td><a href="#" class="btn btn-danger"
+                                       th:attr="data-categoryid=${category.categoryId}">下架</a>
+                                </td>
+                            </th:block>
+
+                            <th:block th:if="${category.categoryStatus} == -1">
+                                <td style="color: orange;">管理员下架</td>
+                                <td><a href="#" class="btn btn-success"
+                                       th:attr="data-categoryid=${category.categoryId}">取消下架</a>
+                                </td>
+                            </th:block>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <hr/>
+                <ul class="pagination" id="myPagination" style="margin: auto;padding-bottom: 1rem;display: none;">
+                    <li class="page-item"><a class="page-link" href="#">上一页</a></li>
+                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item"><a class="page-link" href="#">4</a></li>
+                    <li class="page-item"><a class="page-link" href="#">5</a></li>
+                    <li class="page-item"><a class="page-link" href="#">下一页</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 <th:block layout:fragment="bodyJs">
+    <script>
+        $(function () {
+            //处理分页以及查询
+            var page = getQueryString("page");
+            if (page == null || page < 1) page = 1;
+
+            var userId = getQueryString("userId");
+            if (userId == null || userId === "null") userId = "";
+            $("#userId").val(userId);
+
+            var categoryStatus = getQueryString("categoryStatus");
+            if (categoryStatus == null || categoryStatus === "null") categoryStatus = -99;
+            $("#categoryStatus").val(categoryStatus);
+
+            var url = changeURLArg(window.location.href, "page", 1);
+            url = changeURLArg(url, "categoryStatus", $("#categoryStatus").val());
+            url = changeURLArg(url, "userId", userId);
+
+            $("#categorySearchBtn").click(function () {
+                url = changeURLArg(window.location.href, "page", 1);
+                url = changeURLArg(url, "categoryStatus", $("#categoryStatus").val());
+                url = changeURLArg(url, "userId", $("#userId").val());
+                window.location = url;
+            });
+            var pageNum = [[${pageNum}]];
+            if (pageNum == null || pageNum === "" || pageNum == 0) pageNum = 1;
+            pageNum = Math.ceil(pageNum / 10);
+            calMyPagination("myPagination", page, pageNum, url);
+        });
+
+
+        //处理状态
+        $(".btn-danger , .btn-success").click(function () {
+            $.ajax({
+                url: "/Category/HandleCategoryUpdateStatus",
+                type: "post",
+                data: {
+                    "categoryId": $(this).data('categoryid')
+                },
+                success: function (result) {
+                    alert(result.message);
+                    if (result.success) location.reload();
+                },
+                error: function (event, XMLHttpRequest, ajaxOptions, thrownError) {
+                    if (XMLHttpRequest.status == 403 || XMLHttpRequest.status == 302) {
+                        alert('您还没有登陆，请登陆后使用');
+                        location.reload();
+                    } else alert('发生了错误,请检查网络或稍后刷新重试');
+                }
+            });
+        });
+
+    </script>
 </th:block>
 </html>

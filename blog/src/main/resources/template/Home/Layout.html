@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
       th:with="index_active='',writeblog_active='',follow_active='',collect_active=''">
 <head th:include="/common/Head::common_header(~{::title},~{::link},~{::style})">
-    <title>首页-SpringBootBlog</title>
+    <title><th:block layout:fragment="title"></th:block> - SpringBootBlog</title>
     <link href="/static/home/css/dashboard.css" rel="stylesheet"/>
     <link href="/static/home/plugins/charts-c3/plugin.css" rel="stylesheet"/>
     <link href="/static/home/plugins/maps-google/plugin.css" rel="stylesheet"/>
@@ -52,13 +52,16 @@
                                     <a class="dropdown-item" th:href="@{/Follow/MyFun}">
                                         <i class="dropdown-icon fe fe-users"></i> 粉 丝
                                     </a>
+                                    <a class="dropdown-item" th:href="@{/Comment/MyComment}">
+                                        <i class="dropdown-icon fa fa-comment" aria-hidden="true"></i> 评 论
+                                    </a>
 
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" th:href="@{/HomeUser/Personal}">
                                         <i class="dropdown-icon fe fe-user"></i> 个人中心
                                     </a>
                                     <a class="dropdown-item" th:href="@{/Admin/Index}" sec:authorize="hasAnyAuthority('管理员')">
-                                        <i class="dropdown-icon fe fe-log-out"></i> 后台管理
+                                        <i class="dropdown-icon fa fa-database" aria-hidden="true"></i> 后台管理
                                     </a>
                                     <a class="dropdown-item" th:href="@{/User/HandleUserLogout}">
                                         <i class="dropdown-icon fe fe-log-out"></i> 退 出

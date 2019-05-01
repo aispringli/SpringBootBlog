@@ -39,6 +39,11 @@ public class HomeUserController {
     }
 
 
+    @RequestMapping("UpdateUsername")
+    public String UpdateUsername(){
+        return "HomeUser/UpdateUsername";
+    }
+
 
     //找回密码
     @RequestMapping("RetrievePasswordEmail")

@@ -29,7 +29,7 @@ public class CollectController {
     @RequestMapping("HandleIsCollect")
     @ResponseBody
     public ResponseResult HandleIsCollect(Long blogId) {
-        if (blogId == null || blogId < 1) return new ResponseResult(-1, "非法参数");
+        if (blogId == null || blogId < 1) return new ResponseResult(-1, "参数非法");
         CollectEntity collectEntity = new CollectEntity();
         collectEntity.setBlogId(blogId);
         collectEntity.setUserId(((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId());
@@ -41,7 +41,7 @@ public class CollectController {
     @RequestMapping("HandleCollectAdd")
     @ResponseBody
     public ResponseResult HandleCollectAdd(Long blogId) {
-        if (blogId == null || blogId < 1) return new ResponseResult(-1, "非法参数");
+        if (blogId == null || blogId < 1) return new ResponseResult(-1, "参数非法");
         CollectEntity collectEntity = new CollectEntity();
         collectEntity.setBlogId(blogId);
         collectEntity.setUserId(((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId());
@@ -51,7 +51,7 @@ public class CollectController {
     @RequestMapping("HandleCollectDelete")
     @ResponseBody
     public ResponseResult HandleCollectDelete(Long blogId) {
-        if (blogId == null || blogId < 1) return new ResponseResult(-1, "非法参数");
+        if (blogId == null || blogId < 1) return new ResponseResult(-1, "参数非法");
         CollectEntity collectEntity = new CollectEntity();
         collectEntity.setBlogId(blogId);
         collectEntity.setUserId(((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId());

@@ -3,13 +3,206 @@
       xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
       layout:decorate="Admin/Layout">
 <head>
-    <title>首页-SpringBootBlog</title>
+    <th:block layout:fragment="title" th:text="'欢迎'+${#authentication.principal.username}+'来管理评论'">title</th:block>
 </head>
 <body th:with="comment_active='active'">
 <div class="content-inner" layout:fragment="content">
+    <div class="row" id="">
+        <div class="col-lg-12">
+            <div class="card container">
+                <div class="card-header row">
+                    <div class="col-5">
+                        <div class="form-group">
+                            <div class="input-group">
+                              <span class="input-group-prepend">
+                                <span class="input-group-text">用户ID</span>
+                              </span>
+                                <form class="input-icon">
+                                    <input type="search" id="userId" class="form-control header-search"
+                                           placeholder="用户ID…"
+                                           tabindex="1">
+                                    <div class="input-icon-addon">
+                                        <i class="fe fe-search"></i>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
 
+                    <div class="col-5">
+                        <div class="form-group">
+                            <div class="input-group">
+                              <span class="input-group-prepend">
+                                <span class="input-group-text">博客ID</span>
+                              </span>
+                                <form class="input-icon">
+                                    <input type="search" id="blogId" class="form-control header-search"
+                                           placeholder="博客ID…"
+                                           tabindex="1">
+                                    <div class="input-icon-addon">
+                                        <i class="fe fe-search"></i>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-1">
+                        <a href="#" class="btn btn-info" id="blogSearchBtn">查询</a>
+                    </div>
+
+                    <div class="col-5">
+                        <div class="form-group">
+                            <div class="input-group">
+                              <span class="input-group-prepend">
+                                <span class="input-group-text">&nbsp; 评  论  &nbsp;</span>
+                              </span>
+                                <form class="input-icon">
+                                    <input type="search" id="commentContent" class="form-control header-search"
+                                           placeholder="评论内容…"
+                                           tabindex="1">
+                                    <div class="input-icon-addon">
+                                        <i class="fe fe-search"></i>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-5">
+                        <div class="form-group">
+                            <div class="input-group">
+                          <span class="input-group-prepend">
+                            <span class="input-group-text">评论状态</span>
+                          </span>
+                                <select name="blogStatus" id="commentStatus" class="form-control custom-select">
+                                    <option value="-99" selected>所有</option>
+                                    <option value="0">正常显示</option>
+                                    <option value="-1">管理员下架</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table card-table table-vcenter text-nowrap">
+                        <thead>
+                        <tr>
+                            <th>评论Id</th>
+                            <th>昵称</th>
+                            <th>标题</th>
+                            <th>评论内容</th>
+                            <th>评论时间</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="comment:${commentLists}">
+                            <td th:text="${comment.commentId}">0</td>
+                            <td><a th:href="'/Admin/CommentManger?userId='+${comment.userId}" th:text="${comment.username}" target="_blank" th:title="'点击查看'+${comment.username}+'用户下所有评论'"></a> </td>
+                            <td><a th:href="'/Admin/CommentManger?blogId='+${comment.blogId}" th:text="${comment.title}" th:title="'点击查看'+${comment.title}+'博客下所有评论'" target="_blank"></a> </td>
+
+                            <td th:text="${comment.commentContent}"></td>
+                            <td th:text="${#dates.format(comment.commentDate, 'yyyy-MM-dd HH:mm')}"></td>
+                            <th:block th:if="${comment.commentStatus} == 0">
+                                <td>正常显示</td>
+                                <td><a href="#" class="btn btn-danger"
+                                       th:attr="data-commentid=${comment.commentId}">下架</a>
+                                </td>
+                            </th:block>
+                            <th:block th:if="${comment.commentStatus} == -1">
+                                <td style="color: orange;">管理员下架</td>
+                                <td><a href="#" class="btn btn-success"
+                                       th:attr="data-commentid=${comment.commentId}">取消下架</a>
+                                </td>
+                            </th:block>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <hr/>
+                <ul class="pagination" id="myPagination" style="margin: auto;padding-bottom: 1rem;display: none;">
+                    <li class="page-item"><a class="page-link" href="#">上一页</a></li>
+                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item"><a class="page-link" href="#">4</a></li>
+                    <li class="page-item"><a class="page-link" href="#">5</a></li>
+                    <li class="page-item"><a class="page-link" href="#">下一页</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 <th:block layout:fragment="bodyJs">
+    <script>
+        $(function () {
+            //处理分页以及查询
+            var page = getQueryString("page");
+            if (page == null || page < 1) page = 1;
+
+            var userId = getQueryString("userId");
+            if (userId == null || userId === "null") userId = "";
+            $("#userId").val(userId);
+
+            var blogId = getQueryString("blogId");
+            if (blogId == null || blogId === "null") blogId = "";
+            $("#blogId").val(blogId);
+
+            var commentStatus = getQueryString("commentStatus");
+            if (commentStatus == null || commentStatus === "null") commentStatus = -99;
+            $("#commentStatus").val(commentStatus);
+
+            var commentContent = getQueryString("commentContent");
+            if (commentContent == null || commentContent === "null") commentContent = "";
+            $("#commentContent").val(commentContent);
+
+
+            var url = changeURLArg(window.location.href, "page", page);
+            url = changeURLArg(url, "commentStatus", $("#commentStatus").val());
+            url = changeURLArg(url, "userId", userId);
+            url = changeURLArg(url, "blogId", blogId);
+            url = changeURLArg(url, "commentContent", commentContent);
+
+            $("#blogSearchBtn").click(function () {
+                url = changeURLArg(window.location.href, "page", 1);
+                url = changeURLArg(url, "commentStatus", $("#commentStatus").val());
+                url = changeURLArg(url, "userId", $("#userId").val());
+                url = changeURLArg(url, "blogId", $("#blogId").val());
+                url = changeURLArg(url, "commentContent", $("#commentContent").val());
+                window.location = url;
+            });
+            var pageNum = [[${pageNum}]];
+            if (pageNum == null || pageNum === "" || pageNum == 0) pageNum = 1;
+            pageNum = Math.ceil(pageNum / 10);
+            calMyPagination("myPagination", page, pageNum, url);
+        });
+
+
+        //处理状态
+        $(".btn-danger , .btn-success").click(function () {
+            $.ajax({
+                url: "/Comment/HandleUpdateCommentStatus",
+                type: "post",
+                data: {
+                    "commentId": $(this).data('commentid')
+                },
+                success: function (result) {
+                    alert(result.message);
+                    if (result.success) location.reload();
+                },
+                error: function (event, XMLHttpRequest, ajaxOptions, thrownError) {
+                    if (XMLHttpRequest.status == 403 || XMLHttpRequest.status == 302) {
+                        alert('您还没有登陆，请登陆后使用');
+                        location.reload();
+                    } else alert('发生了错误,请检查网络或稍后刷新重试');
+                }
+            });
+        });
+
+    </script>
 </th:block>
 </html>

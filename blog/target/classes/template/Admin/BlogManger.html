@@ -3,13 +3,221 @@
       xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
       layout:decorate="Admin/Layout">
 <head>
-    <title>首页-SpringBootBlog</title>
+    <th:block layout:fragment="title" th:text="'欢迎'+${#authentication.principal.username}+'来管理博客'">title</th:block>
 </head>
 <body th:with="blog_active='active'">
 <div class="content-inner" layout:fragment="content">
+    <div class="row" id="">
+        <div class="col-lg-12">
+            <div class="card container">
+                <div class="card-header row">
+                    <div class="col-5">
+                        <div class="form-group">
+                            <div class="input-group">
+                              <span class="input-group-prepend">
+                                <span class="input-group-text">用户ID</span>
+                              </span>
+                                <form class="input-icon">
+                                    <input type="search" id="userId" class="form-control header-search"
+                                           placeholder="用户ID…"
+                                           tabindex="1">
+                                    <div class="input-icon-addon">
+                                        <i class="fe fe-search"></i>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
 
+                    <div class="col-5">
+                        <div class="form-group">
+                            <div class="input-group">
+                              <span class="input-group-prepend">
+                                <span class="input-group-text">分类ID</span>
+                              </span>
+                                <form class="input-icon">
+                                    <input type="search" id="categoryId" class="form-control header-search"
+                                           placeholder="分类ID…"
+                                           tabindex="1">
+                                    <div class="input-icon-addon">
+                                        <i class="fe fe-search"></i>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-1">
+                        <a href="#" class="btn btn-info" id="blogSearchBtn">查询</a>
+                    </div>
+
+                    <div class="col-5">
+                        <div class="form-group">
+                            <div class="input-group">
+                              <span class="input-group-prepend">
+                                <span class="input-group-text">&nbsp; 标  题  &nbsp;</span>
+                              </span>
+                                <form class="input-icon">
+                                    <input type="search" id="title" class="form-control header-search"
+                                           placeholder="标题…"
+                                           tabindex="1">
+                                    <div class="input-icon-addon">
+                                        <i class="fe fe-search"></i>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-5">
+                        <div class="form-group">
+                            <div class="input-group">
+                          <span class="input-group-prepend">
+                            <span class="input-group-text">分类状态</span>
+                          </span>
+                                <select name="blogStatus" id="blogStatus" class="form-control custom-select">
+                                    <option value="-99" selected>所有</option>
+                                    <option value="0">正常显示</option>
+                                    <option value="1">个人可见</option>
+                                    <option value="-1">管理员下架</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table card-table table-vcenter text-nowrap">
+                        <thead>
+                        <tr>
+                            <th>博客Id</th>
+                            <th>标题</th>
+                            <th>所属分类</th>
+                            <th>昵称</th>
+                            <th>收藏量</th>
+                            <th>点赞量</th>
+                            <th>评论量</th>
+                            <th>创作时间</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="blog:${blogLists}">
+                            <td th:text="${blog.blogId}">0</td>
+                            <td><a th:href="'/Blog/BlogDashboard?blogId='+${blog.blogId}" th:text="${blog.title}" target="_blank" title="点击查看此博客"></a> </td>
+                            <td><a th:href="'/Admin/BlogManger?categoryId='+${blog.categoryId}" th:text="${blog.categoryName}" th:title="'点击查看'+${blog.categoryName}+'分类下所有博客'" target="_blank"></a> </td>
+                            <td><a th:href="'/Admin/BlogManger?userId='+${blog.userId}" th:text="${blog.username}" th:title="'点击查看'+${blog.username}+'用户下所有博客'" target="_blank"></a> </td>
+
+                            <td th:text="${blog.collectQuantity}"></td>
+                            <td th:text="${blog.starQuantity}"></td>
+                            <td th:text="${blog.commentQuantity}"></td>
+                            <td th:text="${#dates.format(blog.blogDate, 'yyyy-MM-dd HH:mm')}"></td>
+                            <th:block th:if="${blog.blogStatus} == 0">
+                                <td>正常显示</td>
+                                <td><a href="#" class="btn btn-danger"
+                                       th:attr="data-blogid=${blog.blogId}">下架</a>
+                                </td>
+                            </th:block>
+
+                            <th:block th:if="${blog.blogStatus} == 1">
+                                <td style="color: #7bd235;">个人可见</td>
+                                <td><a href="#" class="btn btn-danger"
+                                       th:attr="data-blogid=${blog.blogId}">下架</a>
+                                </td>
+                            </th:block>
+
+                            <th:block th:if="${blog.blogStatus} == -1">
+                                <td style="color: orange;">管理员下架</td>
+                                <td><a href="#" class="btn btn-success"
+                                       th:attr="data-blogid=${blog.blogId}">取消下架</a>
+                                </td>
+                            </th:block>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <hr/>
+                <ul class="pagination" id="myPagination" style="margin: auto;padding-bottom: 1rem;display: none;">
+                    <li class="page-item"><a class="page-link" href="#">上一页</a></li>
+                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item"><a class="page-link" href="#">4</a></li>
+                    <li class="page-item"><a class="page-link" href="#">5</a></li>
+                    <li class="page-item"><a class="page-link" href="#">下一页</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 <th:block layout:fragment="bodyJs">
+    <script>
+        $(function () {
+            //处理分页以及查询
+            var page = getQueryString("page");
+            if (page == null || page < 1) page = 1;
+
+            var userId = getQueryString("userId");
+            if (userId == null || userId === "null") userId = "";
+            $("#userId").val(userId);
+
+            var categoryId = getQueryString("categoryId");
+            if (categoryId == null || categoryId === "null") categoryId = "";
+            $("#categoryId").val(categoryId);
+
+            var blogStatus = getQueryString("blogStatus");
+            if (blogStatus == null || blogStatus === "null") blogStatus = -99;
+            $("#blogStatus").val(blogStatus);
+
+            var title = getQueryString("title");
+            if (title == null || title === "null") title = "";
+            $("#title").val(title);
+
+
+            var url = changeURLArg(window.location.href, "page", page);
+            url = changeURLArg(url, "blogStatus", $("#blogStatus").val());
+            url = changeURLArg(url, "userId", userId);
+            url = changeURLArg(url, "categoryId", categoryId);
+            url = changeURLArg(url, "title", title);
+
+            $("#blogSearchBtn").click(function () {
+                url = changeURLArg(window.location.href, "page", 1);
+                url = changeURLArg(url, "blogStatus", $("#blogStatus").val());
+                url = changeURLArg(url, "userId", $("#userId").val());
+                url = changeURLArg(url, "categoryId", $("#categoryId").val());
+                url = changeURLArg(url, "title", $("#title").val());
+                window.location = url;
+            });
+            var pageNum = [[${pageNum}]];
+            if (pageNum == null || pageNum === "" || pageNum == 0) pageNum = 1;
+            pageNum = Math.ceil(pageNum / 10);
+            calMyPagination("myPagination", page, pageNum, url);
+        });
+
+
+        //处理状态
+        $(".btn-danger , .btn-success").click(function () {
+            $.ajax({
+                url: "/Blog/HandleUpdateBlogStatus",
+                type: "post",
+                data: {
+                    "blogId": $(this).data('blogid')
+                },
+                success: function (result) {
+                    alert(result.message);
+                    if (result.success) location.reload();
+                },
+                error: function (event, XMLHttpRequest, ajaxOptions, thrownError) {
+                    if (XMLHttpRequest.status == 403 || XMLHttpRequest.status == 302) {
+                        alert('您还没有登陆，请登陆后使用');
+                        location.reload();
+                    } else alert('发生了错误,请检查网络或稍后刷新重试');
+                }
+            });
+        });
+
+    </script>
 </th:block>
 </html>

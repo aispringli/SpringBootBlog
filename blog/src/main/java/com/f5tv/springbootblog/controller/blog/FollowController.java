@@ -29,7 +29,7 @@ public class FollowController {
     @RequestMapping("CheckUserIsFollowByUserId")
     @ResponseBody
     public ResponseResult CheckUserIsFollowByUserId(Long userId){
-        if(userId==null||userId<1)return new ResponseResult(-1,"非法参数,操作失败");
+        if(userId==null||userId<1)return new ResponseResult(-1,"参数非法,处理失败");
         FollowEntity followEntity=new FollowEntity();
         long userFollowId = ((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
         followEntity.setUserFollowId(userFollowId);
@@ -41,7 +41,7 @@ public class FollowController {
     @RequestMapping("UserFollowByUserId")
     @ResponseBody
     public ResponseResult UserFollowByUserId(Long userId){
-        if(userId==null||userId<1)return new ResponseResult(-1,"非法参数,操作失败");
+        if(userId==null||userId<1)return new ResponseResult(-1,"参数非法,处理失败");
         FollowEntity followEntity=new FollowEntity();
         long userFollowId = ((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
         followEntity.setUserFollowId(userFollowId);
@@ -52,7 +52,7 @@ public class FollowController {
     @RequestMapping("UserDeleteFollowByUserId")
     @ResponseBody
     public ResponseResult UserDeleteFollowByUserId(Long userId){
-        if(userId==null||userId<1)return new ResponseResult(-1,"非法参数,操作失败");
+        if(userId==null||userId<1)return new ResponseResult(-1,"参数非法,处理失败");
         FollowEntity followEntity=new FollowEntity();
         long userFollowId = ((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
         followEntity.setUserFollowId(userFollowId);

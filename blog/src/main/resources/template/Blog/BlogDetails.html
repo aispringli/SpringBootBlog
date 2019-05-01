@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
       layout:decorate="Home/Layout">
 <head>
     <title>首页-SpringBootBlog</title>
+    <th:block layout:fragment="title" th:text="${blogEntity.title}+'-'+${blogEntity.username}+'的博客'">title</th:block>
 </head>
 
 <body class="">
@@ -37,7 +39,37 @@
                 </div>
                 <div class="card-body">
                     <th:block th:utext="${blogEntity.content}"></th:block>
-                    <p th:content="${blogEntity.content}"></p>
+                </div>
+                <div class="card-body"  sec:authorize="isAuthenticated()">
+                    <form class="">
+                        <div class="row">
+                            <div class="col-auto">
+                                <span class="avatar avatar-xl" th:style="'background-image:url('+${#authentication.principal.userLogoSrc}+')'"></span>
+                            </div>
+                            <div class="form-group col">
+                                <label class="form-label">欢迎您写下精彩评论</label>
+                                <textarea class="form-control" rows="5" maxlength="200" placeholder="请在此写评论" id="commentContent"></textarea>
+                            </div>
+                        </div>
+                        <div class="card-footer text-right" style="padding-right: 50px;">
+                            <button type="button" class="btn btn-warning" style="margin-right: 20px;" id="commentCancelBtn">取消</button>
+                            <button type="button" class="btn btn-success" style="margin-right: 20px;" id="commentSubmitBtn">评论</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="card-body">
+                    <hr/>
+                    <ul class="list-group card-list-group" id="commentUl">
+                    </ul>
+
+                    <a href="#">
+                    </a><div class="alert alert-icon alert-primary text-center" role="alert" id="loadMoreBtn"><a href="#">
+                    <div>
+                        <i class="fa fa-angle-double-down" aria-hidden="true"></i> 浏览更多精彩评论
+                    </div>
+                </a>
+                </div>
                 </div>
             </div>
         </div>
@@ -66,7 +98,6 @@
 <th:block layout:fragment="bodyJs">
     <script th:inline="javascript">
         require(['jquery', 'jquery-validation'], function ($) {
-
 
             //已登陆后
             $(function () {
@@ -281,6 +312,89 @@
                 });
             });
 
+
+            //评论部分
+            $("#commentCancelBtn").click(
+                function () {
+                    $("#commentContent").val("");
+                }
+            );
+            $("#commentSubmitBtn").click(function () {
+                $.ajax({
+                    url: "/Comment/HandleCommentAdd",
+                    type: "post",
+                    data: {
+                        "blogId":getQueryString("blogId"),
+                        "commentContent":$("#commentContent").val()
+                    },
+                    success: function (result, textStatus, xhr) {
+                        $("#modalTipBody").removeClass();
+                        $("#modalTipBody").html(result.message);
+                        if(result.success){
+                            $("#modalTipBody").addClass("alert alert-success");
+                            //
+                            var userLogoSrc=[[${#authentication.principal.userLogoSrc}]];
+                            var username=[[${#authentication.principal.username}]];
+                            var dom='<li class="list-group-item py-5">' +
+                                '    <div class="media">' +
+                                '        <div class="media-object avatar avatar-md mr-4" style="background-image:url('+userLogoSrc+')"></div>' +
+                                '        <div class="media-body">' +
+                                '            <div class="media-heading">' +
+                                '                <small class="float-right text-muted">刚刚</small>\n' +
+                                '                <h5>'+username+'</h5>' +
+                                '            </div>' +
+                                '            <div>' +
+                                'commentContent' +
+                                '            </div>' +
+                                '        </div>' +
+                                '    </div>' +
+                                '</li>'
+
+                            dom=dom.replace("commentContent",$("#commentContent").val());
+                            $("#commentUl").prepend(dom);
+                            $("#commentContent").val("")
+                        }else $("#modalTipBody").addClass("alert alert-danger");
+                        $("#modalTip").modal();
+                    },
+                    error: function (event, XMLHttpRequest, ajaxOptions, thrownError) {
+                        if (XMLHttpRequest.status == 403 || XMLHttpRequest.status == 302) {
+                            alert('您还没有登陆，请登陆后使用');
+                            location.reload();
+                        } else alert('发生了错误,请检查网络或稍后刷新重试');
+                    }
+                });
+            });
+
+            var page = 1;
+            $("#loadMoreBtn").click(function () {
+                $.ajax({
+                    url: "/Comment/SelectComment",
+                    type: "post",
+                    data: {
+                        "page": page,
+                        "blogId": getQueryString("blogId")
+                    },
+                    success: function (result, textStatus, xhr) {
+                        $("#commentUl").append(result);
+                        page = page + 1;
+                        if (!(result == null || result === ""||result.split("list-group-item").length<11)) {
+                            return;
+                        }
+                        console.log("暂无更多");
+                        $("#loadMoreBtn").removeClass("alert-primary");
+                        $("#loadMoreBtn").addClass("alert-warning");
+                        $("#loadMoreBtn").html("<div><i class='fa fa-angle-double-up' aria-hidden='true'></i> 暂无更多</div>");
+                    },
+                    error: function (event, XMLHttpRequest, ajaxOptions, thrownError) {
+                        if (XMLHttpRequest.status == 403 || XMLHttpRequest.status == 302) {
+                            alert('您还没有登陆，请登陆后使用');
+                            location.reload();
+                        } else alert('发生了错误,请检查网络或稍后刷新重试');
+                    }
+                });
+                return false;
+            });
+            $("#loadMoreBtn").click();
         });
     </script>
 </th:block>

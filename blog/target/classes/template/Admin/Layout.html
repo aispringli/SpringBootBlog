@@ -4,7 +4,7 @@
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
       th:with="index_active='',user_active='',category_active='',blog_active='',comment_active=''">
 <head th:include="/common/Head::common_header(~{::title},~{::link},~{::style})">
-    <title>首页-SpringBootBlog</title>
+    <title><th:block layout:fragment="title"></th:block> - SpringBootBlog</title>
 
     <link rel="stylesheet" href="/static/admin/css/font-icon-style.css">
     <link rel="stylesheet" href="/static/admin/css/style.default.css" id="theme-stylesheet">

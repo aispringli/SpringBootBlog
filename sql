@@ -34,6 +34,29 @@ create table user(
 
 insert into user(userName,password,userEmail,userStatus) values('administrator','$2a$10$/udjFoC7X2oWoUTP5.Zt6.ydzzndnagYnOKoUqsULcn52DbbatVj2','3377939225@qq.com',0);
 
+
+insert into user(userName,password,userEmail,userStatus) values('1','$2a$10$/udjFoC7X2oWoUTP5.Zt6.ydzzndnagYnOKoUqsULcn52DbbatVj2','1@qq.com',0);
+insert into user(userName,password,userEmail,userStatus) values('2','$2a$10$/udjFoC7X2oWoUTP5.Zt6.ydzzndnagYnOKoUqsULcn52DbbatVj2','2@qq.com',0);
+insert into user(userName,password,userEmail,userStatus) values('3','$2a$10$/udjFoC7X2oWoUTP5.Zt6.ydzzndnagYnOKoUqsULcn52DbbatVj2','3@qq.com',0);
+insert into user(userName,password,userEmail,userStatus) values('4','$2a$10$/udjFoC7X2oWoUTP5.Zt6.ydzzndnagYnOKoUqsULcn52DbbatVj2','4@qq.com',0);
+insert into user(userName,password,userEmail,userStatus) values('5','$2a$10$/udjFoC7X2oWoUTP5.Zt6.ydzzndnagYnOKoUqsULcn52DbbatVj2','5@qq.com',0);
+insert into user(userName,password,userEmail,userStatus) values('6','$2a$10$/udjFoC7X2oWoUTP5.Zt6.ydzzndnagYnOKoUqsULcn52DbbatVj2','6@qq.com',0);
+insert into user(userName,password,userEmail,userStatus) values('7','$2a$10$/udjFoC7X2oWoUTP5.Zt6.ydzzndnagYnOKoUqsULcn52DbbatVj2','7@qq.com',0);
+insert into user(userName,password,userEmail,userStatus) values('8','$2a$10$/udjFoC7X2oWoUTP5.Zt6.ydzzndnagYnOKoUqsULcn52DbbatVj2','8@qq.com',0);
+insert into user(userName,password,userEmail,userStatus) values('9','$2a$10$/udjFoC7X2oWoUTP5.Zt6.ydzzndnagYnOKoUqsULcn52DbbatVj2','9@qq.com',0);
+insert into user(userName,password,userEmail,userStatus) values('10','$2a$10$/udjFoC7X2oWoUTP5.Zt6.ydzzndnagYnOKoUqsULcn52DbbatVj2','10@qq.com',0);
+insert into user(userName,password,userEmail,userStatus) values('11','$2a$10$/udjFoC7X2oWoUTP5.Zt6.ydzzndnagYnOKoUqsULcn52DbbatVj2','11@qq.com',0);
+insert into user(userName,password,userEmail,userStatus) values('12','$2a$10$/udjFoC7X2oWoUTP5.Zt6.ydzzndnagYnOKoUqsULcn52DbbatVj2','12@qq.com',0);
+insert into user(userName,password,userEmail,userStatus) values('13','$2a$10$/udjFoC7X2oWoUTP5.Zt6.ydzzndnagYnOKoUqsULcn52DbbatVj2','13@qq.com',0);
+insert into user(userName,password,userEmail,userStatus) values('14','$2a$10$/udjFoC7X2oWoUTP5.Zt6.ydzzndnagYnOKoUqsULcn52DbbatVj2','14@qq.com',0);
+insert into user(userName,password,userEmail,userStatus) values('15','$2a$10$/udjFoC7X2oWoUTP5.Zt6.ydzzndnagYnOKoUqsULcn52DbbatVj2','15@qq.com',0);
+insert into user(userName,password,userEmail,userStatus) values('16','$2a$10$/udjFoC7X2oWoUTP5.Zt6.ydzzndnagYnOKoUqsULcn52DbbatVj2','16@qq.com',0);
+
+
+
+
+
+
 create table userPassword(
     password VARCHAR(60) NOT NULL,
     userId bigint UNSIGNED,
@@ -113,6 +136,16 @@ create table collect(
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+
+create table comment(
+    commentId bigint auto_increment,
+    userId bigint not null,
+    blogId bigint not null,
+    commentContent VARCHAR(500) NOT NULL,
+    commentDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    commentStatus int default 0 not null,
+    PRIMARY KEY (commentId)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 

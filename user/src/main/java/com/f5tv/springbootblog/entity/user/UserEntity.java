@@ -172,60 +172,6 @@ public class UserEntity extends UserRole implements UserDetails, CredentialsCont
         }
     }
 
-    /**
-     * Returns {@code true} if the supplied object is a {@code User} instance with the
-     * same {@code username} value.
-     * <p>
-     * In other words, the objects are equal if they have the same username, representing
-     * the same principal.
-     */
-    @Override
-    public boolean equals(Object rhs) {
-        if (rhs instanceof UserEntity) {
-            return username.equals(((UserEntity) rhs).username);
-        }
-        return false;
-    }
-
-    /**
-     * Returns the hashcode of the {@code username}.
-     */
-    @Override
-    public int hashCode() {
-        return username.hashCode();
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.toString()).append(": ");
-        sb.append("Username: ").append(this.username).append("; ");
-        sb.append("Password: [PROTECTED]; ");
-        sb.append("Enabled: ").append(this.enabled).append("; ");
-        sb.append("AccountNonExpired: ").append(this.accountNonExpired).append("; ");
-        sb.append("credentialsNonExpired: ").append(this.credentialsNonExpired)
-                .append("; ");
-        sb.append("AccountNonLocked: ").append(this.accountNonLocked).append("; ");
-
-        if (!authorities.isEmpty()) {
-            sb.append("Granted Authorities: ");
-
-            boolean first = true;
-            for (GrantedAuthority auth : authorities) {
-                if (!first) {
-                    sb.append(",");
-                }
-                first = false;
-
-                sb.append(auth);
-            }
-        } else {
-            sb.append("Not granted any authorities");
-        }
-
-        return sb.toString();
-    }
-
 
     // get set methods
 
@@ -313,5 +259,25 @@ public class UserEntity extends UserRole implements UserDetails, CredentialsCont
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+
+    @Override
+    public String toString() {
+        return String.valueOf(this.userId);
+    }
+
+    @Override
+    public int hashCode() {
+        return String.valueOf(this.userId).hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof UserEntity){
+            UserEntity userEntity= (UserEntity) obj;
+            return this.userId==userEntity.getUserId();
+        }
+        return false;
     }
 }

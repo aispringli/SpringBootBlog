@@ -9,6 +9,8 @@ import com.f5tv.springbootblog.service.blog.CategoryService;
 import com.f5tv.springbootblog.service.user.UserService;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -72,9 +74,14 @@ public class BlogController {
         BlogEntity blogEntity = blogService.selectBlogByBlogId(blogId);
         if (blogEntity == null) return new ModelAndView("/Error/404");
         //非公开的只能个人或管理员浏览
-        if (blogEntity.getBlogStatus() != 0 && (SecurityContextHolder.getContext().getAuthentication().getPrincipal() == null
-                || ((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId() != blogEntity.getUserId()))
-            return new ModelAndView("/Error/404");
+        if(blogEntity.getBlogStatus() != 0){
+            if(SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof UserEntity){
+                UserEntity userEntity = ((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+                if(!userEntity.getAuthorities().contains(new SimpleGrantedAuthority("管理员"))&&blogEntity.getBlogId()!=userEntity.getUserId())return new ModelAndView("/Error/404");
+            }
+            else return new ModelAndView("/Error/404");
+        }
+
         List<CategoryEntity> categoryLists = categoryService.categorySelectByUserId(blogEntity.getUserId());
         ModelAndView modelAndView = new ModelAndView("Blog/BlogDetails");
         modelAndView.addObject("categoryLists", categoryLists);
@@ -140,7 +147,7 @@ public class BlogController {
     @RequestMapping("HandleBlogDelete")
     @ResponseBody
     public ResponseResult HandleBlogDelete(Long blogId) {
-        if (blogId == null || blogId < 0) return new ResponseResult(-1, "参数非法");
+        if (blogId == null || blogId < 0) return new ResponseResult(-1, "参数非法,处理失败");
         long userId = ((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
         return blogService.BlogDelete(blogId, userId);
     }
@@ -159,6 +166,13 @@ public class BlogController {
         PageHelper.startPage(page, 10);
         modelAndView.addObject("blogLists", blogService.selectBlogAll(blogEntity));
         return modelAndView;
+    }
+
+    @RequestMapping("HandleUpdateBlogStatus")
+    @ResponseBody
+    public ResponseResult HandleUpdateBlogStatus(Long blogId){
+        if(blogId==null||blogId<1)return new ResponseResult(1,"参数非法，处理失败");
+        return blogService.updateBlogStatus(blogId);
     }
 
 }

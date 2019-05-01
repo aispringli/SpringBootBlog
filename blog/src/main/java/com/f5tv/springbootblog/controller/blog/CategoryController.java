@@ -43,8 +43,9 @@ public class CategoryController {
     @Secured({"管理员"})//此方法只允许 管理员 角色 访问
     @RequestMapping("HandleCategoryUpdateStatus")
     @ResponseBody
-    public ResponseResult HandleCategoryUpdateStatus(CategoryEntity categoryEntity){
-        return categoryService.CategoryUpdateStatus(categoryEntity);
+    public ResponseResult HandleCategoryUpdateStatus(Long categoryId){
+        if(categoryId==null||categoryId<1)return new ResponseResult(1,"参数非法，处理失败");
+        return categoryService.CategoryUpdateStatus(categoryId);
     }
 
     @RequestMapping("HandleCategoryDelete")

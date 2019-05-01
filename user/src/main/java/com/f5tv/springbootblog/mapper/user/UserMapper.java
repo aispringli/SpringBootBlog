@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.LockModeType;
+import java.util.List;
 
 /**
  * @author 34499
@@ -38,6 +39,12 @@ public interface UserMapper  {
     @Lock(LockModeType.PESSIMISTIC_READ)
     @Select("select * from user where userId = #{userId}")
     UserEntity userEntitySelectByUserId(long userId);
+
+
+    List<UserEntity> selectAllUser(UserEntity userEntity);
+
+    int selectAllUserCount(UserEntity userEntity);
+
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Insert("INSERT INTO user(username,password, userRoleId,userEmail,userLogoSrc,userMotto) " +

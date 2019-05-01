@@ -3,7 +3,7 @@
       xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
       layout:decorate="Home/Layout">
 <head>
-    <title>首页-SpringBootBlog</title>
+    <th:block layout:fragment="title" th:text="${#authentication.principal.username}+'的分类'">title</th:block>
 </head>
 
 <body class="" th:with="index_active=false">
