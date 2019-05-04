@@ -81,7 +81,7 @@
                     <div class="row align-items-center">
                         <div class="col-lg-3 ml-auto">
                             <form class="input-icon my-3 my-lg-0">
-                                <input type="search" class="form-control header-search" placeholder="Search&hellip;"
+                                <input type="search" id="blogTitleSearch" class="form-control header-search" placeholder="Search博客标题&hellip;"
                                        tabindex="1">
                                 <div class="input-icon-addon" style="cursor:pointer;pointer-events: auto;">
                                     <i class="fe fe-search"></i>
@@ -284,6 +284,9 @@
                                     <div class="form-footer">
                                         <button type="submit" class="btn btn-primary btn-block">登陆</button>
                                     </div>
+                                    <label class="form-label">
+                                        <a href="/HomeUser/RetrievePasswordEmail" class="float-right">忘记密码</a>
+                                    </label>
                                 </div>
                             </form>
                         </div>
@@ -380,6 +383,11 @@
 
             });
 
+            // 自定义校验规则
+            $.validator.addMethod("passwordCheck",function(value, element){
+                var mediumRegex = new RegExp("^(?=.{7,})(((?=.*[A-Z])(?=.*[a-z]))|((?=.*[A-Z])(?=.*[0-9]))|((?=.*[a-z])(?=.*[0-9]))).*$", "g");
+                return this.optional(element) || (mediumRegex.test(value));
+            },"请提高密码复杂度");
             //登陆部分
             $("#formSignIn").validate({
                 onsubmit: true,// 是否在提交是验证
@@ -440,7 +448,8 @@
                 }
             });
 
-            $("#formSignUp").validate({
+            $("#formSignUp").validate(
+                {
                 onsubmit: true,// 是否在提交是验证
                 onfocusout: function (element) {
                     $(element).valid()
@@ -452,9 +461,15 @@
                     else error.appendTo(element.parent());
                 },
                 rules: {
+                    password:{
+                        passwordCheck:true
+                    },
                     userEmail: {
                         required: true,
                         remote: '/User/CheckUserEmail?type=false'
+                    },
+                    repeatpassword:{
+                        equalTo:"#password"
                     }
                 },
                 messages: {
@@ -556,6 +571,15 @@
                     })
                 }
             );
+
+            $(".fe-search").click(
+                function () {
+                    var url = changeURLArg(window.location.href, "page", 1);
+                    url = changeURLArg(url, "blogTitle", $("#blogTitleSearch").val());
+                    window.location=url;
+                }
+            );
+
         });
     </script>
 </div>

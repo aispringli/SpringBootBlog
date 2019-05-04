@@ -18,7 +18,7 @@
                                 <span class="input-group-text">用户ID</span>
                               </span>
                                 <form class="input-icon">
-                                    <input type="search" id="userId" class="form-control header-search"
+                                    <input type="number" id="userId" class="form-control header-search"
                                            placeholder="用户ID…"
                                            tabindex="1">
                                     <div class="input-icon-addon">
@@ -36,7 +36,7 @@
                                 <span class="input-group-text">分类ID</span>
                               </span>
                                 <form class="input-icon">
-                                    <input type="search" id="categoryId" class="form-control header-search"
+                                    <input type="number" id="categoryId" class="form-control header-search"
                                            placeholder="分类ID…"
                                            tabindex="1">
                                     <div class="input-icon-addon">
@@ -105,7 +105,7 @@
                         <tbody>
                         <tr th:each="blog:${blogLists}">
                             <td th:text="${blog.blogId}">0</td>
-                            <td><a th:href="'/Blog/BlogDashboard?blogId='+${blog.blogId}" th:text="${blog.title}" target="_blank" title="点击查看此博客"></a> </td>
+                            <td><a th:href="'/Blog/BlogDetails?blogId='+${blog.blogId}" th:text="${blog.title}" target="_blank" title="点击查看此博客"></a> </td>
                             <td><a th:href="'/Admin/BlogManger?categoryId='+${blog.categoryId}" th:text="${blog.categoryName}" th:title="'点击查看'+${blog.categoryName}+'分类下所有博客'" target="_blank"></a> </td>
                             <td><a th:href="'/Admin/BlogManger?userId='+${blog.userId}" th:text="${blog.username}" th:title="'点击查看'+${blog.username}+'用户下所有博客'" target="_blank"></a> </td>
 

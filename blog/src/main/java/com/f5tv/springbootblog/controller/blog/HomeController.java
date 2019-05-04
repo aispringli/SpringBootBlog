@@ -64,5 +64,22 @@ public class HomeController {
         return modelAndView;
     }
 
+    @RequestMapping("BlogSearch")
+    public ModelAndView BlogSearch(String blogTitle,Integer page){
+        if(page==null||page<1)page=1;
+        ModelAndView modelAndView=new ModelAndView("/Home/BlogSearch");
+        BlogEntity blogEntity=new BlogEntity();
+        if(blogTitle==null)blogTitle="";
+        blogEntity.setTitle("%"+blogTitle+"%");
+        blogEntity.setBlogStatus(0);
+        blogEntity.setUserId(0);
+        blogEntity.setCategoryId(0);
+        PageHelper.startPage(page,10);
+        modelAndView.addObject("blogLists",blogService.selectBlogAll(blogEntity));
+        modelAndView.addObject("blogTitle",blogTitle);
+        modelAndView.addObject("pageNum", blogService.selectBlogAllNum(blogEntity));
+        return modelAndView;
+    }
+
 
 }

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorate="Home/Layout">
+<head>
+    <th:block layout:fragment="title" th:text="'标题为'+${blogTitle}+'的搜索结果页面'">title</th:block>
+</head>
+<body>
+<div class="content-inner" layout:fragment="content">
+    <div class="row" id="">
+        <div class="col-lg-12">
+            <div class="card container">
+                <div class="table-responsive">
+                    <table class="table card-table table-vcenter text-nowrap">
+                        <thead>
+                        <tr>
+                            <th>博客Id</th>
+                            <th>标题</th>
+                            <th>所属分类</th>
+                            <th>昵称</th>
+                            <th>收藏量</th>
+                            <th>点赞量</th>
+                            <th>评论量</th>
+                            <th>创作时间</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="blog:${blogLists}">
+                            <td th:text="${blog.blogId}">0</td>
+                            <td><a th:href="'/Blog/BlogDashboard?blogId='+${blog.blogId}" th:text="${blog.title}"
+                                   target="_blank" title="点击查看此博客"></a></td>
+                            <td>
+                                <a th:href="'/Blog/BlogDashboard?categoryId='+${blog.categoryId}+'&userId='+${blog.userId}"
+                                   th:text="${blog.categoryName}" th:title="'点击查看'+${blog.categoryName}+'分类下所有博客'"
+                                   target="_blank"></a></td>
+                            <td><a th:href="'/Blog/BlogDashboard?userId='+${blog.userId}" th:text="${blog.username}"
+                                   th:title="'点击查看'+${blog.username}+'用户下所有博客'" target="_blank"></a></td>
+
+                            <td th:text="${blog.collectQuantity}"></td>
+                            <td th:text="${blog.starQuantity}"></td>
+                            <td th:text="${blog.commentQuantity}"></td>
+                            <td th:text="${#dates.format(blog.blogDate, 'yyyy-MM-dd HH:mm')}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <hr/>
+                <ul class="pagination" id="myPagination" style="margin: auto;padding-bottom: 1rem;display: none;">
+                    <li class="page-item"><a class="page-link" href="#">上一页</a></li>
+                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item"><a class="page-link" href="#">4</a></li>
+                    <li class="page-item"><a class="page-link" href="#">5</a></li>
+                    <li class="page-item"><a class="page-link" href="#">下一页</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<th:block layout:fragment="bodyJs">
+    <script th:inline="javascript">
+        require(['jquery'], function ($) {
+            $(function () {
+                //处理分页以及查询
+                var blogTitle = getQueryString("blogTitle");
+                if (blogTitle == null || blogTitle === "null") blogTitle = "";
+                var page = getQueryString("page");
+                if (page == null || page < 1) page = 1;
+                var url = changeURLArg(window.location.href, "page", page);
+                url = changeURLArg(url, "blogTitle", blogTitle);
+                $("#blogTitleSearch").val(blogTitle);
+                var pageNum = [[${pageNum}]];
+                if (pageNum == null || pageNum === "" || pageNum == 0) pageNum = 1;
+                pageNum = Math.ceil(pageNum / 10);
+                calMyPagination("myPagination", page, pageNum, url);
+            });
+        });
+    </script>
+</th:block>
+</html>

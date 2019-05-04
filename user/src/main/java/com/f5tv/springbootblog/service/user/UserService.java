@@ -28,8 +28,6 @@ public class UserService {
     @Autowired
     UserMapper userMapper;
 
-    @Autowired
-    private SessionRegistry sessionRegistry;
 
 
     /**
@@ -79,8 +77,10 @@ public class UserService {
         return userMapper.updateUserEmail(userEntity);
     }
 
-    //修改邮箱
+    //修改密码
     public int updatePassword(UserEntity userEntity) {
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        userEntity.setPassword(bCryptPasswordEncoder.encode(userEntity.getPassword()));
         return userMapper.updatePassword(userEntity);
     }
 

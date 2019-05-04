@@ -320,10 +320,13 @@ public class UserController {
         if (userEntity == null) return userResultBean.userResetPasswordResult().get(101);
         //校验码
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        if (StringUtils.isEmpty(code) || code.length() != 60) return userResultBean.userResetPasswordResult().get(0);
-        if (bCryptPasswordEncoder.matches(userEntity.getUserId() + userEntity.getUsername() + userEntity.getPassword() + userEntity.getUserEmail(), code))
-            return userResultBean.userResetPasswordResult().get(0);
-        //return emailFeignClient.SendEmailHtml(emailAddressArray, "重置密码", "/User/HandleRetrievePassword", datas, null);
+        if (StringUtils.isEmpty(code) || code.length() != 60)
+        try {
+            if (bCryptPasswordEncoder.matches(userEntity.getUserId() + userEntity.getUsername() + userEntity.getPassword() + userEntity.getUserEmail(), code))
+                return userResultBean.userResetPasswordResult().get(203);
+        }catch (Exception ex){
+            return userResultBean.userResetPasswordResult().get(202);
+        }
         userEntity.setPassword(password);
         if (userService.updatePassword(userEntity) > 0)
             return userResultBean.userResetPasswordResult().get(0);
