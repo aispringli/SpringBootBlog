@@ -10,8 +10,10 @@ require.config({
     },
     paths: {
         'core': '/static/home/js/core',
-        'jquery': '/static/home/js/vendors/jquery.min',
+        'jquery': 'https://cdn.bootcss.com/jquery/3.3.1/jquery.min',
+        // 'jquery': '/static/home/js/vendors/jquery.min',
         'bootstrap': '/static/home/js/vendors/bootstrap.bundle.min',
+        'bootstrap': 'https://cdn.bootcss.com/twitter-bootstrap/4.2.1/js/bootstrap.bundle.min',
         'sparkline': '/static/home/js/vendors/jquery.sparkline.min',
         'selectize': '/static/home/js/vendors/selectize.min',
         'tablesorter': '/static/home/js/vendors/jquery.tablesorter.min',

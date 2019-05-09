@@ -3,6 +3,7 @@ package com.f5tv.springbootblog.controller.blog;
 import com.f5tv.springbootblog.entity.core.ResponseResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
@@ -74,19 +75,14 @@ public class FileUploadController {
         }
     }
 
-    private String rootPath = "";
+    @Value("${file.imgFolder}")
+    private String imgFolder;
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    @Value("${file.fileFolder}")
+    private String fileFolder;
 
-    public FileUploadController() {
-        try {
-            logger.info("原始路径: " + ClassUtils.getDefaultClassLoader().getResource("").getPath().substring(1));
-            rootPath = new String(ClassUtils.getDefaultClassLoader().getResource("").getPath().substring(1).getBytes("gbk"), "utf-8");
-            logger.info("UTF8路径: " + rootPath);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-    }
+    @Value("${file.rootFolder}")
+    private String rootFolder;
 
     @RequestMapping("UploadLogoImg")
     public ResponseResult UploadLogoImg(@RequestParam(value = "file") MultipartFile file) {
@@ -94,7 +90,7 @@ public class FileUploadController {
             return new ResponseResult(1, "文件为空");
         }
         if (file.getSize() > 1 * 1024 * 1024) return new ResponseResult(2, "文件大小不得超过1MB");
-        String filePath = "/static/file/logo/"; // 上传后的路径
+        String filePath = "/file/logo/"; // 上传后的路径
         try {
             saveFile(file, filePath);
             return new ResponseResult(0, true, saveFile(file, filePath));
@@ -107,7 +103,7 @@ public class FileUploadController {
     @RequestMapping("UploadBlogImg")
     public Result UploadBlogImg(@RequestParam("files") MultipartFile[] files) {
         if (files == null) return new Result(1);
-        String filePath = "/static/file/images/"; // 上传后的路径
+        String filePath = "/file/images/"; // 上传后的路径
         Result result = new Result(0);
         String[] dates = new String[files.length];
         for (int i = 0; i < files.length; i++) {
@@ -127,7 +123,6 @@ public class FileUploadController {
     @RequestMapping("UploadBlogFile")
     public Result UploadBlogFile(@RequestParam("files") MultipartFile[] files) {
         if (files == null) return new Result(1);
-        String filePath = "/enclosure/"; // 上传后的路径
         Result result = new Result(0);
         String[] dates = new String[files.length];
         String[] names = new String[files.length];
@@ -137,7 +132,7 @@ public class FileUploadController {
             try {
                 String fileName = files[i].getOriginalFilename();
                 names[i] = fileName;
-                dates[i] = saveFile(files[i], filePath).replace(filePath, "");
+                dates[i] = saveFile(files[i], "/enclosure/").replace("/enclosure/", "");
             } catch (IOException e) {
                 e.printStackTrace();
                 return new Result(3);
@@ -152,8 +147,7 @@ public class FileUploadController {
     public String Download(String fileNameId, String fileName, HttpServletRequest request, HttpServletResponse response) {
         if (StringUtils.isEmpty(fileNameId) || StringUtils.isEmpty(fileName) || fileNameId.contains("/") || fileNameId.contains("\\"))
             return "redirect/Home/Error404";
-        String filePath = rootPath + "/enclosure/";
-        File file = new File(filePath + fileNameId);
+        File file = new File(fileFolder + fileNameId);
         if (!file.exists()) return "redirect/Home/Error404";
         response.setHeader("content-type", "application/octet-stream");
         response.setContentType("application/octet-stream");
@@ -212,9 +206,8 @@ public class FileUploadController {
         String suffixName = fileName.substring(fileName.lastIndexOf("."));  // 后缀名
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
         fileName = UUID.randomUUID() + df.format(new Date()) + suffixName; // 新文件名
-        fileName = filePath + fileName;
-
-        File dest = new File(rootPath + fileName);
+        fileName=filePath+fileName;
+        File dest = new File(rootFolder+fileName);
         if (!dest.getParentFile().exists()) {
             dest.getParentFile().mkdirs();
         }

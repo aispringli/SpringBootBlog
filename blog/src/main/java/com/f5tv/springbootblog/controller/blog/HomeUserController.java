@@ -49,13 +49,13 @@ public class HomeUserController {
     @RequestMapping("RetrievePasswordEmail")
     public String RetrievePasswordEmail() {
 
-        return "/HomeUser/RetrievePasswordEmail";
+        return "HomeUser/RetrievePasswordEmail";
     }
 
     //重置密码
     @RequestMapping("RetrievePassword")
     public String RetrievePassword() {
 
-        return "/HomeUser/RetrievePassword";
+        return "HomeUser/RetrievePassword";
     }
 }

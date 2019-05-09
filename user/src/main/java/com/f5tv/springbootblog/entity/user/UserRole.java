@@ -1,6 +1,11 @@
 package com.f5tv.springbootblog.entity.user;
 
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
 /**
  * @author 34499
  * @Title: UserRole
@@ -8,6 +13,7 @@ package com.f5tv.springbootblog.entity.user;
  * @Description: TODO
  * @date 9:18 2019/3/11
  */
+@Entity
 public class UserRole {
 
     /**
@@ -17,6 +23,8 @@ public class UserRole {
 
     private String userRoleName;
 
+    @Id
+    @GeneratedValue(strategy= GenerationType.AUTO)
     public int getUserRoleId() {
         return userRoleId;
     }

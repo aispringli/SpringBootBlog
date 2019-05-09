@@ -1,0 +1,6 @@
+com\f5tv\springbootblog\controller\core\KaptchaController.class
+com\f5tv\springbootblog\config\beans\CommonResultBean.class
+com\f5tv\springbootblog\entity\core\ResponseResult.class
+com\f5tv\springbootblog\feign\clients\core\KaptchaFeignClient.class
+com\f5tv\springbootblog\tools\CheckStringTool.class
+com\f5tv\springbootblog\config\KaptchaConfig.class

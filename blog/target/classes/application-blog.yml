@@ -17,8 +17,6 @@ spring:
       max-lifetime: 1800000
       connection-timeout: 30000
       pool-name: DatebookHikariCP
-  jpa:
-    show-sql: true
 
   thymeleaf:
     prefix: classpath:/template/

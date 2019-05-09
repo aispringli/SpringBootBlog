@@ -30,7 +30,7 @@ public interface FollowMapper {
     FollowEntity selectUserIsFollow(FollowEntity followEntity);
 
     //查询某个用户关注了哪些人
-    @Select("select followId,follow.userId,userFollowId,followDate,username,userLogoSrc,userMotto from follow left join user on follow.userFollowId = user.userId where follow.userFollowId =#{userFollowId} and userStatus = 0 order by followId desc")
+    @Select("select followId,follow.userId,userFollowId,followDate,username,userLogoSrc,userMotto from follow left join user on follow.userId = user.userId where follow.userFollowId =#{userFollowId} and userStatus = 0 order by followId desc")
     List<FollowEntity> selectUserFollowByUserFollowId(long userFollowId);
 
     @Select("select count(*) from follow where userFollowId =#{userFollowId}")
@@ -38,7 +38,7 @@ public interface FollowMapper {
 
 
     //查询某个用户被哪些人关注
-    @Select("select followId,follow.userId,userFollowId,followDate,username,userLogoSrc,userMotto from follow left join user on follow.userId = user.userId where follow.userId =#{userId} and userStatus = 0 order by followId desc")
+    @Select("select followId,follow.userId,userFollowId,followDate,username,userLogoSrc,userMotto from follow left join user on follow.userFollowId = user.userId where follow.userId =#{userId} and userStatus = 0 order by followId desc")
     List<FollowEntity> selectFollowersByUserId(long userId);
 
     //查询某个用户被哪些人关注

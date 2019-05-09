@@ -61,7 +61,7 @@ public class CollectController {
     @RequestMapping("MyCollect")
     public ModelAndView MyCollect(Integer page){
         if(page==null||page<1)page=1;
-        ModelAndView modelAndView=new ModelAndView("/Collect/MyCollect");
+        ModelAndView modelAndView=new ModelAndView("Collect/MyCollect");
         PageHelper.startPage(1,10);
         modelAndView.addObject("collectLists",collectService.selectCollectByUserId(((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId()));
         modelAndView.addObject("pageNum",collectService.selectCollectCountByUserId(((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId()));

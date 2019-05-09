@@ -43,7 +43,7 @@ public class AdminController {
 
     @RequestMapping("Index")
     public ModelAndView Index() {
-        ModelAndView modelAndView = new ModelAndView("/Admin/Index");
+        ModelAndView modelAndView = new ModelAndView("Admin/Index");
         return modelAndView;
     }
 
@@ -65,7 +65,7 @@ public class AdminController {
         userEntity.setUsername(username);
         if (!StringUtils.isEmpty(userEmail)) userEmail = "%" + userEmail + "%";
         userEntity.setUserEmail(userEmail);
-        ModelAndView modelAndView = new ModelAndView("/Admin/UserManger");
+        ModelAndView modelAndView = new ModelAndView("Admin/UserManger");
 
         PageHelper.startPage(page, 10);
         modelAndView.addObject("userLists", userService.selectAllUser(userEntity));
@@ -76,7 +76,7 @@ public class AdminController {
 
     @RequestMapping("CategoryManger")
     public ModelAndView CategoryManger(Integer page, Long userId, Integer categoryStatus) {
-        ModelAndView modelAndView = new ModelAndView("/Admin/CategoryManger");
+        ModelAndView modelAndView = new ModelAndView("Admin/CategoryManger");
         CategoryEntity categoryEntity = new CategoryEntity();
         if (page == null || page < 1) page = 1;
         if (userId == null || userId < 1) userId = 0L;
@@ -102,7 +102,7 @@ public class AdminController {
         blogEntity.setBlogStatus(blogStatus);
         if (!StringUtils.isEmpty(title)) title = "%" + title + "%";
         blogEntity.setTitle(title);
-        ModelAndView modelAndView = new ModelAndView("/Admin/BlogManger");
+        ModelAndView modelAndView = new ModelAndView("Admin/BlogManger");
         PageHelper.startPage(page,10);
         modelAndView.addObject("blogLists",blogService.selectBlogAll(blogEntity));
         modelAndView.addObject("pageNum", blogService.selectBlogAllNum(blogEntity));
@@ -121,7 +121,7 @@ public class AdminController {
         if(commentStatus==null)commentEntity.setCommentStatus(-99);
         else commentEntity.setCommentStatus(commentStatus);
         PageHelper.startPage(page,10);
-        ModelAndView modelAndView = new ModelAndView("/Admin/CommentManger");
+        ModelAndView modelAndView = new ModelAndView("Admin/CommentManger");
         modelAndView.addObject("commentLists",commentService.selectComment(commentEntity));
         modelAndView.addObject("pageNum",commentService.selectCommentCount(commentEntity));
         return modelAndView;

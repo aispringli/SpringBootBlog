@@ -65,7 +65,7 @@ public class FollowController {
         if(page==null||page<1)page=1;
         PageHelper.startPage(page,10);
         long userFollowId = ((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
-        ModelAndView modelAndView=new ModelAndView("/Follow/MyFollow");
+        ModelAndView modelAndView=new ModelAndView("Follow/MyFollow");
         modelAndView.addObject("followEntityList",followService.selectUserFollowByUserFollowId(userFollowId));
         modelAndView.addObject("pageNum",followService.selectCountUserFollowByUserFollowId(userFollowId));
         return modelAndView;
@@ -73,7 +73,7 @@ public class FollowController {
     @RequestMapping("MyFun")
     public ModelAndView MyFun(Integer page){
         if(page==null||page<1)page=1;
-        ModelAndView modelAndView=new ModelAndView("/Follow/MyFun");
+        ModelAndView modelAndView=new ModelAndView("Follow/MyFun");
         PageHelper.startPage(page,10);
         long userId = ((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
         modelAndView.addObject("followEntityList",followService.selectFollowersByUserId(userId));

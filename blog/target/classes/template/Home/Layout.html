@@ -2,11 +2,10 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.w3.org/1999/xhtml"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
       th:with="index_active='',writeblog_active='',follow_active='',collect_active=''">
-<head th:include="/common/Head::common_header(~{::title},~{::link},~{::style})">
+<head th:include="common/Head::common_header(~{::title},~{::link},~{::style})">
     <title><th:block layout:fragment="title"></th:block> - SpringBootBlog</title>
     <link href="/static/home/css/dashboard.css" rel="stylesheet"/>
     <link href="/static/home/plugins/charts-c3/plugin.css" rel="stylesheet"/>
-    <link href="/static/home/plugins/maps-google/plugin.css" rel="stylesheet"/>
     <style></style>
 </head>
 <body class="">
@@ -30,11 +29,11 @@
                             </div>
                             <div class="dropdown" sec:authorize="!isAnonymous()">
                                 <a href="#" class="nav-link pr-0 leading-none" data-toggle="dropdown">
-                                    <span class="avatar"  style="background-image: url(/static/file/logo/demo.jpg)"
+                                    <span class="avatar" id="layout_userLogoSrc"  style="background-image: url(/static/file/logo/demo.jpg)"
                                           th:style="'background-image:url('+${#authentication.principal.userLogoSrc}+')'">
                                     </span>
                                     <span class="ml-2 d-none d-lg-block">
-                                        <span class="text-default" data-sec-authentication="name"></span>
+                                        <span class="text-default" id="layout_username" data-sec-authentication="name"></span>
                                         <small class="text-muted d-block mt-1"
                                                data-sec-authentication="principal.userRoleName"></small>
                                     </span>
@@ -343,11 +342,11 @@
             </div>
         </div>
     </div>
-    <footer th:replace="/common/Footer::common_footer">
+    <footer th:replace="common/Footer::common_footer">
     </footer>
 </div>
 </body>
-<div th:include="/common/Head::home_script(~{::script})">
+<div th:include="common/Head::home_script(~{::script})">
     <script src="/static/home/js/require.min.js"></script>
     <script>
         requirejs.config({
@@ -359,8 +358,6 @@
     <script src="/static/common/js/common.js"></script>
     <!-- c3.js Charts Plugin -->
     <script src="/static/home/plugins/charts-c3/plugin.js"></script>
-    <!-- Google Maps Plugin -->
-    <script src="/static/home/plugins/maps-google/plugin.js"></script>
     <!-- Input Mask Plugin -->
     <script src="/static/home/plugins/input-mask/plugin.js"></script>
 

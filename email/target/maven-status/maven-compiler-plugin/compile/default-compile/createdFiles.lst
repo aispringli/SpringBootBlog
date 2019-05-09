@@ -1,0 +1,5 @@
+com\f5tv\springbootblog\feign\clients\email\EmailFeignClient.class
+com\f5tv\springbootblog\config\email\MailConfiguration.class
+com\f5tv\springbootblog\config\email\EmailResultBean.class
+com\f5tv\springbootblog\service\email\EmailClientService.class
+com\f5tv\springbootblog\controller\email\EmailController.class

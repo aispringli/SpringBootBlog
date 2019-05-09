@@ -19,7 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
  * @date 11:25 2019/4/12
  */
 @Controller
-@RequestMapping(value = {"Home","/"})
+@RequestMapping(value = {"Home","/",""})
 public class HomeController {
 
     @Autowired
@@ -28,10 +28,10 @@ public class HomeController {
     @Autowired
     BlogService blogService;
 
-    @RequestMapping(value = {"Index","/"})
+    @RequestMapping(value = {"Index","/",""})
     public ModelAndView Index(Integer page){
 
-        ModelAndView modelAndView=new ModelAndView("/Home/Index");
+        ModelAndView modelAndView=new ModelAndView("Home/Index");
         if (page == null || page < 1) page = 1;
         BlogEntity blogEntity = new BlogEntity();
         blogEntity.setBlogStatus(0);
@@ -45,7 +45,7 @@ public class HomeController {
 
     @RequestMapping("Category")
     public ModelAndView Category(){
-        ModelAndView modelAndView=new ModelAndView("/Home/Category");
+        ModelAndView modelAndView=new ModelAndView("Home/Category");
         long userId=((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
         modelAndView.addObject("categoryLists",categoryService.categorySelectByUserId(userId));
         return modelAndView;
@@ -53,12 +53,12 @@ public class HomeController {
 
     @RequestMapping("Personal")
     public String Personal(){
-        return "/Home/Personal";
+        return "Home/Personal";
     }
 
     @RequestMapping("WriteBlog")
     public ModelAndView WriteBlog(){
-        ModelAndView modelAndView=new ModelAndView("/Home/WriteBlog");
+        ModelAndView modelAndView=new ModelAndView("Home/WriteBlog");
         long userId=((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
         modelAndView.addObject("categoryLists",categoryService.categorySelectByUserId(userId));
         return modelAndView;
@@ -67,7 +67,7 @@ public class HomeController {
     @RequestMapping("BlogSearch")
     public ModelAndView BlogSearch(String blogTitle,Integer page){
         if(page==null||page<1)page=1;
-        ModelAndView modelAndView=new ModelAndView("/Home/BlogSearch");
+        ModelAndView modelAndView=new ModelAndView("Home/BlogSearch");
         BlogEntity blogEntity=new BlogEntity();
         if(blogTitle==null)blogTitle="";
         blogEntity.setTitle("%"+blogTitle+"%");

@@ -6,6 +6,6 @@ spring:
   resources:
     static-locations: classpath:/
   thymeleaf:
-    prefix: classpath:/template/
+    prefix: classpath:/template
     suffix: .html
     mode:  HTML5

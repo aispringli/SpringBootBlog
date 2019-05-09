@@ -40,7 +40,7 @@
                 <div class="card-body">
                     <th:block th:utext="${blogEntity.content}"></th:block>
                 </div>
-                <div class="card-body"  sec:authorize="isAuthenticated()">
+                <div class="card-body"  sec:authorize="!isAnonymous()">
                     <form class="">
                         <div class="row">
                             <div class="col-auto">
@@ -165,6 +165,53 @@
                                 location.reload();
                             } else alert('发生了错误,请检查网络或稍后刷新重试');
                         }
+                    });
+
+
+                    $("#commentSubmitBtn").click(function () {
+                        $.ajax({
+                            url: "/Comment/HandleCommentAdd",
+                            type: "post",
+                            data: {
+                                "blogId":getQueryString("blogId"),
+                                "commentContent":$("#commentContent").val()
+                            },
+                            success: function (result, textStatus, xhr) {
+                                $("#modalTipBody").removeClass();
+                                $("#modalTipBody").html(result.message);
+                                if(result.success){
+                                    $("#modalTipBody").addClass("alert alert-success");
+                                    //
+                                    var userLogoSrc=$("#layout_userLogoSrc").css("backgroundImage");
+                                    var username=$("#layout_username").html();
+                                    var dom='<li class="list-group-item py-5">' +
+                                        '    <div class="media">' +
+                                        '        <div class="media-object avatar avatar-md mr-4" style="background-image:url('+userLogoSrc+')"></div>' +
+                                        '        <div class="media-body">' +
+                                        '            <div class="media-heading">' +
+                                        '                <small class="float-right text-muted">刚刚</small>\n' +
+                                        '                <h5>'+username+'</h5>' +
+                                        '            </div>' +
+                                        '            <div>' +
+                                        'commentContent' +
+                                        '            </div>' +
+                                        '        </div>' +
+                                        '    </div>' +
+                                        '</li>'
+
+                                    dom=dom.replace("commentContent",$("#commentContent").val());
+                                    $("#commentUl").prepend(dom);
+                                    $("#commentContent").val("")
+                                }else $("#modalTipBody").addClass("alert alert-danger");
+                                $("#modalTip").modal();
+                            },
+                            error: function (event, XMLHttpRequest, ajaxOptions, thrownError) {
+                                if (XMLHttpRequest.status == 403 || XMLHttpRequest.status == 302) {
+                                    alert('您还没有登陆，请登陆后使用');
+                                    location.reload();
+                                } else alert('发生了错误,请检查网络或稍后刷新重试');
+                            }
+                        });
                     });
                 }
             });
@@ -319,51 +366,7 @@
                     $("#commentContent").val("");
                 }
             );
-            $("#commentSubmitBtn").click(function () {
-                $.ajax({
-                    url: "/Comment/HandleCommentAdd",
-                    type: "post",
-                    data: {
-                        "blogId":getQueryString("blogId"),
-                        "commentContent":$("#commentContent").val()
-                    },
-                    success: function (result, textStatus, xhr) {
-                        $("#modalTipBody").removeClass();
-                        $("#modalTipBody").html(result.message);
-                        if(result.success){
-                            $("#modalTipBody").addClass("alert alert-success");
-                            //
-                            var userLogoSrc=[[${#authentication.principal.userLogoSrc}]];
-                            var username=[[${#authentication.principal.username}]];
-                            var dom='<li class="list-group-item py-5">' +
-                                '    <div class="media">' +
-                                '        <div class="media-object avatar avatar-md mr-4" style="background-image:url('+userLogoSrc+')"></div>' +
-                                '        <div class="media-body">' +
-                                '            <div class="media-heading">' +
-                                '                <small class="float-right text-muted">刚刚</small>\n' +
-                                '                <h5>'+username+'</h5>' +
-                                '            </div>' +
-                                '            <div>' +
-                                'commentContent' +
-                                '            </div>' +
-                                '        </div>' +
-                                '    </div>' +
-                                '</li>'
 
-                            dom=dom.replace("commentContent",$("#commentContent").val());
-                            $("#commentUl").prepend(dom);
-                            $("#commentContent").val("")
-                        }else $("#modalTipBody").addClass("alert alert-danger");
-                        $("#modalTip").modal();
-                    },
-                    error: function (event, XMLHttpRequest, ajaxOptions, thrownError) {
-                        if (XMLHttpRequest.status == 403 || XMLHttpRequest.status == 302) {
-                            alert('您还没有登陆，请登陆后使用');
-                            location.reload();
-                        } else alert('发生了错误,请检查网络或稍后刷新重试');
-                    }
-                });
-            });
 
             var page = 1;
             $("#loadMoreBtn").click(function () {

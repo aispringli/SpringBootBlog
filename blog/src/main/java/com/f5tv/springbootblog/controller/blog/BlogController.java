@@ -70,16 +70,16 @@ public class BlogController {
 
     @RequestMapping("BlogDetails")
     public ModelAndView BlogDetails(Long blogId) {
-        if (blogId == null) return new ModelAndView("/Error/404");
+        if (blogId == null) return new ModelAndView("Error/404");
         BlogEntity blogEntity = blogService.selectBlogByBlogId(blogId);
-        if (blogEntity == null) return new ModelAndView("/Error/404");
+        if (blogEntity == null) return new ModelAndView("Error/404");
         //非公开的只能个人或管理员浏览
         if(blogEntity.getBlogStatus() != 0){
             if(SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof UserEntity){
                 UserEntity userEntity = ((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
                 if(!userEntity.getAuthorities().contains(new SimpleGrantedAuthority("管理员"))&&blogEntity.getBlogId()!=userEntity.getUserId())return new ModelAndView("/Error/404");
             }
-            else return new ModelAndView("/Error/404");
+            else return new ModelAndView("Error/404");
         }
 
         List<CategoryEntity> categoryLists = categoryService.categorySelectByUserId(blogEntity.getUserId());
@@ -92,9 +92,9 @@ public class BlogController {
     @RequestMapping("BlogDashboard")
     public ModelAndView BlogDashboard(Long userId, Long categoryId, Integer page) {
         if (page == null || page < 1) page = 1;
-        if (userId == null) return new ModelAndView("/Error/404");
+        if (userId == null) return new ModelAndView("Error/404");
         UserEntity userEntity = userService.userEntitySelectByUserId(userId);
-        if (userEntity == null) return new ModelAndView("/Error/404");
+        if (userEntity == null) return new ModelAndView("Error/404");
         ModelAndView modelAndView = new ModelAndView("Blog/BlogDashboard");
         modelAndView.addObject("userEntity", userEntity);
         List<CategoryEntity> categoryLists = categoryService.categorySelectByUserId(userId);
@@ -155,7 +155,7 @@ public class BlogController {
 
     @RequestMapping("HandleBlogSelectAllNormalAjax")
     public ModelAndView HandleBlogSelectAllNormalAjax(Integer page, Long userId, Long categoryId) {
-        ModelAndView modelAndView = new ModelAndView("/Blog/blogListsTemplate");
+        ModelAndView modelAndView = new ModelAndView("Blog/BlogListsTemplate");
         if (page == null || page < 1) page = 1;
         BlogEntity blogEntity = new BlogEntity();
         if (userId != null && userId > 0) {

@@ -22,15 +22,15 @@ public class ErrorController {
 
     @RequestMapping("400")
     public String Error400(HttpServletRequest request){
-        return "/Error/400";
+        return "Error/400";
     }
 
     @RequestMapping("404")
     public String Error404(HttpServletRequest request){
-        return "/Error/404";
+        return "Error/404";
     }
     @RequestMapping("500")
     public String Error500(HttpServletRequest request){
-        return "/Error/500";
+        return "Error/500";
     }
 }

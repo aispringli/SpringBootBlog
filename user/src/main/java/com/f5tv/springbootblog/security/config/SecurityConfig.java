@@ -87,7 +87,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/User/HandleSignIn","/User/CheckUserEmail","/User/HandleSignUp","/User/HandleSign","/","/Home/Index","/Blog/BlogDetails","/Blog/BlogDashboard","/FileUpload/Download","/Blog/HandleBlogSelectAllNormalAjax",
                         "/Comment/SelectComment","/User/SendEmailValidateCode","/HomeUser/RetrievePasswordEmail","/User/HandleRetrievePasswordEmail","/User/HandleRetrievePassword","/HomeUser/RetrievePassword","/Home/BlogSearch","/static/**",
-                        "/VerificationCode/**","favicon.ico","/Email/**").permitAll()
+                        "/VerificationCode/**","favicon.ico","/Email/**","/file/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()

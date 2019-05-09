@@ -32,7 +32,7 @@ create table user(
     PRIMARY KEY (userId)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-insert into user(userName,password,userEmail,userStatus) values('administrator','$2a$10$/udjFoC7X2oWoUTP5.Zt6.ydzzndnagYnOKoUqsULcn52DbbatVj2','3377939225@qq.com',0);
+insert into user(userName,password,userEmail,userStatus,userRoleId) values('administrator','$2a$10$/udjFoC7X2oWoUTP5.Zt6.ydzzndnagYnOKoUqsULcn52DbbatVj2','3377939225@qq.com',0,101);
 
 
 insert into user(userName,password,userEmail,userStatus) values('1','$2a$10$/udjFoC7X2oWoUTP5.Zt6.ydzzndnagYnOKoUqsULcn52DbbatVj2','1@qq.com',0);

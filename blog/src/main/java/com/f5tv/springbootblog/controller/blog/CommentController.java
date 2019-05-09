@@ -45,7 +45,7 @@ public class CommentController {
         if(page==null||page<1)page=1;
         if(blogId==null)blogId=0L;
         PageHelper.startPage(page,10);
-        ModelAndView modelAndView=new ModelAndView("/Comment/CommentListsTemplate");
+        ModelAndView modelAndView=new ModelAndView("Comment/CommentListsTemplate");
         CommentEntity commentEntity=new CommentEntity();
         commentEntity.setUserId(0);
         commentEntity.setBlogId(blogId);
@@ -59,7 +59,7 @@ public class CommentController {
     public ModelAndView MyComment(Integer page){
         if(page==null||page<1)page=1;
         PageHelper.startPage(page,10);
-        ModelAndView modelAndView=new ModelAndView("/Comment/MyComment");
+        ModelAndView modelAndView=new ModelAndView("Comment/MyComment");
         CommentEntity commentEntity=new CommentEntity();
         commentEntity.setUserId(((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId());
         commentEntity.setCommentStatus(0);
