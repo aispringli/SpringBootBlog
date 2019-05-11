@@ -224,7 +224,7 @@ public class UserController {
     public ResponseResult HandleSignUp(UserEntity userEntity, String validateCode, String emailValidateCode, HttpServletRequest request,HttpServletResponse response) {
         ResponseResult responseResult = CheckValidateCode(validateCode, request);
         if (!responseResult.success) return responseResult;
-        if (!checkStringTool.CheckStringLength(userEntity.getUsername(), 6, 20))
+        if (!checkStringTool.CheckStringLength(userEntity.getUsername(), 2, 20))
             return userResultBean.userRegisterResult().get(201);
         if (checkStringTool.CheckStringHasSpecialChar(userEntity.getUsername()))
             return userResultBean.userRegisterResult().get(202);

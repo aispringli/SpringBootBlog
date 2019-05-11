@@ -27,7 +27,7 @@
                         <tbody>
                         <tr th:each="blog:${blogLists}">
                             <td th:text="${blog.blogId}">0</td>
-                            <td><a th:href="'/Blog/BlogDashboard?blogId='+${blog.blogId}" th:text="${blog.title}"
+                            <td><a th:href="'/Blog/BlogDetails?blogId='+${blog.blogId}" th:text="${blog.title}"
                                    target="_blank" title="点击查看此博客"></a></td>
                             <td>
                                 <a th:href="'/Blog/BlogDashboard?categoryId='+${blog.categoryId}+'&userId='+${blog.userId}"

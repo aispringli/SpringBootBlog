@@ -85,10 +85,10 @@ mybatis:
 #静态资源对外暴露的访问路径
 file:
   staticAccessPath: /file/**
-  #文件上传目录（注意Linux和Windows上的目录结构不同）
-#  imgFolder: F://temp/static/file/
-#  fileFolder: F://temp/static/enclosure/
-#  rootFolder: F://temp/static/
-  imgFolder: C://Users/Administrator/Desktop/blog/static/file/
-  fileFolder: C://Users/Administrator/Desktop/blog/enclosure/
-  rootFolder: C://Users/Administrator/Desktop/blog/static/
+  #文件上传目录（注意目录结构不同）
+  imgFolder: F://temp/static/file/
+  fileFolder: F://temp/static/enclosure/
+  rootFolder: F://temp/static/
+#  imgFolder: C://Users/Administrator/Desktop/blog/static/file/
+#  fileFolder: C://Users/Administrator/Desktop/blog/enclosure/
+#  rootFolder: C://Users/Administrator/Desktop/blog/static/

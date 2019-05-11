@@ -73,7 +73,7 @@ public interface BlogMapper {
 
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    long updateBlogStatus(BlogEntity blogEntity);
+    int updateBlogStatus(BlogEntity blogEntity);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Update("update blog set title = #{title}, summary = #{summary}, blogLogo = #{blogLogo}, content = #{content}, " +

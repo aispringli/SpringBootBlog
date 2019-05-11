@@ -74,7 +74,7 @@
             </div>
         </div>
 
-        <div class="side-tool" style="position:fixed;right:60px;bottom:50px;visibility:hidden;">
+        <div class="side-tool" style="position:fixed;right:60px;bottom:50px;visibility:hidden;z-index: 100;">
             <ul style="list-style: none;">
                 <li class="text-center" id="backTopBtn" data-placement="left" data-toggle="tooltip"
                     data-container="body"
@@ -182,11 +182,11 @@
                                 if(result.success){
                                     $("#modalTipBody").addClass("alert alert-success");
                                     //
-                                    var userLogoSrc=$("#layout_userLogoSrc").css("backgroundImage");
+                                    var userLogoSrc=$("#layout_userLogoSrc").css("backgroundImage").replace("\"","").replace("\"","");
                                     var username=$("#layout_username").html();
                                     var dom='<li class="list-group-item py-5">' +
                                         '    <div class="media">' +
-                                        '        <div class="media-object avatar avatar-md mr-4" style="background-image:url('+userLogoSrc+')"></div>' +
+                                        '        <div class="media-object avatar avatar-md mr-4" style="background-image:'+userLogoSrc+'"></div>' +
                                         '        <div class="media-body">' +
                                         '            <div class="media-heading">' +
                                         '                <small class="float-right text-muted">刚刚</small>\n' +

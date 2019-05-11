@@ -33,6 +33,8 @@
                             <option value="-99">所有</option>
                             <option value="0">正常显示</option>
                             <option value="1">私密可见</option>
+                            <option value="2">待审核</option>
+                            <option value="-2">未通过审核</option>
                             <option value="-1">管理员下架</option>
                         </select>
                     </div>
@@ -78,6 +80,12 @@
                             </div>
                             <div th:if="${blog.blogStatus == 1}">
                                 <span class="status-icon bg-secondary"></span> 私密可见
+                            </div>
+                            <div th:if="${blog.blogStatus == 2}">
+                                <span class="status-icon bg-secondary"></span> 待审核
+                            </div>
+                            <div th:if="${blog.blogStatus == -2}">
+                                <span class="status-icon bg-danger"></span> 未通过审核
                             </div>
                             <div th:if="${blog.blogStatus == -1}">
                                 <span class="status-icon bg-danger"></span> 管理员下架

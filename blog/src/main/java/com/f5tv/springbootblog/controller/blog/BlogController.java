@@ -62,7 +62,6 @@ public class BlogController {
         blogEntity.setContent("false");
         blogEntity.setSummary("false");
         PageHelper.startPage(page, 10);
-        System.out.println("page: " + page);
         modelAndView.addObject("blogLists", blogService.selectBlogByUserId(blogEntity));
         modelAndView.addObject("pageNum", blogService.selectBlogNumByUserId(blogEntity));
         return modelAndView;
@@ -170,9 +169,9 @@ public class BlogController {
 
     @RequestMapping("HandleUpdateBlogStatus")
     @ResponseBody
-    public ResponseResult HandleUpdateBlogStatus(Long blogId){
-        if(blogId==null||blogId<1)return new ResponseResult(1,"参数非法，处理失败");
-        return blogService.updateBlogStatus(blogId);
+    public ResponseResult HandleUpdateBlogStatus(Long blogId,Integer blogStatus){
+        if(blogId==null||blogId<1||blogStatus==null)return new ResponseResult(1,"参数非法，处理失败");
+        return blogService.updateBlogStatus(blogId,blogStatus);
     }
 
 }

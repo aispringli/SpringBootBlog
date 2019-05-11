@@ -56,6 +56,7 @@ public class BlogService {
     @Transactional
     public ResponseResult BlogInsert(BlogEntity blogEntity, long userId) {
         ResponseResult responseResult = checkBlog(blogEntity, userId);
+        blogEntity.setBlogStatus(2);
         if (responseResult != null) return responseResult;
         try {
             if (blogMapper.blogInsert(blogEntity) > 0) {
@@ -113,7 +114,8 @@ public class BlogService {
                 categoryMapper.updateBlogQuantity(category);
             }
             blogEntity.setCategoryId(0);
-            blogEntity.setCategoryStatus(-1);
+            //blogEntity.setCategoryStatus(-1); 在旧版本中控制下架的博客无法修改
+            blogEntity.setBlogStatus(2);
             if(blogMapper.updateBlogStatus(blogEntity)>0)flag=true;
             if(flag) return new ResponseResult(0, true, "修改成功");
             else return new ResponseResult(5, "未进行任何修改");
@@ -158,15 +160,19 @@ public class BlogService {
         return null;
     }
 
-    public ResponseResult updateBlogStatus(long blogId){
+    public ResponseResult updateBlogStatus(long blogId,int blogStatus){
         BlogEntity blogEntity=blogMapper.selectBlogByBlogId(blogId);
         if(blogEntity==null)return new ResponseResult(-1,"博客不存在，处理失败");
-        if(blogEntity.getBlogStatus()==-1)blogEntity.setBlogStatus(0);
-        else blogEntity.setBlogStatus(-1);
+        if(blogStatus<-2||blogStatus>2)blogStatus=0;
+        blogEntity.setBlogStatus(blogStatus);
+
+//        if(blogEntity.getBlogStatus()==2)blogEntity.setBlogStatus(0);
+//        else if(blogEntity.getBlogStatus()==-1)blogEntity.setBlogStatus(0);
+//        else blogEntity.setBlogStatus(-1);
+//        blogEntity.setCategoryStatus(0);
+
         blogEntity.setCategoryId(0);
         blogEntity.setUserId(0);
-        blogEntity.setCategoryStatus(0);
-
         if(blogMapper.updateBlogStatus(blogEntity)>0)return new ResponseResult(0,true,"处理成功");
         else return new ResponseResult(2,"处理失败");
     }

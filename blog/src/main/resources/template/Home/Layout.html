@@ -137,7 +137,7 @@
                                         <div class="row align-items-center">
                                             <label class="form-label col-3">昵称</label>
                                             <div class="col-9">
-                                                <input name="username" minlength="6" maxlength="20" required type="text"
+                                                <input name="username" minlength="2" maxlength="20" required type="text"
                                                        class="form-control" placeholder="昵称">
                                             </div>
                                         </div>
@@ -471,8 +471,8 @@
                 },
                 messages: {
                     username: {
-                        required: "请输入6-20位昵称",
-                        minlength: "请至少输入6位昵称",
+                        required: "请输入2-20位昵称",
+                        minlength: "请至少输入2位昵称",
                         maxlength: "最多输入20位昵称"
                     },
                     password: {
@@ -571,7 +571,7 @@
 
             $(".fe-search").click(
                 function () {
-                    var url = changeURLArg(window.location.href, "page", 1);
+                    var url = changeURLArg("/Home/BlogSearch", "page", 1);
                     url = changeURLArg(url, "blogTitle", $("#blogTitleSearch").val());
                     window.location=url;
                 }

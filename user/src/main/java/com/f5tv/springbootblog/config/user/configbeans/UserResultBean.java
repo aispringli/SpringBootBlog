@@ -24,9 +24,9 @@ public class UserResultBean {
         Map<Integer,ResponseResult> map=new HashMap<>();
         map.put(0,new ResponseResult(0,true,"注册成功"));
 
-        map.put(201,new ResponseResult(201,"注册失败，用户名长度请在6-20之间"));
-        map.put(202,new ResponseResult(202,"注册失败，用户名不允许有空格等其他字符"));
-        map.put(203,new ResponseResult(203,"注册失败，用户名已被注册使用"));
+        map.put(201,new ResponseResult(201,"注册失败，昵称长度请在2-20之间"));
+        map.put(202,new ResponseResult(202,"注册失败，昵称不允许有空格等其他字符"));
+        map.put(203,new ResponseResult(203,"注册失败，昵称已被注册使用"));
 
         map.put(301,new ResponseResult(301,"注册失败，请输入合法的邮箱地址"));
         map.put(302,new ResponseResult(302,"注册失败，邮箱地址最大100字符长度"));
