@@ -6,6 +6,8 @@ import com.f5tv.springbootblog.entity.user.UserEntity;
 import com.f5tv.springbootblog.service.blog.CommentService;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -69,6 +71,7 @@ public class CommentController {
         return modelAndView;
     }
 
+    @PreAuthorize("hasAnyAuthority('管理员')")//此方法只允许 管理员 角色 访问
     @RequestMapping("HandleUpdateCommentStatus")
     @ResponseBody
     public ResponseResult HandleUpdateCommentStatus(Long commentId){

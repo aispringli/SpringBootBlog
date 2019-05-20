@@ -1,6 +1,7 @@
 package com.f5tv.springbootblog.mapper.blog;
 
 import com.f5tv.springbootblog.entity.blog.BlogEntity;
+import com.f5tv.springbootblog.entity.core.DateQuantityEntity;
 import org.apache.ibatis.annotations.*;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Component;
@@ -91,4 +92,9 @@ public interface BlogMapper {
     int deleteBlogByBlogId(long blogId);
 
 
+    @Select("select count(0) from blog")
+    long blogCount();
+
+    @Select("SELECT DATE_FORMAT(blogDate,'%Y-%m-%d') as time,count(0) as quantity FROM blog where DATE_SUB(CURDATE(), INTERVAL 7 DAY) <= date(blogDate)  GROUP BY  time")
+    List<DateQuantityEntity> blogCountWeek();
 }

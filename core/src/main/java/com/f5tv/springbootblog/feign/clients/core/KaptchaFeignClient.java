@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @Description: //TODO
  * @date 13:08 2019/3/22
  */
-@FeignClient(name = "KaptchaFeignClient", url = "127.0.0.1")
+//@FeignClient(name = "KaptchaFeignClient", url = "https://127.0.0.1")
+@FeignClient(name = "KaptchaFeignClient", url = "https://f5tv.com")
 //@Component(value = "KaptchaFeignClient")
 public interface KaptchaFeignClient {
 

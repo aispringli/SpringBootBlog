@@ -118,7 +118,7 @@
                             <th:block th:if="${blog.blogStatus} == 0">
                                 <td>正常显示</td>
                                 <td><a href="#" class="btn btn-danger"
-                                       th:attr="data-blogid=${blog.blogId}" data-blogstatus="0">下架</a>
+                                       th:attr="data-blogid=${blog.blogId}" data-blogstatus="-1">下架</a>
                                 </td>
                             </th:block>
 
@@ -158,7 +158,7 @@
                     <li class="page-item"><a class="page-link" href="#">上一页</a></li>
                     <li class="page-item"><a class="page-link" href="#">1</a></li>
                     <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item active"><a class="page-link" href="#">3</a></li>
                     <li class="page-item"><a class="page-link" href="#">4</a></li>
                     <li class="page-item"><a class="page-link" href="#">5</a></li>
                     <li class="page-item"><a class="page-link" href="#">下一页</a></li>

@@ -8,8 +8,370 @@
 <body th:with="index_active='active'">
 <div class="content-inner" layout:fragment="content">
 
+    <div class="chart-cont">
+
+        <!--***** CHART *****-->
+        <div class="row">
+            <div class="col-md-6 mt-2">
+                <div class="card">
+                    <div class="card-block">
+                        <canvas id="allcount-chart" width="400" height="400"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mt-2">
+                <div class="card">
+                    <div class="card-block">
+                        <canvas id="usercount-chart" width="400" height="400"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mt-2">
+                <div class="card">
+                    <div class="card-block">
+                        <canvas id="categorycount-chart" width="400" height="400"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mt-2">
+                <div class="card">
+                    <div class="card-block">
+                        <canvas id="blogcount-chart" width="400" height="400"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mt-2">
+                <div class="card">
+                    <div class="card-block">
+                        <canvas id="commentcount-chart" width="400" height="400"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mt-2">
+                <div class="card">
+                    <div class="card-block">
+                        <canvas id="followcount-chart" width="400" height="400"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mt-2">
+                <div class="card">
+                    <div class="card-block">
+                        <canvas id="collectcount-chart" width="400" height="400"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mt-2">
+                <div class="card">
+                    <div class="card-block">
+                        <canvas id="starcount-chart" width="400" height="400"></canvas>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
 </div>
 </body>
 <th:block layout:fragment="bodyJs">
+    <script th:inline="javascript">
+
+        function getDay(day){
+            var today = new Date();
+            var targetday_milliseconds=today.getTime() + 1000*60*60*24*day;
+            today.setTime(targetday_milliseconds); //注意，这行是关键代码
+            var tYear = today.getFullYear();
+            var tMonth = today.getMonth();
+            var tDate = today.getDate();
+            tMonth = doHandleMonth(tMonth + 1);
+            tDate = doHandleMonth(tDate);
+            //return tYear+"-"+tMonth+"-"+tDate;
+            return tMonth+"-"+tDate;
+        }
+        function doHandleMonth(month){
+            var m = month;
+            if(month.toString().length == 1){
+                m = "0" + month;
+            }
+            return m;
+        }
+
+        function getDayFromTime(time){
+            var today = new Date(time);
+            var tYear = today.getFullYear();
+            var tMonth = today.getMonth();
+            var tDate = today.getDate();
+            tMonth = doHandleMonth(tMonth + 1);
+            tDate = doHandleMonth(tDate);
+            //return tYear+"-"+tMonth+"-"+tDate;
+            return tMonth+"-"+tDate;
+        }
+
+
+        //总量-chart
+        var userCount = [[${userCount}]];
+        var categoryCount = [[${categoryCount}]];
+        var blogCount = [[${blogCount}]];
+        var commentCount = [[${commentCount}]];
+        var followCount = [[${followCount}]];
+        var commentCount = [[${commentCount}]];
+        var starCount = [[${starCount}]];
+
+        var totalcount = [userCount,categoryCount,blogCount,commentCount,followCount,commentCount,starCount];
+
+        new Chart(document.getElementById("allcount-chart"), {
+            type: 'bar',
+            data: {
+                labels: ["用户", "分类", "博客", "评论", "关注", "收藏", "点赞"],
+                datasets: [
+                    {
+                        label: "数量 ",
+                        backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850","#34495E","#E6B80D"],
+                        data: totalcount
+                    }
+                ]
+            },
+            options: {
+                legend: { display: false },
+                title: {
+                    display: true,
+                    text: '系统所有数据量总览'
+                }
+            }
+        });
+        //日期
+        var datearray = new Array(7);
+        for(var i=0;i<8;i++)
+            datearray[7-i]=getDay(0-i);
+
+        //用户周-chart
+        var usercountweek = [[${userCountWeek}]];
+        var usercountweekValue = new Array(7);
+        var j=0;
+        for(var i=0;i<8;i++){
+            if(usercountweek!=null&&j<usercountweek.length){
+                if(getDayFromTime(usercountweek[j].time)==datearray[i]){
+                    usercountweekValue[i]=usercountweek[j].quantity;
+                    ++j;
+                }
+                else usercountweekValue[i]=0;
+            }
+        }
+        new Chart(document.getElementById("usercount-chart"), {
+            type: 'line',
+            data: {
+                labels: datearray,
+                datasets: [{
+                    data: usercountweekValue,
+                    label: "用户注册量",
+                    borderColor: "#3e95cd",
+                    fill: false
+                }]
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: '用户最近一周注册量'
+                }
+            }
+        });
+
+        //分类周-chart
+        var categorycountweek = [[${categoryCountWeek}]];
+        var categorycountweekValue = new Array(7);
+        var j=0;
+        for(var i=0;i<8;i++){
+            if(categorycountweek!=null&&j<categorycountweek.length){
+                if(getDayFromTime(categorycountweek[j].time)==datearray[i]){
+                    categorycountweekValue[i]=categorycountweek[j].quantity;
+                    ++j;
+                }
+                else categorycountweekValue[i]=0;
+            }
+        }
+        new Chart(document.getElementById("categorycount-chart"), {
+            type: 'line',
+            data: {
+                labels: datearray,
+                datasets: [{
+                    data: categorycountweekValue,
+                    label: "分类添加量",
+                    borderColor: "#8e5ea2",
+                    fill: false
+                }]
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: '分类最近一周添加量'
+                }
+            }
+        });
+
+        //博客周-chart
+
+        var blogcountweek = [[${blogCountWeek}]];
+        var blogcountweekValue = new Array(7);
+        var j=0;
+        for(var i=0;i<8;i++){
+            if(blogcountweek!=null&&j<blogcountweek.length){
+                if(getDayFromTime(blogcountweek[j].time)==datearray[i]){
+                    blogcountweekValue[i]=blogcountweek[j].quantity;
+                    ++j;
+                }
+                else blogcountweekValue[i]=0;
+            }
+        }
+        new Chart(document.getElementById("blogcount-chart"), {
+            type: 'line',
+            data: {
+                labels: datearray,
+                datasets: [{
+                    data: blogcountweekValue,
+                    label: "博客发表量",
+                    borderColor: "#3cba9f",
+                    fill: false
+                }]
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: '博客最近一周发表量'
+                }
+            }
+        });
+        //评论周-chart
+        var commentcountweek = [[${commentCountWeek}]];
+        var commentcountweekValue = new Array(7);
+        var j=0;
+        for(var i=0;i<8;i++){
+            if(commentcountweek!=null&&j<commentcountweek.length){
+                if(getDayFromTime(commentcountweek[j].time)==datearray[i]){
+                    commentcountweekValue[i]=commentcountweek[j].quantity;
+                    ++j;
+                }
+                else commentcountweekValue[i]=0;
+            }
+        }
+        new Chart(document.getElementById("commentcount-chart"), {
+            type: 'line',
+            data: {
+                labels: datearray,
+                datasets: [{
+                    data: commentcountweekValue,
+                    label: "评论量",
+                    borderColor: "#e8c3b9",
+                    fill: false
+                }]
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: '最近一周评论量'
+                }
+            }
+        });
+        //关注周-chart
+        var followcountweek = [[${followCountWeek}]];
+        var followcountweekValue = new Array(7);
+        var j=0;
+        for(var i=0;i<8;i++){
+            if(followcountweek!=null&&j<followcountweek.length){
+                if(getDayFromTime(followcountweek[j].time)==datearray[i]){
+                    followcountweekValue[i]=followcountweek[j].quantity;
+                    ++j;
+                }
+                else followcountweekValue[i]=0;
+            }
+        }
+        new Chart(document.getElementById("followcount-chart"), {
+            type: 'line',
+            data: {
+                labels: datearray,
+                datasets: [{
+                    data: followcountweekValue,
+                    label: "关注量",
+                    borderColor: "#c45850",
+                    fill: false
+                }]
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: '最近一周关注量'
+                }
+            }
+        });
+        //收藏周-chart
+        var collectcountweek = [[${colleCtcountWeek}]];
+        var collectcountweekValue = new Array(7);
+        var j=0;
+        for(var i=0;i<8;i++){
+            if(collectcountweek!=null&&j<collectcountweek.length){
+                if(getDayFromTime(collectcountweek[j].time)==datearray[i]){
+                    collectcountweekValue[i]=collectcountweek[j].quantity;
+                    ++j;
+                }
+                else collectcountweekValue[i]=0;
+            }
+        }
+        new Chart(document.getElementById("collectcount-chart"), {
+            type: 'line',
+            data: {
+                labels: datearray,
+                datasets: [{
+                    data: collectcountweekValue,
+                    label: "收藏量",
+                    borderColor: "#34495E",
+                    fill: false
+                }]
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: '最近一周收藏量'
+                }
+            }
+        });
+        //点赞周-chart
+        var starcountweek = [[${starCountWeek}]];
+        var starcountweekValue = new Array(7);
+        var j=0;
+        for(var i=0;i<8;i++){
+            if(starcountweek!=null&&j<starcountweek.length){
+                if(getDayFromTime(starcountweek[j].time)==datearray[i]){
+                    starcountweekValue[i]=starcountweek[j].quantity;
+                    ++j;
+                }
+                else starcountweekValue[i]=0;
+            }
+        }
+        new Chart(document.getElementById("starcount-chart"), {
+            type: 'line',
+            data: {
+                labels: datearray,
+                datasets: [{
+                    data: starcountweekValue,
+                    label: "点赞量",
+                    borderColor: "#E6B80D",
+                    fill: false
+                }]
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: '最近一周点赞量'
+                }
+            }
+        });
+    </script>
 </th:block>
 </html>

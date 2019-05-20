@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
@@ -16,11 +17,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @Description: TODO
  * @date 15:41 2019/3/16
  */
-//@SpringBootApplication
 // 开启SpringCache缓存支持
 @EnableCaching
 // 微服务调用feign
 @EnableFeignClients
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableTransactionManagement
 @SpringBootApplication()
 

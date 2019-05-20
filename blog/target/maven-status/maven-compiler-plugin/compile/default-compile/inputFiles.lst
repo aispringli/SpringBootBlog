@@ -8,6 +8,7 @@ C:\Users\34499\Documents\IdeaProjects\SpringBootBlog\blog\src\main\java\com\f5tv
 C:\Users\34499\Documents\IdeaProjects\SpringBootBlog\blog\src\main\java\com\f5tv\springbootblog\controller\blog\StarController.java
 C:\Users\34499\Documents\IdeaProjects\SpringBootBlog\blog\src\main\java\com\f5tv\springbootblog\entity\blog\CollectEntity.java
 C:\Users\34499\Documents\IdeaProjects\SpringBootBlog\blog\src\main\java\com\f5tv\springbootblog\controller\blog\FollowController.java
+C:\Users\34499\Documents\IdeaProjects\SpringBootBlog\blog\src\main\java\com\f5tv\springbootblog\service\blog\DataStatisticsService.java
 C:\Users\34499\Documents\IdeaProjects\SpringBootBlog\blog\src\main\java\com\f5tv\springbootblog\controller\blog\CommentController.java
 C:\Users\34499\Documents\IdeaProjects\SpringBootBlog\blog\src\main\java\com\f5tv\springbootblog\mapper\blog\FollowMapper.java
 C:\Users\34499\Documents\IdeaProjects\SpringBootBlog\blog\src\main\java\com\f5tv\springbootblog\service\blog\CategoryService.java
@@ -20,10 +21,11 @@ C:\Users\34499\Documents\IdeaProjects\SpringBootBlog\blog\src\main\java\com\f5tv
 C:\Users\34499\Documents\IdeaProjects\SpringBootBlog\blog\src\main\java\com\f5tv\springbootblog\controller\blog\AdminController.java
 C:\Users\34499\Documents\IdeaProjects\SpringBootBlog\blog\src\main\java\com\f5tv\springbootblog\entity\blog\FollowEntity.java
 C:\Users\34499\Documents\IdeaProjects\SpringBootBlog\blog\src\main\java\com\f5tv\springbootblog\entity\blog\BlogEntity.java
-C:\Users\34499\Documents\IdeaProjects\SpringBootBlog\blog\src\main\java\com\f5tv\springbootblog\controller\blog\ErrorController.java
 C:\Users\34499\Documents\IdeaProjects\SpringBootBlog\blog\src\main\java\com\f5tv\springbootblog\controller\blog\CategoryController.java
+C:\Users\34499\Documents\IdeaProjects\SpringBootBlog\blog\src\main\java\com\f5tv\springbootblog\controller\blog\MyErrorController.java
 C:\Users\34499\Documents\IdeaProjects\SpringBootBlog\blog\src\main\java\com\f5tv\springbootblog\entity\blog\CommentEntity.java
 C:\Users\34499\Documents\IdeaProjects\SpringBootBlog\blog\src\main\java\com\f5tv\springbootblog\controller\blog\HomeUserController.java
 C:\Users\34499\Documents\IdeaProjects\SpringBootBlog\blog\src\main\java\com\f5tv\springbootblog\controller\blog\HomeController.java
+C:\Users\34499\Documents\IdeaProjects\SpringBootBlog\blog\src\main\java\com\f5tv\springbootblog\controller\blog\NotFoundExceptionController.java
 C:\Users\34499\Documents\IdeaProjects\SpringBootBlog\blog\src\main\java\com\f5tv\springbootblog\mapper\blog\BlogMapper.java
 C:\Users\34499\Documents\IdeaProjects\SpringBootBlog\blog\src\main\java\com\f5tv\springbootblog\service\blog\CollectService.java

@@ -1,6 +1,7 @@
 package com.f5tv.springbootblog.mapper.blog;
 
 import com.f5tv.springbootblog.entity.blog.CategoryEntity;
+import com.f5tv.springbootblog.entity.core.DateQuantityEntity;
 import org.apache.ibatis.annotations.*;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Component;
@@ -66,4 +67,10 @@ public interface CategoryMapper {
     @Lock(LockModeType.PESSIMISTIC_READ)
     @Select("select * from category where categoryId = #{categoryId}")
     CategoryEntity categorySelectByCategoryId(long categoryId);
+
+    @Select("select count(0) from category")
+    long categoryCount();
+
+    @Select("SELECT DATE_FORMAT(categoryDate,'%Y-%m-%d') as time,count(0) as quantity FROM category where DATE_SUB(CURDATE(), INTERVAL 7 DAY) <= date(categoryDate)  GROUP BY  time")
+    List<DateQuantityEntity> categoryCountWeek();
 }

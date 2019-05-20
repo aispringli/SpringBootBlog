@@ -115,7 +115,9 @@ public class BlogService {
             }
             blogEntity.setCategoryId(0);
             //blogEntity.setCategoryStatus(-1); 在旧版本中控制下架的博客无法修改
-            blogEntity.setBlogStatus(2);
+            if(blogEntityConfirm.getBlogStatus()==-1)blogEntity.setBlogStatus(-1);
+            else if(blogEntityConfirm.getBlogStatus()==2||blogEntityConfirm.getBlogStatus()==-2)blogEntity.setBlogStatus(2);
+            //blogEntity.setBlogStatus(2);
             if(blogMapper.updateBlogStatus(blogEntity)>0)flag=true;
             if(flag) return new ResponseResult(0, true, "修改成功");
             else return new ResponseResult(5, "未进行任何修改");

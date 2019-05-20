@@ -1,6 +1,7 @@
 package com.f5tv.springbootblog.mapper.blog;
 
 import com.f5tv.springbootblog.entity.blog.FollowEntity;
+import com.f5tv.springbootblog.entity.core.DateQuantityEntity;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -44,4 +45,10 @@ public interface FollowMapper {
     //查询某个用户被哪些人关注
     @Select("select count(*) from follow where userId =#{userId}")
     int selectCountFollowersByUserId(long userId);
+
+    @Select("select count(0) from follow")
+    long followCount();
+
+    @Select("SELECT DATE_FORMAT(followDate,'%Y-%m-%d') as time,count(0) as quantity FROM follow where DATE_SUB(CURDATE(), INTERVAL 7 DAY) <= date(followDate)  GROUP BY  time")
+    List<DateQuantityEntity> followCountWeek();
 }

@@ -50,7 +50,7 @@ public class UserEntity extends UserRole implements UserDetails, CredentialsCont
      **/
     private String userMotto;
 
-
+    private long userFollowerQuantity;
 
     private String username;
     private String password;
@@ -60,7 +60,7 @@ public class UserEntity extends UserRole implements UserDetails, CredentialsCont
     private boolean credentialsNonExpired;
     private boolean enabled;
 
-    public UserEntity(){
+    public UserEntity() {
 
     }
 
@@ -236,6 +236,14 @@ public class UserEntity extends UserRole implements UserDetails, CredentialsCont
         this.password = password;
     }
 
+    public long getUserFollowerQuantity() {
+        return userFollowerQuantity;
+    }
+
+    public void setUserFollowerQuantity(long userFollowerQuantity) {
+        this.userFollowerQuantity = userFollowerQuantity;
+    }
+
     @Override
     public String getPassword() {
         return password;
@@ -278,9 +286,9 @@ public class UserEntity extends UserRole implements UserDetails, CredentialsCont
 
     @Override
     public boolean equals(Object obj) {
-        if(obj instanceof UserEntity){
-            UserEntity userEntity= (UserEntity) obj;
-            return this.userId==userEntity.getUserId();
+        if (obj instanceof UserEntity) {
+            UserEntity userEntity = (UserEntity) obj;
+            return this.userId == userEntity.getUserId();
         }
         return false;
     }

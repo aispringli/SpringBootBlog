@@ -1,8 +1,19 @@
 server:
-  port: 80
+  port: 443
   servlet:
     session:
       timeout: 3600
+    context-path: /
+  ssl:
+    key-store: 2192909_f5tv.com.pfx
+    key-store-password: wEKGgprf
+    key-store-type: PKCS12
+    key-alias: f5tv.com
+
+
+
+
+
 
 feign:
   okhttp:
@@ -86,9 +97,9 @@ mybatis:
 file:
   staticAccessPath: /file/**
   #文件上传目录（注意目录结构不同）
-  imgFolder: F://temp/static/file/
-  fileFolder: F://temp/static/enclosure/
-  rootFolder: F://temp/static/
-#  imgFolder: C://Users/Administrator/Desktop/blog/static/file/
-#  fileFolder: C://Users/Administrator/Desktop/blog/enclosure/
-#  rootFolder: C://Users/Administrator/Desktop/blog/static/
+#  imgFolder: F://temp/static/file/
+#  fileFolder: F://temp/static/enclosure/
+#  rootFolder: F://temp/static/
+  imgFolder: C://Users/Administrator/Desktop/blog/static/file/
+  fileFolder: C://Users/Administrator/Desktop/blog/enclosure/
+  rootFolder: C://Users/Administrator/Desktop/blog/static/

@@ -1,6 +1,7 @@
 package com.f5tv.springbootblog.mapper.blog;
 
 import com.f5tv.springbootblog.entity.blog.CollectEntity;
+import com.f5tv.springbootblog.entity.core.DateQuantityEntity;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -39,4 +40,9 @@ public interface CollectMapper {
     @Delete("delete from collect where blogId = #{blogId}")
     int deleteByBlogId(long blogId);
 
+    @Select("select count(0) from collect")
+    long collectCount();
+
+    @Select("SELECT DATE_FORMAT(collectDate,'%Y-%m-%d') as time,count(0) as quantity FROM collect where DATE_SUB(CURDATE(), INTERVAL 7 DAY) <= date(collectDate)  GROUP BY  time")
+    List<DateQuantityEntity> collectCountWeek();
 }

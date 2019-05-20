@@ -17,7 +17,8 @@ import java.util.Map;
  * @Description: //TODO
  * @date 13:33 2019/3/22
  */
-@FeignClient(name = "EmailFeignClient", url = "127.0.0.1")
+//@FeignClient(name = "EmailFeignClient", url = "https://127.0.0.1")
+@FeignClient(name = "EmailFeignClient", url = "https://f5tv.com")
 public interface EmailFeignClient {
 
     /**

@@ -9,6 +9,8 @@ import com.f5tv.springbootblog.service.blog.CategoryService;
 import com.f5tv.springbootblog.service.user.UserService;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -167,6 +169,7 @@ public class BlogController {
         return modelAndView;
     }
 
+    @PreAuthorize("hasAnyAuthority('管理员')")//此方法只允许 管理员 角色 访问
     @RequestMapping("HandleUpdateBlogStatus")
     @ResponseBody
     public ResponseResult HandleUpdateBlogStatus(Long blogId,Integer blogStatus){

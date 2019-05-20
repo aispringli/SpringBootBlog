@@ -104,5 +104,7 @@ public class UserService {
         return userMapper.updateUserRoleId(userEntity);
     }
 
+    //修改粉丝数量
+    public int updateuserFollowerQuantityc(UserEntity userEntity){return userMapper.updateuserFollowerQuantityc(userEntity);}
 
 }

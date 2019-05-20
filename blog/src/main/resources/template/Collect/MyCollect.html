@@ -10,7 +10,7 @@
 <div class="container" layout:fragment="content">
     <div class="row row-cards row-deck">
         <div class="col-12">
-            <div class="card">
+            <div class="card container">
                 <div class="table-responsive">
                     <table class="table card-table table-vcenter text-nowrap">
                         <thead>
@@ -33,7 +33,7 @@
                                    th:text="${collect.title}">title</a></td>
                             <td><a target="_blank" th:href="@{'/Blog/BlogDashboard?userId='+${collect.userId}}"
                                    th:text="${collect.username}">username</a></td>
-                            <td><a target="_blank" th:href="@{'/Blog/BlogDashboard?page=1&categoryId='+${collect.categoryId}+'userId='+${collect.userId}}"
+                            <td><a target="_blank" th:href="@{'/Blog/BlogDashboard?page=1&categoryId='+${collect.categoryId}+'&userId='+${collect.userId}}"
                                    th:text="${collect.categoryName}">默认</a></td>
                             <td th:text="${#dates.format(collect.collectDate, 'yyyy-MM-dd HH:mm')}">2019-04-19 12:10</td>
                             <td th:text="${collect.starQuantity}">0</td>
@@ -58,7 +58,7 @@
                     <li class="page-item"><a class="page-link" href="#">上一页</a></li>
                     <li class="page-item"><a class="page-link" href="#">1</a></li>
                     <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item active"><a class="page-link" href="#">3</a></li>
                     <li class="page-item"><a class="page-link" href="#">4</a></li>
                     <li class="page-item"><a class="page-link" href="#">5</a></li>
                     <li class="page-item"><a class="page-link" href="#">下一页</a></li>

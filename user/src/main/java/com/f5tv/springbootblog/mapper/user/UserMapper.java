@@ -1,5 +1,6 @@
 package com.f5tv.springbootblog.mapper.user;
 
+import com.f5tv.springbootblog.entity.core.DateQuantityEntity;
 import com.f5tv.springbootblog.entity.user.UserEntity;
 import org.apache.ibatis.annotations.*;
 import org.springframework.data.jpa.repository.Lock;
@@ -29,7 +30,8 @@ public interface UserMapper  {
                     @Result(property = "userStatus", column = "userStatus"),
                     @Result(property = "userDate", column = "userDate"),
                     @Result(property = "userLogoSrc", column = "userLogoSrc"),
-                    @Result(property = "userMotto", column = "userMotto")
+                    @Result(property = "userMotto", column = "userMotto"),
+                    @Result(property = "userFollowerQuantity", column = "userFollowerQuantity")
             })
 
     @Lock(LockModeType.PESSIMISTIC_READ)
@@ -78,10 +80,17 @@ public interface UserMapper  {
     @Update("update user set userLogoSrc=#{userLogoSrc} where userId = #{userId}")
     int updateUserLogoSrc(UserEntity userEntity);
 
+    //修改粉丝数量
+    @Update("update user set userFollowerQuantity = userFollowerQuantity + #{userFollowerQuantity} where userId = #{userId}")
+    int updateuserFollowerQuantityc(UserEntity userEntity);
 
     //修改权限
     @Update("update user set userRoleId=#{userRoleId} where userId = #{userId}")
     int updateUserRoleId(UserEntity userEntity);
 
+    @Select("select count(0) from user")
+    long userCount();
 
+    @Select("SELECT DATE_FORMAT(userDate,'%Y-%m-%d') as time,count(0) as quantity FROM user where DATE_SUB(CURDATE(), INTERVAL 7 DAY) <= date(userDate)  GROUP BY  time")
+    List<DateQuantityEntity> userCountWeek();
 }

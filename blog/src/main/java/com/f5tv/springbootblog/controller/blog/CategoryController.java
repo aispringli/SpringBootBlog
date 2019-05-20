@@ -6,6 +6,7 @@ import com.f5tv.springbootblog.entity.user.UserEntity;
 import com.f5tv.springbootblog.service.blog.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,7 +41,7 @@ public class CategoryController {
     }
 
     //管理员修改状态
-    @Secured({"管理员"})//此方法只允许 管理员 角色 访问
+    @PreAuthorize("hasAnyAuthority('管理员')")//此方法只允许 管理员 角色 访问
     @RequestMapping("HandleCategoryUpdateStatus")
     @ResponseBody
     public ResponseResult HandleCategoryUpdateStatus(Long categoryId){

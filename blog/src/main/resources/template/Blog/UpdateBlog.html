@@ -17,7 +17,7 @@
                           <span class="input-group-prepend">
                             <span class="input-group-text">博客标题</span>
                           </span>
-                            <input id="title" type="text" maxlength="20" class="form-control"/>
+                            <input id="title" type="text" maxlength="20" class="form-control" th:value="${blog.title}"/>
                         </div>
                     </div>
                     <div class="form-group col-3">
@@ -37,9 +37,10 @@
                             <span class="input-group-text">显示状态</span>
                           </span>
                             <select name="blogStatus" id="blogStatus" class="form-control custom-select">
-                                <option value="2" selected>待审核</option>
-                                <!--<option value="0">正常显示</option>-->
-                                <!--<option value="1">私密可见</option>-->
+                                <option value="2" selected th:if="${blog.blogStatus} == -2 or ${blog.blogStatus} == 2">待审核</option>
+                                <option value="-1" selected th:if="${blog.blogStatus} == -1">管理员下架</option>
+                                <option value="0" th:if="${blog.blogStatus} ==0 or ${blog.blogStatus} ==1">正常显示</option>
+                                <option value="1" th:if="${blog.blogStatus} ==0 or ${blog.blogStatus} ==1">私密可见</option>
                             </select>
                         </div>
                     </div>
@@ -63,7 +64,7 @@
                 </div>
                 <div class="form-group form-group col-6">
                     <textarea maxlength="200" id="blogSummary" class="form-control" rows="6"
-                              placeholder="简介"></textarea>
+                              placeholder="简介" th:text="${blog.summary}"></textarea>
                 </div>
                 <div class="form-group col-6">
                     <img id="blogSummaryLogoImg" style="height: 150px;cursor: pointer;display: none;" src="/static/file/logo/demo.jpg"
@@ -148,8 +149,9 @@
             editor.create();
             editor.txt.html([[${blog.content}]]);
             $("#categoryId").val([[${blog.categoryId}]]);
-            $("#title").val([[${blog.title}]]);
-            $("#blogSummary").text([[${blog.summary}]]);
+            //$("#title").val([[${blog.title}]]);
+            $("#blogStatus").val([[${blog.blogStatus}]]);
+            //$("#blogSummary").text([[${blog.summary}]]);
             if([[${blog.blogLogo}]] !== ""){
                 $("#blogSummaryLogoImg").attr("src", [[${blog.blogLogo}]]);
                 $("#blogSummaryLogoImg").show();

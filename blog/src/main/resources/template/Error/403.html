@@ -3,16 +3,16 @@
       xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
       layout:decorate="Home/Layout">
 <head>
-    <th:block layout:fragment="title">400错误页面</th:block>
+    <th:block layout:fragment="title">403错误页面</th:block>
 </head>
 
 <body class="">
 <div class="container" layout:fragment="content">
     <div class="page-content">
         <div class="container text-center">
-            <div class="display-1 text-muted mb-5"><i class="si si-exclamation"></i> 400</div>
-            <h1 class="h2" th:text="${msg}">参数不正确</h1>
-            <p class="h4 text-muted font-weight-normal">如您确认参数没问题，请联系我们解决问题</p>
+            <div class="display-1 text-muted mb-5"><i class="si si-exclamation"></i> 403</div>
+            <h1 class="h2" th:text="${msg}">您无权限访问该页面</h1>
+            <p class="h4 text-muted font-weight-normal">如您确认此页面确实可以访问，请联系我们解决问题</p>
             <p class="h4 font-weight-normal mb-7" style="color:red;">系统将在 <span id="mes">5</span> 秒钟后返回首页！</p>
             <a class="btn btn-primary" href="javascript:window.location='/'">
                 <i class="fe fe-arrow-left mr-2"></i>点击返回首页

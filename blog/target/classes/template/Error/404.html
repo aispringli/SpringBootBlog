@@ -11,7 +11,7 @@
     <div class="page-content">
         <div class="container text-center">
             <div class="display-1 text-muted mb-5"><i class="si si-exclamation"></i> 404</div>
-            <h1 class="h2">您访问的内容不存在或已被永久性的删除了</h1>
+            <h1 class="h2" th:text="${msg}">您访问的内容不存在或已被永久性的删除了</h1>
             <p class="h4 text-muted font-weight-normal">如您确认此页面确实存在，请联系我们解决问题</p>
             <p class="h4 font-weight-normal mb-7" style="color:red;">系统将在 <span id="mes">5</span> 秒钟后返回首页！</p>
             <a class="btn btn-primary" href="javascript:window.location='/'">

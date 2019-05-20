@@ -13,6 +13,8 @@ import com.f5tv.springbootblog.tools.CheckStringTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -245,7 +247,7 @@ public class UserController {
         if (CheckUserEmail(userEntity.getUserEmail(), true)) return userResultBean.userRegisterResult().get(304);
         userEntity.setUserRoleId(301);//普通用户
         userEntity.setUserMotto("签名是一种态度");
-        userEntity.setUserLogoSrc("file/logo/demo.jpg");
+        userEntity.setUserLogoSrc("/file/logo/demo_user.jpg");
         String password=userEntity.getPassword();
         userService.insert(userEntity);
         userEntity.setPassword(password);;
@@ -293,7 +295,7 @@ public class UserController {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         datas.put("code", bCryptPasswordEncoder.encode(userEntity.getUserId() + userEntity.getUsername() + userEntity.getPassword() + userEntity.getUserEmail()));
         //return emailFeignClient.SendEmailHtml(dates);
-        return emailFeignClient.SendEmailHtml(emailAddressArray, "重置密码", "/User/HandleRetrievePassword", datas, null);
+        return emailFeignClient.SendEmailHtml(emailAddressArray, "重置密码", "User/HandleRetrievePassword", datas, null);
     }
 
     //找回密码
@@ -423,6 +425,7 @@ public class UserController {
         return new ResponseResult(-3,"未进行任何修改");
     }
 
+    @PreAuthorize("hasAnyAuthority('超级管理员')")//此方法只允许 超级管理员 角色 访问
     @RequestMapping("HandleUpdateUserRole")
     @ResponseBody
     public ResponseResult HandleUpdateUserRole(Long userId){
@@ -438,6 +441,7 @@ public class UserController {
         else return new ResponseResult(-1,"处理失败");
     }
 
+    @PreAuthorize("hasAnyAuthority('管理员')")//此方法只允许 管理员 角色 访问
     @RequestMapping("HandleUpdateUserStatus")
     @ResponseBody
     public ResponseResult HandleUpdateUserStatus(Long userId){

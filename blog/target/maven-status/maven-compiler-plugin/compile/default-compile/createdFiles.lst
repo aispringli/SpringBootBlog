@@ -7,7 +7,6 @@ com\f5tv\springbootblog\controller\blog\HomeUserController.class
 com\f5tv\springbootblog\mapper\blog\CollectMapper.class
 com\f5tv\springbootblog\service\blog\CategoryService.class
 com\f5tv\springbootblog\mapper\blog\FollowMapper.class
-com\f5tv\springbootblog\controller\blog\ErrorController.class
 com\f5tv\springbootblog\entity\blog\StarEntity.class
 com\f5tv\springbootblog\controller\blog\AdminController.class
 com\f5tv\springbootblog\mapper\blog\BlogMapper.class

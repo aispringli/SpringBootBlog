@@ -12,8 +12,17 @@
 <div class="container" layout:fragment="content">
     <div class="row">
         <div class="col-md-2">
-            <h3 class="page-title" th:text="${blogEntity.username}" >username</h3>
-            <a href="#" class="btn btn-pill btn-lime" id="followBtn" th:attr="data-userid=${blogEntity.userId}" style="visibility:hidden;"><i class="fe fe-plus"></i> 关注</a>
+            <div class="d-flex align-items-center pt-5 mt-auto">
+                <a href="" th:href="@{'/Blog/BlogDashboard?userId='+${blogEntity.userId}}">
+                    <div class="avatar avatar-md mr-3" th:style="'background-image:url('+${blogEntity.userLogoSrc}+')'"></div>
+                </a>
+
+                <div>
+                    <a th:href="@{'/Blog/BlogDashboard?userId='+${blogEntity.userId}}" class="text-default" th:text="${blogEntity.username}">username</a>
+                    <small class="d-block text-muted" th:text="'粉丝量（'+${blogEntity.userFollowerQuantity}+'）'">粉丝量</small>
+                </div>
+            </div>
+            <a href="#" class="btn btn-pill btn-lime" id="followBtn" th:attr="data-userid=${blogEntity.userId}" style="visibility:hidden;margin: 5px;"><i class="fe fe-plus"></i> 关注</a>
             <div style="padding-top: 15px;">
                 <div class="list-group list-group-transparent mb-0">
                     <div th:each="category:${categoryLists}">
