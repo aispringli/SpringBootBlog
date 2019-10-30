@@ -21,8 +21,8 @@ feign:
 spring:
   mail:
     host: smtp.f5tv.com
-    username: springbootblog@f5tv.com
-    password: ll.201520111
+    username: xxx@f5tv.com
+    password: xxx
     default-encoding: utf-8
     port: 465
     properties:
